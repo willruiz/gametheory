@@ -58,17 +58,16 @@ def update_dimensions(rows_in, cols_in):
     cenv = width * 0.5
     cenh = height * 0.5
 
-
-
 def submit(entry_list):
     
     for i in entry_list:
-        for j in i: # iterate through tuple
-            name=j.get()
-            
-            print("The name is : " + name)
-            
-            j.set("")
+        for j in i:
+            for k in j: # iterate through tuple
+                name=k.get()
+                
+                print("The name is : " + name)
+                
+                k.set("")
 
 def create_matrix(canvas, root, rows, cols):
     
