@@ -1,10 +1,13 @@
+## NOTE: Only supports 2-player games - N-player games will have to developed in the future
+
 from tkinter import *
 import tkinter as tk
 import math
 import numpy as np
 
-rows = 3
-cols = 3
+
+rows = 2
+cols = 2
 
 height = 500
 width = 500
@@ -35,6 +38,11 @@ root = tk.Tk()
 A1_string=tk.StringVar()
 A2_string=tk.StringVar()
 
+saved_file = "saved_matrix.npy"
+saved_dim = "saved_dim.npy"
+prev_file = "prev_matrix.npy" 
+prev_dim = "prev_dim.npy"
+
 def update_dimensions(rows_in, cols_in):
     global width 
     global height
@@ -58,19 +66,47 @@ def update_dimensions(rows_in, cols_in):
     cenv = width * 0.5
     cenh = height * 0.5
 
-def submit(entry_list):
-    
-    for i in entry_list:
-        for j in i:
-            for k in j: # iterate through tuple
-                name=k.get()
-                
-                print("The name is : " + name)
-                
-                k.set("")
 
-def create_matrix(canvas, root, rows, cols):
-    
+def submit(entry_list, matrix):
+    for i, i_entry in enumerate(entry_list):
+        for j, j_entry in enumerate(i_entry):
+            for k, k_entry in enumerate(j_entry): # iterate through tuple
+                str_input =k_entry.get()
+                input = 0
+                if (str_input == ''):
+                    input = 0
+                else:
+                    input = int(str_input)
+                matrix[i][j][k] = input
+                print(matrix)
+    np.save(prev_file, matrix)
+
+def reset(entry_list, matrix):
+    for i, i_entry in enumerate(entry_list):
+        for j, j_entry in enumerate(i_entry):
+            for k, k_entry in enumerate(j_entry): # iterate through tuple
+                k_entry.set("")
+                matrix[i][j][k] = 0
+    #np.save(prev_file, matrix)
+
+def fill_entries_from_matrix(entry_list, matrix):
+    for i, i_entry in enumerate(entry_list):
+        for j, j_entry in enumerate(i_entry):
+            for k, k_entry in enumerate(j_entry): # iterate through tuple
+                if (str(matrix[i][j][k]) == '0'):
+                    k_entry.set("")    
+                else:
+                    k_entry.set(str(matrix[i][j][k]))
+
+def enter_saved(entry_list, matrix):
+    matrix = np.load(saved_file)
+    fill_entries_from_matrix(entry_list,matrix)
+
+def transfer_prev_to_saved():
+    temp = np.load(prev_file)
+    np.save(saved_file, temp)
+
+def create_matrix(canvas, rows, cols):
 
     update_dimensions(rows, cols)
     print("width: ", width)
@@ -89,13 +125,9 @@ def create_matrix(canvas, root, rows, cols):
         divs_h = top+unit_height * (j+1)
         canvas.create_line(left, divs_h, right, divs_h, fill="black", width ='5')
     
-    
     canvas.pack(fill=BOTH, expand=1)
 
-def create_entry_boxes(canvas, root, rows, cols):
-
-    entry_list = []
-    entry_windows = []
+def create_entry_boxes(canvas, root, rows, cols, entry_list):
 
     for i in range(rows):
         entry_row = []
@@ -103,7 +135,8 @@ def create_entry_boxes(canvas, root, rows, cols):
             entry_row.append((tk.StringVar(), tk.StringVar()))
         entry_list.append(entry_row)
 
-    math.floor((cenv+left)/2)
+    prev_mat = np.load(prev_file)
+    fill_entries_from_matrix(entry_list, prev_mat)
 
     initH_offset = top+unit_height/2
     initW_offset = left+unit_width/2
@@ -113,29 +146,39 @@ def create_entry_boxes(canvas, root, rows, cols):
             canvas.create_window(initW_offset+(unit_width*(j))-offset, initH_offset+(unit_height*(i)), window=entryA0)
             entryA1 = tk.Entry (root, textvariable=entry_list[i][j][1], width= 4)
             canvas.create_window(initW_offset+(unit_width*(j))+offset, initH_offset+(unit_height*(i)), window=entryA1)
-                
+    
 
-    # entryA1 = tk.Entry (root, textvariable=entry_list[0][0], width= 4)
-    # entryA2 = tk.Entry (root, textvariable=entry_list[0][1], width= 4)
-    
-    # canvas.create_window(colA-offset, rowA, window=entryA1)
-    # canvas.create_window(colA+offset, rowA, window=entryA2)
-    sub_btn=tk.Button(root,text = 'Submit', command = lambda: submit(entry_list))
-    canvas.create_window(180, 380, window=sub_btn)
-    
+def init_np(matrix, rows, cols):
+    matrix = np.resize(matrix, (rows, cols))
+    return matrix
+
+def gen_buttons(root, canvas, matrix, entry_list):
+    root.geometry(str(width) + "x" + str(height))
+    sub_btn=tk.Button(root,text = 'Submit', command = lambda: submit(entry_list, matrix))
+    canvas.create_window(cenv, bot+40, window=sub_btn)
+    saved_btn=tk.Button(root,text = 'Load saved', command = lambda: enter_saved(entry_list, matrix))
+    canvas.create_window(cenv+160, bot+80, window=saved_btn)
+    prv2pst_btn=tk.Button(root,text = 'Move to saved', command = lambda: transfer_prev_to_saved())
+    canvas.create_window(cenv+160, bot+40, window=prv2pst_btn)
+    reset_btn=tk.Button(root,text = 'Reset', command = lambda: reset(entry_list, matrix))
+    canvas.create_window(cenv, bot+80, window=reset_btn)
 
 
 def main():
     
-    
     canvas = Canvas(root, bg='white')
+
+    entry_list = []
+    matrix = np.zeros((1,1), dtype='i,i')
+
+    matrix = init_np(matrix, rows, cols)
+    print(matrix)
     
-    create_matrix(canvas, root, rows, cols)
-    create_entry_boxes(canvas, root, rows, cols)
-    root.geometry(str(width) + "x" + str(height))
+    create_matrix(canvas, rows, cols)
+    create_entry_boxes(canvas, root, rows, cols, entry_list)
+    gen_buttons(root, canvas, matrix, entry_list)
 
     root.mainloop()
-
 
 
 if __name__ == '__main__':
