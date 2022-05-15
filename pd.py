@@ -4,10 +4,10 @@ from tkinter import *
 import tkinter as tk
 import math
 import numpy as np
+import sys
 
-
-rows = 2
-cols = 2
+rows = 3
+cols = 3
 
 height = 500
 width = 500
@@ -66,46 +66,6 @@ def update_dimensions(rows_in, cols_in):
     cenv = width * 0.5
     cenh = height * 0.5
 
-
-def submit(entry_list, matrix):
-    for i, i_entry in enumerate(entry_list):
-        for j, j_entry in enumerate(i_entry):
-            for k, k_entry in enumerate(j_entry): # iterate through tuple
-                str_input =k_entry.get()
-                input = 0
-                if (str_input == ''):
-                    input = 0
-                else:
-                    input = int(str_input)
-                matrix[i][j][k] = input
-                print(matrix)
-    np.save(prev_file, matrix)
-
-def reset(entry_list, matrix):
-    for i, i_entry in enumerate(entry_list):
-        for j, j_entry in enumerate(i_entry):
-            for k, k_entry in enumerate(j_entry): # iterate through tuple
-                k_entry.set("")
-                matrix[i][j][k] = 0
-    #np.save(prev_file, matrix)
-
-def fill_entries_from_matrix(entry_list, matrix):
-    for i, i_entry in enumerate(entry_list):
-        for j, j_entry in enumerate(i_entry):
-            for k, k_entry in enumerate(j_entry): # iterate through tuple
-                if (str(matrix[i][j][k]) == '0'):
-                    k_entry.set("")    
-                else:
-                    k_entry.set(str(matrix[i][j][k]))
-
-def enter_saved(entry_list, matrix):
-    matrix = np.load(saved_file)
-    fill_entries_from_matrix(entry_list,matrix)
-
-def transfer_prev_to_saved():
-    temp = np.load(prev_file)
-    np.save(saved_file, temp)
-
 def create_matrix(canvas, rows, cols):
 
     update_dimensions(rows, cols)
@@ -128,7 +88,6 @@ def create_matrix(canvas, rows, cols):
     canvas.pack(fill=BOTH, expand=1)
 
 def create_entry_boxes(canvas, root, rows, cols, entry_list):
-
     for i in range(rows):
         entry_row = []
         for j in range(cols):
@@ -136,7 +95,10 @@ def create_entry_boxes(canvas, root, rows, cols, entry_list):
         entry_list.append(entry_row)
 
     prev_mat = np.load(prev_file)
-    fill_entries_from_matrix(entry_list, prev_mat)
+    if ((prev_mat.shape[0] == rows) and (prev_mat.shape[1] == cols)):
+        fill_entries_from_matrix(entry_list, prev_mat)
+    else:
+        print("Prev dimensions do not match - Cannot load")
 
     initH_offset = top+unit_height/2
     initW_offset = left+unit_width/2
@@ -148,6 +110,95 @@ def create_entry_boxes(canvas, root, rows, cols, entry_list):
             canvas.create_window(initW_offset+(unit_width*(j))+offset, initH_offset+(unit_height*(i)), window=entryA1)
     
 
+def gen_BR_grid(match_p1, match_p2):
+    subroot = tk.Tk()
+    subcan = Canvas(subroot, bg='white')
+    create_matrix(subcan, rows, cols)
+
+def find_basic_BR(matrix): # return index coordinates of BRs
+    # Player 1 (going down each column)
+    match_p1 = []
+    match_p2 = []
+    for i in range(matrix.shape[1]): # increment right
+        local_br_val = (-1*sys.maxsize)-1
+        col_list = []
+        for j in range(matrix.shape[0]): # scan down
+            curr = matrix[i][j][0]
+            col_list.append(curr)
+            if (curr > local_br_val):
+                local_br_val = curr
+        col_np = np.asarray(col_list)
+        matches = np.where(col_np == local_br_val)
+        match_p1.append(matches)
+    
+    # Player 2 (going right each row)
+    for i in range(matrix.shape[0]): # increment down
+        local_br_val = (-1*sys.maxsize)-1
+        row_list = []
+        for j in range(matrix.shape[1]): # scan right
+            curr = matrix[i][j][1]
+            row_list.append(curr)
+            if (curr > local_br_val):
+                local_br_val = curr
+        row_np = np.asarray(row_list)
+        matches = np.where(row_np == local_br_val)
+        match_p2.append(matches)
+    return match_p1, match_p2
+
+def submit(entry_list, matrix):
+    for i, i_entry in enumerate(entry_list):
+        for j, j_entry in enumerate(i_entry):
+            for k, k_entry in enumerate(j_entry): # iterate through tuple
+                str_input =k_entry.get()
+                input = 0
+                if (str_input == ''):
+                    input = 0
+                else:
+                    input = int(str_input)
+                matrix[i][j][k] = input
+                #print(matrix)
+    print("SUBMIT")
+    np.save(prev_file, matrix)
+
+    p1_br = []
+    p2_br = []
+    p1_br, p2_br = find_basic_BR(matrix)
+    
+
+def reset(entry_list, matrix):
+    for i, i_entry in enumerate(entry_list):
+        for j, j_entry in enumerate(i_entry):
+            for k, k_entry in enumerate(j_entry): # iterate through tuple
+                k_entry.set("")
+                matrix[i][j][k] = 0
+    print("RESET")
+    #np.save(prev_file, matrix)
+
+def fill_entries_from_matrix(entry_list, matrix):
+    for i, i_entry in enumerate(entry_list):
+        for j, j_entry in enumerate(i_entry):
+            for k, k_entry in enumerate(j_entry): # iterate through tuple
+                if (str(matrix[i][j][k]) == '0'):
+                    k_entry.set("")    
+                else:
+                    k_entry.set(str(matrix[i][j][k]))
+
+def enter_saved(entry_list):
+    entry = np.load(saved_file)
+    if ((entry.shape[0] == rows) and (entry.shape[1] == cols)):
+        fill_entries_from_matrix(entry_list,entry)
+        print("LOADED")
+    else:
+        print("Saved dimensions do not match - Cannot load")
+    
+
+def transfer_prev_to_saved():
+    temp = np.load(prev_file)
+    np.save(saved_file, temp)
+    print("SAVED")
+
+
+
 def init_np(matrix, rows, cols):
     matrix = np.resize(matrix, (rows, cols))
     return matrix
@@ -155,13 +206,15 @@ def init_np(matrix, rows, cols):
 def gen_buttons(root, canvas, matrix, entry_list):
     root.geometry(str(width) + "x" + str(height))
     sub_btn=tk.Button(root,text = 'Submit', command = lambda: submit(entry_list, matrix))
-    canvas.create_window(cenv, bot+40, window=sub_btn)
-    saved_btn=tk.Button(root,text = 'Load saved', command = lambda: enter_saved(entry_list, matrix))
+    canvas.create_window(cenv, bot+20, window=sub_btn)
+    saved_btn=tk.Button(root,text = 'Load saved', command = lambda: enter_saved(entry_list))
     canvas.create_window(cenv+160, bot+80, window=saved_btn)
     prv2pst_btn=tk.Button(root,text = 'Move to saved', command = lambda: transfer_prev_to_saved())
     canvas.create_window(cenv+160, bot+40, window=prv2pst_btn)
     reset_btn=tk.Button(root,text = 'Reset', command = lambda: reset(entry_list, matrix))
-    canvas.create_window(cenv, bot+80, window=reset_btn)
+    canvas.create_window(cenv, bot+50, window=reset_btn)
+    quit_btn = tk.Button(root, text="Exit", command=root.destroy)
+    canvas.create_window(cenv, bot+80, window=quit_btn)
 
 
 def main():
