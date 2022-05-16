@@ -51,14 +51,14 @@ class NFM:
         
         canvas_in.pack(fill=BOTH, expand=1)
 
-    def fill_entries_from_matrix(self):
+    def fill_entries_from_matrix(self, matrix_in):
         for i, i_entry in enumerate(self.entry_list):
             for j, j_entry in enumerate(i_entry):
                 for k, k_entry in enumerate(j_entry): # iterate through tuple
-                    if (str(self.matrix[i][j][k]) == '0'):
+                    if (str(matrix_in[i][j][k]) == '0'):
                         k_entry.set("")    
                     else:
-                        k_entry.set(str(self.matrix[i][j][k]))
+                        k_entry.set(str(matrix_in[i][j][k]))
 
     def create_entry_boxes(self, canvas):
         for i in range(rows):
@@ -69,7 +69,7 @@ class NFM:
 
         prev_mat = np.load(self.prev_file)
         if ((prev_mat.shape[0] == rows) and (prev_mat.shape[1] == cols)):
-            self.fill_entries_from_matrix()
+            self.fill_entries_from_matrix(prev_mat)
         else:
             print("Prev is not loaded")
 
@@ -140,6 +140,17 @@ class NFM:
                 match_p2[i,x] = bool_row[0][x]
 
         return match_p1, match_p2
+    def get_entries_into_matrix(self):
+        for i, i_entry in enumerate(self.entry_list):
+            for j, j_entry in enumerate(i_entry):
+                for k, k_entry in enumerate(j_entry): # iterate through tuple
+                    str_input =k_entry.get()
+                    input = 0
+                    if (str_input == ''):
+                        input = 0
+                    else:
+                        input = int(str_input)
+                    self.matrix[i][j][k] = input
 
     def reset(self):
         for i, i_entry in enumerate(self.entry_list):
@@ -148,19 +159,25 @@ class NFM:
                     k_entry.set("")
                     self.matrix[i][j][k] = 0
         print("RESET")
+        np.save(self.prev_file, self.matrix)
+
+    def quit_game(self):
+        np.save(self.prev_file, self.matrix)
+        print("EXIT")
+        self.root.destroy()
 
     def enter_saved(self):
         entry = np.load(self.saved_file)
         if ((entry.shape[0] == rows) and (entry.shape[1] == cols)):
             self.matrix = entry
-            self.fill_entries_from_matrix()
+            self.fill_entries_from_matrix(entry)
             print("LOADED")
         else:
             print("Saved dimensions do not match - Cannot load")
     
-    def transfer_prev_to_saved(self):
-        temp = np.load(self.prev_file)
-        np.save(self.saved_file, temp)
+    def transfer_entries_to_saved(self):
+        self.get_entries_into_matrix()
+        np.save(self.saved_file, self.matrix)
         print("SAVED")
 
     def init_np(self):
@@ -201,22 +218,23 @@ class NFM:
         
         sub_btn=tk.Button(root,text = 'Submit', command = lambda: self.submit())
         canvas.create_window(self.cenv, self.bot+20, window=sub_btn)
-        saved_btn=tk.Button(root,text = 'Load saved', command = lambda: self.enter_saved())
+        saved_btn=tk.Button(root,text = 'Load', command = lambda: self.enter_saved())
         canvas.create_window(self.cenv+160, self.bot+80, window=saved_btn)
-        prv2pst_btn=tk.Button(root,text = 'Move to saved', command = lambda: self.transfer_prev_to_saved())
+        prv2pst_btn=tk.Button(root,text = 'Save', command = lambda: self.transfer_entries_to_saved())
         canvas.create_window(self.cenv +160, self.bot+40, window=prv2pst_btn)
         reset_btn=tk.Button(root,text = 'Reset', command = lambda: self.reset())
         canvas.create_window(self.cenv, self.bot+50, window=reset_btn)
-        quit_btn = tk.Button(root, text="Exit", command=root.destroy)
+        quit_btn = tk.Button(root, text="Exit", command = lambda: self.quit_game())
+        #quit_btn = tk.Button(root, text="Exit", command=root.destroy)
         canvas.create_window(self.cenv, self.bot+80, window=quit_btn)
 
-def main():
-    parent = NFM(rows, cols)
-    parent.init_np()
-    parent.create_matrix_grid(parent.root, parent.canvas)
-    parent.create_entry_boxes(parent.canvas)
-    parent.gen_entry_buttons(parent.root, parent.canvas)
-    parent.root.mainloop()
+# def main():
+#     parent = NFM(rows, cols)
+#     parent.init_np()
+#     parent.create_matrix_grid(parent.root, parent.canvas)
+#     parent.create_entry_boxes(parent.canvas)
+#     parent.gen_entry_buttons(parent.root, parent.canvas)
+#     parent.root.mainloop()
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
