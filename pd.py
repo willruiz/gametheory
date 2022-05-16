@@ -55,8 +55,8 @@ def update_dimensions(rows_in, cols_in):
     global cenv
     global cenh
     
-    width = cols*200+100
-    height = rows*200+100
+    width = cols_in*200+50
+    height = rows_in*200+50
     left = width * 0.2
     right = width * 0.8
     top = height * 0.2
