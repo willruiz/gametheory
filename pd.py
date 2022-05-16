@@ -30,8 +30,6 @@ offset = 20
 
 
 root = tk.Tk()
-A1_string=tk.StringVar()
-A2_string=tk.StringVar()
 
 saved_file = "saved_matrix.npy"
 saved_dim = "saved_dim.npy"
