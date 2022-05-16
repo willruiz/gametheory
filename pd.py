@@ -6,8 +6,8 @@ import math
 import numpy as np
 import sys
 
-rows = 2
-cols = 2
+rows = 4
+cols = 5
 
 height = 500
 width = 500
@@ -28,11 +28,6 @@ unit_height = 0.0
 
 offset = 20
 
-colA = math.floor((cenv+left)/2)
-colB = math.floor((cenv+right)/2)
-
-rowA = math.floor((cenh+top)/2)
-rowB = math.floor((cenh+bot)/2)
 
 root = tk.Tk()
 A1_string=tk.StringVar()
@@ -42,7 +37,7 @@ saved_file = "saved_matrix.npy"
 saved_dim = "saved_dim.npy"
 prev_file = "prev_matrix.npy" 
 prev_dim = "prev_dim.npy"
-
+##
 def update_dimensions(rows_in, cols_in):
     global width 
     global height
@@ -65,7 +60,7 @@ def update_dimensions(rows_in, cols_in):
     unit_height = (bot-top)/rows_in
     cenv = width * 0.5
     cenh = height * 0.5
-
+##
 def create_matrix(canvas, rows, cols, root):
     update_dimensions(rows, cols)
     root.geometry(str(width) + "x" + str(height))
@@ -86,7 +81,7 @@ def create_matrix(canvas, rows, cols, root):
         canvas.create_line(left, divs_h, right, divs_h, fill="black", width ='5')
     
     canvas.pack(fill=BOTH, expand=1)
-
+##
 def fill_entries_from_matrix(entry_list, matrix):
     for i, i_entry in enumerate(entry_list):
         for j, j_entry in enumerate(i_entry):
@@ -96,7 +91,7 @@ def fill_entries_from_matrix(entry_list, matrix):
                 else:
                     k_entry.set(str(matrix[i][j][k]))
 
-
+##
 def create_entry_boxes(canvas, root, rows, cols, entry_list):
     for i in range(rows):
         entry_row = []
