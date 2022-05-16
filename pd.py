@@ -6,8 +6,8 @@ import math
 import numpy as np
 import sys
 
-rows = 3
-cols = 3
+rows = 2
+cols = 2
 
 height = 500
 width = 500
@@ -66,9 +66,9 @@ def update_dimensions(rows_in, cols_in):
     cenv = width * 0.5
     cenh = height * 0.5
 
-def create_matrix(canvas, rows, cols):
-
+def create_matrix(canvas, rows, cols, root):
     update_dimensions(rows, cols)
+    root.geometry(str(width) + "x" + str(height))
     print("width: ", width)
     print("height: ", height)
 
@@ -86,6 +86,16 @@ def create_matrix(canvas, rows, cols):
         canvas.create_line(left, divs_h, right, divs_h, fill="black", width ='5')
     
     canvas.pack(fill=BOTH, expand=1)
+
+def fill_entries_from_matrix(entry_list, matrix):
+    for i, i_entry in enumerate(entry_list):
+        for j, j_entry in enumerate(i_entry):
+            for k, k_entry in enumerate(j_entry): # iterate through tuple
+                if (str(matrix[i][j][k]) == '0'):
+                    k_entry.set("")    
+                else:
+                    k_entry.set(str(matrix[i][j][k]))
+
 
 def create_entry_boxes(canvas, root, rows, cols, entry_list):
     for i in range(rows):
@@ -108,62 +118,82 @@ def create_entry_boxes(canvas, root, rows, cols, entry_list):
             canvas.create_window(initW_offset+(unit_width*(j))-offset, initH_offset+(unit_height*(i)), window=entryA0)
             entryA1 = tk.Entry (root, textvariable=entry_list[i][j][1], width= 4)
             canvas.create_window(initW_offset+(unit_width*(j))+offset, initH_offset+(unit_height*(i)), window=entryA1)
-    
 
-def gen_BR_grid(match_p1, match_p2):
-    subroot = tk.Tk()
-    subcan = Canvas(subroot, bg='white')
-    create_matrix(subcan, rows, cols)
+def show_payoffs(canvas, matrix, p1_br, p2_br):
+    initH_offset = top+unit_height/2
+    initW_offset = left+unit_width/2
+    for i in range(rows):
+        for j in range(cols):
+            coord_x = initW_offset+(unit_width*(j))
+            coord_y = initH_offset+(unit_height*(i))
+            if (p1_br[i][j]):
+                canvas.create_rectangle(coord_x-offset-10, coord_y-10, coord_x-offset+15, coord_y+10, fill='#FFCCCB')
+            if (p2_br[i][j]):
+                canvas.create_rectangle(coord_x+offset-10, coord_y-10, coord_x+offset+15, coord_y+10, fill='#ADD8E6')
+            canvas.create_text(coord_x-offset, coord_y, 
+                text=matrix[i][j][0], fill="black", font=('Helvetica 15 bold'))
+            canvas.create_text(coord_x, coord_y, 
+                text=',', fill="black", font=('Helvetica 15 bold'))
+            canvas.create_text(coord_x+offset, coord_y, 
+                text=matrix[i][j][1], fill="black", font=('Helvetica 15 bold'))
+
 
 def find_basic_BR(matrix): # return index coordinates of BRs
     # Player 1 (going down each column)
-    match_p1 = []
-    match_p2 = []
+    match_p1 = np.zeros((rows, cols), dtype=bool)
+    match_p2 = np.zeros((rows, cols), dtype=bool)
     for i in range(matrix.shape[1]): # increment right
         local_br_val = (-1*sys.maxsize)-1
-        col_list = []
+        curr_col = (matrix[:,i])
+        curr_col_indexed = [x[0] for x in curr_col]
         for j in range(matrix.shape[0]): # scan down
-            curr = matrix[i][j][0]
-            col_list.append(curr)
+            curr = matrix[j][i][0]
             if (curr > local_br_val):
                 local_br_val = curr
-        col_np = np.asarray(col_list)
-        matches = np.where(col_np == local_br_val)
-        match_p1.append(matches)
+        # print("p1 br: ", local_br_val)
+        # print("rows: ", rows)
+        comp_col = np.zeros((1, rows))
+        comp_col.fill(local_br_val)
+        bool_col = (curr_col_indexed == comp_col)
+        # #bool_col = np.reshape(bool_col[0], (rows,1))
+        # print("comp_col: ", comp_col)
+        # print("curr_col: ", curr_col)
+        # print("curr_col_indexed: ", curr_col_indexed)
+        # print("bool_matches: ", bool_col)
+        # #print("match_p1[i,:].shape: ", match_col.shape)
+        # print("bool_col.shape: ", bool_col.shape)
+        for x in range(match_p1.shape[0]):
+            match_p1[x,i] = bool_col[0][x]
+    print(match_p1)
+        # col_np = np.asarray(col_list)
+        # matches = np.where(col_np == local_br_val)
+        # match_p1.append(matches)
     
     # Player 2 (going right each row)
     for i in range(matrix.shape[0]): # increment down
         local_br_val = (-1*sys.maxsize)-1
-        row_list = []
+        curr_row = (matrix[i,:])
+        curr_row_indexed = [x[1] for x in curr_row]
         for j in range(matrix.shape[1]): # scan right
             curr = matrix[i][j][1]
-            row_list.append(curr)
             if (curr > local_br_val):
                 local_br_val = curr
-        row_np = np.asarray(row_list)
-        matches = np.where(row_np == local_br_val)
-        match_p2.append(matches)
+        #print("p2 br: ", local_br_val)
+        comp_row = np.zeros((1, cols))
+        comp_row.fill(local_br_val)
+        bool_row = (curr_row_indexed == comp_row)
+        # print("comp_row: ", comp_row)
+        # print("curr_row: ", curr_row)
+        # print("curr_row_indexed: ", curr_row_indexed)
+        # print("bool_matches: ", bool_row)
+
+        for x in range(match_p1.shape[0]):
+            match_p2[i,x] = bool_row[0][x]
+    print(match_p2)
+        # row_np = np.asarray(row_list)
+        # matches = np.where(row_np == local_br_val)
+        # match_p2.append(matches)
     return match_p1, match_p2
-
-def submit(entry_list, matrix):
-    for i, i_entry in enumerate(entry_list):
-        for j, j_entry in enumerate(i_entry):
-            for k, k_entry in enumerate(j_entry): # iterate through tuple
-                str_input =k_entry.get()
-                input = 0
-                if (str_input == ''):
-                    input = 0
-                else:
-                    input = int(str_input)
-                matrix[i][j][k] = input
-                #print(matrix)
-    print("SUBMIT")
-    np.save(prev_file, matrix)
-
-    p1_br = []
-    p2_br = []
-    p1_br, p2_br = find_basic_BR(matrix)
-    
 
 def reset(entry_list, matrix):
     for i, i_entry in enumerate(entry_list):
@@ -174,14 +204,6 @@ def reset(entry_list, matrix):
     print("RESET")
     #np.save(prev_file, matrix)
 
-def fill_entries_from_matrix(entry_list, matrix):
-    for i, i_entry in enumerate(entry_list):
-        for j, j_entry in enumerate(i_entry):
-            for k, k_entry in enumerate(j_entry): # iterate through tuple
-                if (str(matrix[i][j][k]) == '0'):
-                    k_entry.set("")    
-                else:
-                    k_entry.set(str(matrix[i][j][k]))
 
 def enter_saved(entry_list):
     entry = np.load(saved_file)
@@ -203,8 +225,43 @@ def init_np(matrix, rows, cols):
     matrix = np.resize(matrix, (rows, cols))
     return matrix
 
-def gen_buttons(root, canvas, matrix, entry_list):
-    root.geometry(str(width) + "x" + str(height))
+def gen_payoff_buttons(root, canvas):
+    quit_btn = tk.Button(root, text="Exit", command=root.destroy)
+    canvas.create_window(cenv, bot+80, window=quit_btn)
+
+def gen_BR_grid(matrix, match_p1, match_p2):
+    subroot = tk.Tk()
+    subcan = Canvas(subroot, bg='white')
+    create_matrix(subcan, rows, cols, subroot)
+    show_payoffs(subcan, matrix, match_p1, match_p2)
+    gen_payoff_buttons(subroot, subcan)
+    subroot.mainloop()
+
+def submit(entry_list, matrix):
+    for i, i_entry in enumerate(entry_list):
+        for j, j_entry in enumerate(i_entry):
+            for k, k_entry in enumerate(j_entry): # iterate through tuple
+                str_input =k_entry.get()
+                input = 0
+                if (str_input == ''):
+                    input = 0
+                else:
+                    input = int(str_input)
+                matrix[i][j][k] = input
+                #print(matrix)
+    print("SUBMIT")
+    np.save(prev_file, matrix)
+
+    # p1_br = []
+    # p2_br = []
+    p1_br, p2_br = find_basic_BR(matrix)
+    # p1_br = np.asarray(p1_br)
+    # p2_br = np.asarray(p2_br)
+    gen_BR_grid(matrix, p1_br, p2_br)
+    
+
+def gen_entry_buttons(root, canvas, matrix, entry_list):
+    
     sub_btn=tk.Button(root,text = 'Submit', command = lambda: submit(entry_list, matrix))
     canvas.create_window(cenv, bot+20, window=sub_btn)
     saved_btn=tk.Button(root,text = 'Load saved', command = lambda: enter_saved(entry_list))
@@ -227,10 +284,10 @@ def main():
     matrix = init_np(matrix, rows, cols)
     print(matrix)
     
-    create_matrix(canvas, rows, cols)
+    create_matrix(canvas, rows, cols, root)
     create_entry_boxes(canvas, root, rows, cols, entry_list)
-    gen_buttons(root, canvas, matrix, entry_list)
-
+    gen_entry_buttons(root, canvas, matrix, entry_list)
+    
     root.mainloop()
 
 
