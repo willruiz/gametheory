@@ -101,7 +101,7 @@ def create_entry_boxes(canvas, root, rows, cols, entry_list):
     if ((prev_mat.shape[0] == rows) and (prev_mat.shape[1] == cols)):
         fill_entries_from_matrix(entry_list, prev_mat)
     else:
-        print("Prev dimensions do not match - Cannot load")
+        print("Prev is not loaded")
 
     initH_offset = top+unit_height/2
     initW_offset = left+unit_width/2
@@ -112,6 +112,7 @@ def create_entry_boxes(canvas, root, rows, cols, entry_list):
             entryA1 = tk.Entry (root, textvariable=entry_list[i][j][1], width= 4)
             canvas.create_window(initW_offset+(unit_width*(j))+offset, initH_offset+(unit_height*(i)), window=entryA1)
 
+##
 def show_payoffs(canvas, matrix, p1_br, p2_br):
     initH_offset = top+unit_height/2
     initW_offset = left+unit_width/2
