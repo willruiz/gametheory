@@ -10,8 +10,8 @@ class SGE:
         self.height = 1000
         self.root = tk.Tk()
         self.canvas = Canvas(self.root, bg='white')
-        self.left = self.width * 0.05
-        self.right = self.width * 0.95
+        self.left = self.width * 0.01
+        self.right = self.width * 0.99
         self.top = self.height * 0.05
         self.bot = self.height * 0.95
         self.cen_x = self.width * 0.5
@@ -26,7 +26,12 @@ class SGE:
         self.left_leg = self.width * 0.15
         self.right_leg = self.width * 0.85
 
+        self.entry_offset = self.width * 0.03
+
         self.dr = self.height * 0.01
+
+        self.nature = []
+        self.payoffs = []
     
     def create_spider_grid(self, root_in, canvas_in):
         root_in.geometry(str(self.width) + "x" + str(self.height))
@@ -52,7 +57,6 @@ class SGE:
         canvas_in.create_oval(self.right_mid -self.dr, self.top_mid -self.dr, self.right_mid +self.dr, self.top_mid +self.dr, fill='black')
         canvas_in.create_oval(self.right_mid -self.dr, self.bot_mid -self.dr, self.right_mid +self.dr, self.bot_mid +self.dr, fill='black')
         
-        
         # Spider-Legs - Top
         tA = self.top_mid-self.offset_leg
         tB = self.top_mid+self.offset_leg
@@ -68,13 +72,52 @@ class SGE:
         canvas_in.create_line(self.left_mid, self.bot_mid, self.left_leg, bB, fill="black", width ='4')
         canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, bA, fill="black", width ='4')
         canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, bB, fill="black", width ='4')
-
-
         canvas_in.pack(fill=BOTH, expand=1)
+
+    def create_entry_boxes(self, root_in, canvas_in):
+        tA = self.top_mid-self.offset_leg
+        tB = self.top_mid+self.offset_leg
+        bA = self.bot_mid-self.offset_leg
+        bB = self.bot_mid+self.offset_leg
+
+        # Nature probabilities
+        for i in range(2):
+            self.nature.append(tk.StringVar())
+        entryN0 = tk.Entry (root_in, textvariable=self.nature[0], width = 6)
+        canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.top_mid)/2, window=entryN0)
+        entryN1 = tk.Entry (root_in, textvariable=self.nature[1], width = 6)
+        canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.bot_mid)/2, window=entryN1)
+        # Player Payoffs [4][2][2]
+        for i in range(4):
+            in_tuple = []
+            for j in range(2):
+                in_tuple.append((tk.StringVar(), tk.StringVar()))
+            self.payoffs.append(in_tuple)
+
+        for i in range(4):
+            for j in range(2):
+                for k in range(2):
+                    if (k == 0):
+                        offset = tA
+                    else:
+                        offset = tB
+                    entryA0 = tk.Entry (root_in, textvariable=self.payoffs[i][j][k], width=4)
+                    canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.top_mid)/2, window=entryA0)
+
+        # if (not self.matrix_import_bool):
+        #     prev_mat = np.load(self.prev_file)
+        #     if ((prev_mat.shape[0] == self.rows) and (prev_mat.shape[1] == self.cols)):
+        #         self.fill_entries_from_matrix(prev_mat)
+        #     else:
+        #         print("Prev is not loaded")
+        # else:
+        #     self.fill_entries_from_matrix(self.matrix_import)
+            
 
 def main():
     parent = SGE()
     parent.create_spider_grid(parent.root, parent.canvas)
+    parent.create_entry_boxes(parent.root, parent.canvas)
     parent.root.mainloop()
 
 if __name__ == '__main__':
