@@ -4,9 +4,6 @@ import math
 import numpy as np
 import sys
 
-rows = 3
-cols = 3
-
 class NFM:
     def __init__(self, rows, cols):
         self.rows = rows
@@ -30,6 +27,9 @@ class NFM:
         self.saved_dim = "saved_dim.npy"
         self.prev_file = "prev_matrix.npy" 
         self.prev_dim = "prev_dim.npy"
+        self.matrix_import = np.zeros((1,1), dtype='i,i')
+        self.matrix_import_bool = False
+
 
     def create_matrix_grid(self, root_in, canvas_in):
         root_in.geometry(str(self.width) + "x" + str(self.height))
@@ -41,11 +41,11 @@ class NFM:
         canvas_in.create_line(self.right, self.top, self.right, self.bot, fill="black", width ='5')
         canvas_in.create_line(self.left, self.bot, self.right, self.bot, fill="black", width ='5')
 
-        for i in range(cols-1):
+        for i in range(self.cols-1):
             divs_v = self.left+self.unit_width* (i+1)
             canvas_in.create_line(divs_v, self.top, divs_v, self.bot, fill="black", width ='5')
 
-        for j in range(rows-1):
+        for j in range(self.rows-1):
             divs_h = self.top+self.unit_height * (j+1)
             canvas_in.create_line(self.left, divs_h, self.right, divs_h, fill="black", width ='5')
         
@@ -61,22 +61,26 @@ class NFM:
                         k_entry.set(str(matrix_in[i][j][k]))
 
     def create_entry_boxes(self, canvas):
-        for i in range(rows):
+        for i in range(self.rows):
             entry_row = []
-            for j in range(cols):
+            for j in range(self.cols):
                 entry_row.append((tk.StringVar(), tk.StringVar()))
             self.entry_list.append(entry_row)
 
-        prev_mat = np.load(self.prev_file)
-        if ((prev_mat.shape[0] == rows) and (prev_mat.shape[1] == cols)):
-            self.fill_entries_from_matrix(prev_mat)
+        if (not self.matrix_import_bool):
+            prev_mat = np.load(self.prev_file)
+            if ((prev_mat.shape[0] == self.rows) and (prev_mat.shape[1] == self.cols)):
+                self.fill_entries_from_matrix(prev_mat)
+            else:
+                print("Prev is not loaded")
         else:
-            print("Prev is not loaded")
+            self.fill_entries_from_matrix(self.matrix_import)
+            
 
         initH_offset = self.top + self.unit_height/2
         initW_offset = self.left+self.unit_width/2
-        for i in range(rows):
-            for j in range(cols):
+        for i in range(self.rows):
+            for j in range(self.cols):
                 coord_x = initW_offset+(self.unit_width*(j))
                 coord_y = initH_offset+(self.unit_height*(i))
                 entryA0 = tk.Entry (self.root, textvariable=self.entry_list[i][j][0], width= 4)
@@ -103,6 +107,10 @@ class NFM:
                     text=',', fill="black", font=('Helvetica 15 bold'))
                 canvas.create_text(coord_x+self.offset, coord_y, 
                     text=self.matrix[i][j][1], fill="black", font=('Helvetica 15 bold'))
+
+    def import_matrix(self, matrix_in):
+        self.matrix_import = matrix_in
+        self.matrix_import_bool = True
 
 
     def find_basic_BR(self): # return index coordinates of BRs
@@ -168,7 +176,7 @@ class NFM:
 
     def enter_saved(self):
         entry = np.load(self.saved_file)
-        if ((entry.shape[0] == rows) and (entry.shape[1] == cols)):
+        if ((entry.shape[0] == self.rows) and (entry.shape[1] == self.cols)):
             self.matrix = entry
             self.fill_entries_from_matrix(entry)
             print("LOADED")
