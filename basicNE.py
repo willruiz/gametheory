@@ -102,11 +102,11 @@ class NFM:
                     canvas.create_rectangle(coord_x+self.offset-10, coord_y-10, 
                         coord_x+self.offset+15, coord_y+10, fill='#ADD8E6')
                 canvas.create_text(coord_x-self.offset, coord_y, 
-                    text=self.matrix[i][j][0], fill="black", font=('Helvetica 15 bold'))
+                    text=self.matrix[i][j][0], fill="black", font=('Arial 15 bold'))
                 canvas.create_text(coord_x, coord_y, 
-                    text=',', fill="black", font=('Helvetica 15 bold'))
+                    text=',', fill="black", font=('Arial 15 bold'))
                 canvas.create_text(coord_x+self.offset, coord_y, 
-                    text=self.matrix[i][j][1], fill="black", font=('Helvetica 15 bold'))
+                    text=self.matrix[i][j][1], fill="black", font=('Arial 15 bold'))
 
     def import_matrix(self, matrix_in):
         self.matrix_import = matrix_in

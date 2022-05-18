@@ -26,7 +26,8 @@ class SGE:
         self.left_leg = self.width * 0.15
         self.right_leg = self.width * 0.85
 
-        self.entry_offset = self.width * 0.03
+        self.entry_offset = self.width * 0.04
+        self.mini_offset = self.width * 0.015
 
         self.dr = self.height * 0.01
 
@@ -94,25 +95,31 @@ class SGE:
                 in_tuple.append((tk.StringVar(), tk.StringVar()))
             self.payoffs.append(in_tuple)
 
-        for i in range(4):
-            for j in range(2):
-                for k in range(2):
-                    if (k == 0):
-                        offset = tA
-                    else:
-                        offset = tB
-                    entryA0 = tk.Entry (root_in, textvariable=self.payoffs[i][j][k], width=4)
-                    canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.top_mid)/2, window=entryA0)
+        for i in range(4): # Corners
+            for j in range(2): # up / down
+                x_offset = 0
+                y_offset = 0
+                if (j == 0 and i <= 1):
+                    y_offset = tA
+                elif (j == 1 and i <= 1):
+                    y_offset = tB
+                elif (j == 0 and i > 1):
+                    y_offset = bA
+                else:
+                    y_offset = bB
+                if (i % 2 == 0):
+                    x_offset = self.left_leg-self.entry_offset
+                else:
+                    x_offset = self.right_leg+self.entry_offset
 
-        # if (not self.matrix_import_bool):
-        #     prev_mat = np.load(self.prev_file)
-        #     if ((prev_mat.shape[0] == self.rows) and (prev_mat.shape[1] == self.cols)):
-        #         self.fill_entries_from_matrix(prev_mat)
-        #     else:
-        #         print("Prev is not loaded")
-        # else:
-        #     self.fill_entries_from_matrix(self.matrix_import)
-            
+                canvas_in.create_text(x_offset, y_offset, text=',', fill="black", font=('Arial 15 bold'))
+                
+                for k in range(2): # tuple
+                    entryLeg = tk.Entry (root_in, textvariable=self.payoffs[i][j][k], width=4)
+                    if (k == 0):
+                        canvas_in.create_window(x_offset -self.mini_offset, y_offset, window=entryLeg)
+                    else:
+                        canvas_in.create_window(x_offset +self.mini_offset, y_offset, window=entryLeg)
 
 def main():
     parent = SGE()
