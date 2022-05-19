@@ -108,7 +108,7 @@ class NFM:
                 canvas.create_text(coord_x+self.offset, coord_y, 
                     text=self.matrix[i][j][1], fill="black", font=('Arial 15 bold'))
 
-    def import_matrix(self, matrix_in):
+    def import_matrix(self, matrix_in): # FOR CUSTOM MATRIX INPUT FOR TEST SUITE
         self.matrix_import = matrix_in
         self.matrix_import_bool = True
 

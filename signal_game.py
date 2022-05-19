@@ -6,6 +6,8 @@ import sys
 
 class SGE:
     def __init__(self):
+        self.rows = 4
+        self.cols = 2
         self.width = 1500
         self.height = 1000
         self.root = tk.Tk()
@@ -42,6 +44,10 @@ class SGE:
         self.matrix_import = np.zeros((4,2), dtype='i,i')
         self.matrix_import_bool = False
     
+    def import_matrix(self, matrix_in): # FOR CUSTOM MATRIX INPUT FOR TEST SUITE
+        self.matrix_import = matrix_in
+        self.matrix_import_bool = True
+
     def create_spider_grid(self, root_in, canvas_in):
         root_in.geometry(str(self.width) + "x" + str(self.height))
         ## Boundaries
@@ -92,19 +98,40 @@ class SGE:
                     else:
                         k_entry.set(str(matrix_in[i][j][k]))
 
+    def get_entries_into_matrix(self):
+        for i, i_entry in enumerate(self.entry_list):
+            for j, j_entry in enumerate(i_entry):
+                for k, k_entry in enumerate(j_entry): # iterate through tuple
+                    str_input =k_entry.get()
+                    input = 0
+                    if (str_input == ''):
+                        input = 0
+                    else:
+                        input = int(str_input)
+                    self.matrix[i][j][k] = input
+
     def create_entry_boxes(self, root_in, canvas_in):
         tA = self.top_mid-self.offset_leg
         tB = self.top_mid+self.offset_leg
         bA = self.bot_mid-self.offset_leg
         bB = self.bot_mid+self.offset_leg
 
+        # Player entry_list [4][2][2]
+        for i in range(4):
+            in_tuple = []
+            for j in range(2):
+                in_tuple.append((tk.StringVar(), tk.StringVar()))
+            self.entry_list.append(in_tuple)
+
         if (not self.matrix_import_bool):
             prev_mat = np.load(self.prev_file)
             if ((prev_mat.shape[0] == self.rows) and (prev_mat.shape[1] == self.cols)):
+                print("Loading prev")
                 self.fill_entries_from_matrix(prev_mat)
             else:
                 print("Prev is not loaded")
         else:
+            print("Importing saved")
             self.fill_entries_from_matrix(self.matrix_import)
 
         # Nature probabilities
@@ -114,12 +141,6 @@ class SGE:
         canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.top_mid)/2, window=entryN0)
         entryN1 = tk.Entry (root_in, textvariable=self.nature[1], width = 6)
         canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.bot_mid)/2, window=entryN1)
-        # Player entry_list [4][2][2]
-        for i in range(4):
-            in_tuple = []
-            for j in range(2):
-                in_tuple.append((tk.StringVar(), tk.StringVar()))
-            self.entry_list.append(in_tuple)
 
         for i in range(4): # Corners
             for j in range(2): # up / down
@@ -137,7 +158,6 @@ class SGE:
                     x_offset = self.left_leg-self.entry_offset
                 else:
                     x_offset = self.right_leg+self.entry_offset
-
                 canvas_in.create_text(x_offset, y_offset, text=',', fill="black", font=('Arial 15 bold'))
                 
                 for k in range(2): # tuple
@@ -148,16 +168,7 @@ class SGE:
                         canvas_in.create_window(x_offset +self.mini_offset, y_offset, window=entryLeg)
     
     def submit(self):
-        for i, i_entry in enumerate(self.entry_list):
-            for j, j_entry in enumerate(i_entry):
-                for k, k_entry in enumerate(j_entry): # iterate through tuple
-                    str_input =k_entry.get()
-                    input = 0
-                    if (str_input == ''):
-                        input = 0
-                    else:
-                        input = int(str_input)
-                    self.matrix[i][j][k] = input
+        self.get_entries_into_matrix()
         print(self.matrix)
         print("SUBMIT")
         np.save(self.prev_file, self.matrix)
@@ -172,6 +183,8 @@ class SGE:
         np.save(self.prev_file, self.matrix)
 
     def quit_game(self):
+        self.get_entries_into_matrix()
+        print(self.matrix)
         np.save(self.prev_file, self.matrix)
         print("EXIT")
         self.root.destroy()
