@@ -12,13 +12,13 @@ class SGE:
         self.canvas = Canvas(self.root, bg='white')
         self.left = self.width * 0.01
         self.right = self.width * 0.99
-        self.top = self.height * 0.05
-        self.bot = self.height * 0.95
+        self.top = self.height * 0.03
+        self.bot = self.height * 0.85
         self.cen_x = self.width * 0.5
         self.cen_y = self.height * 0.5
 
-        self.bot_mid = self.height * 0.75
-        self.top_mid = self.height * 0.25
+        self.bot_mid = self.bot - self.height * 0.15
+        self.top_mid = self.top + self.height * 0.15
         self.left_mid = self.width * 0.25
         self.right_mid = self.width * 0.75
 
@@ -31,8 +31,16 @@ class SGE:
 
         self.dr = self.height * 0.01
 
-        self.nature = []
-        self.payoffs = []
+        self.nature = [] # Dimensions [2]
+        self.matrix = np.zeros((4,2), dtype='i,i')
+        self.entry_list = [] # Dimensions [4][2][2]
+
+        self.saved_file = "saved_matrix_sg.npy"
+        self.saved_dim = "saved_dim_sg.npy"
+        self.prev_file = "prev_matrix_sg.npy" 
+        self.prev_dim = "prev_dim_sg.npy"
+        self.matrix_import = np.zeros((4,2), dtype='i,i')
+        self.matrix_import_bool = False
     
     def create_spider_grid(self, root_in, canvas_in):
         root_in.geometry(str(self.width) + "x" + str(self.height))
@@ -51,10 +59,10 @@ class SGE:
         canvas_in.create_oval(self.cen_x -self.dr, self.bot_mid-self.dr, self.cen_x +self.dr, self.bot_mid+self.dr, fill='black')
 
         ## Dotted
-        canvas_in.create_line(self.left_mid, self.top_mid, self.left_mid, self.bot_mid, fill="black", width ='4', dash=(25,22))
+        canvas_in.create_line(self.left_mid, self.top_mid, self.left_mid, self.bot_mid, fill="black", width ='4', dash=(15,32))
         canvas_in.create_oval(self.left_mid -self.dr, self.top_mid -self.dr, self.left_mid +self.dr, self.top_mid +self.dr, fill='black')
         canvas_in.create_oval(self.left_mid -self.dr, self.bot_mid -self.dr, self.left_mid +self.dr, self.bot_mid +self.dr, fill='black')
-        canvas_in.create_line(self.right_mid, self.top_mid, self.right_mid, self.bot_mid, fill="black", width ='4', dash=(25,22))
+        canvas_in.create_line(self.right_mid, self.top_mid, self.right_mid, self.bot_mid, fill="black", width ='4', dash=(15,32))
         canvas_in.create_oval(self.right_mid -self.dr, self.top_mid -self.dr, self.right_mid +self.dr, self.top_mid +self.dr, fill='black')
         canvas_in.create_oval(self.right_mid -self.dr, self.bot_mid -self.dr, self.right_mid +self.dr, self.bot_mid +self.dr, fill='black')
         
@@ -75,11 +83,29 @@ class SGE:
         canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, bB, fill="black", width ='4')
         canvas_in.pack(fill=BOTH, expand=1)
 
+    def fill_entries_from_matrix(self, matrix_in):
+        for i, i_entry in enumerate(self.entry_list):
+            for j, j_entry in enumerate(i_entry):
+                for k, k_entry in enumerate(j_entry): # iterate through tuple
+                    if (str(matrix_in[i][j][k]) == '0'):
+                        k_entry.set("")    
+                    else:
+                        k_entry.set(str(matrix_in[i][j][k]))
+
     def create_entry_boxes(self, root_in, canvas_in):
         tA = self.top_mid-self.offset_leg
         tB = self.top_mid+self.offset_leg
         bA = self.bot_mid-self.offset_leg
         bB = self.bot_mid+self.offset_leg
+
+        if (not self.matrix_import_bool):
+            prev_mat = np.load(self.prev_file)
+            if ((prev_mat.shape[0] == self.rows) and (prev_mat.shape[1] == self.cols)):
+                self.fill_entries_from_matrix(prev_mat)
+            else:
+                print("Prev is not loaded")
+        else:
+            self.fill_entries_from_matrix(self.matrix_import)
 
         # Nature probabilities
         for i in range(2):
@@ -88,12 +114,12 @@ class SGE:
         canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.top_mid)/2, window=entryN0)
         entryN1 = tk.Entry (root_in, textvariable=self.nature[1], width = 6)
         canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.bot_mid)/2, window=entryN1)
-        # Player Payoffs [4][2][2]
+        # Player entry_list [4][2][2]
         for i in range(4):
             in_tuple = []
             for j in range(2):
                 in_tuple.append((tk.StringVar(), tk.StringVar()))
-            self.payoffs.append(in_tuple)
+            self.entry_list.append(in_tuple)
 
         for i in range(4): # Corners
             for j in range(2): # up / down
@@ -115,16 +141,60 @@ class SGE:
                 canvas_in.create_text(x_offset, y_offset, text=',', fill="black", font=('Arial 15 bold'))
                 
                 for k in range(2): # tuple
-                    entryLeg = tk.Entry (root_in, textvariable=self.payoffs[i][j][k], width=4)
+                    entryLeg = tk.Entry (root_in, textvariable=self.entry_list[i][j][k], width=4)
                     if (k == 0):
                         canvas_in.create_window(x_offset -self.mini_offset, y_offset, window=entryLeg)
                     else:
                         canvas_in.create_window(x_offset +self.mini_offset, y_offset, window=entryLeg)
+    
+    def submit(self):
+        for i, i_entry in enumerate(self.entry_list):
+            for j, j_entry in enumerate(i_entry):
+                for k, k_entry in enumerate(j_entry): # iterate through tuple
+                    str_input =k_entry.get()
+                    input = 0
+                    if (str_input == ''):
+                        input = 0
+                    else:
+                        input = int(str_input)
+                    self.matrix[i][j][k] = input
+        print(self.matrix)
+        print("SUBMIT")
+        np.save(self.prev_file, self.matrix)
+
+    def reset(self):
+        for i, i_entry in enumerate(self.entry_list):
+            for j, j_entry in enumerate(i_entry):
+                for k, k_entry in enumerate(j_entry): # iterate through tuple
+                    k_entry.set("")
+                    self.matrix[i][j][k] = 0
+        print("RESET")
+        np.save(self.prev_file, self.matrix)
+
+    def quit_game(self):
+        np.save(self.prev_file, self.matrix)
+        print("EXIT")
+        self.root.destroy()
+        
+    def gen_entry_buttons(self, root, canvas):
+    
+        sub_btn=tk.Button(root,text = 'Submit', command = lambda: self.submit())
+        canvas.create_window(self.cen_x, self.bot+20, window=sub_btn)
+        # saved_btn=tk.Button(root,text = 'Load', command = lambda: self.enter_saved())
+        # canvas.create_window(self.cen_x+160, self.bot+80, window=saved_btn)
+        # prv2pst_btn=tk.Button(root,text = 'Save', command = lambda: self.transfer_entries_to_saved())
+        # canvas.create_window(self.cen_x +160, self.bot+40, window=prv2pst_btn)
+        reset_btn=tk.Button(root,text = 'Reset', command = lambda: self.reset())
+        canvas.create_window(self.cen_x, self.bot+50, window=reset_btn)
+        quit_btn = tk.Button(root, text="Exit", command = lambda: self.quit_game())
+        canvas.create_window(self.cen_x, self.bot+80, window=quit_btn)
+
 
 def main():
     parent = SGE()
     parent.create_spider_grid(parent.root, parent.canvas)
     parent.create_entry_boxes(parent.root, parent.canvas)
+    parent.gen_entry_buttons(parent.root, parent.canvas)
     parent.root.mainloop()
 
 if __name__ == '__main__':
