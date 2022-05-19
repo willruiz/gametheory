@@ -8,8 +8,8 @@ class SGE:
     def __init__(self):
         self.rows = 4
         self.cols = 2
-        self.width = 1500
-        self.height = 1000
+        self.width = 1200
+        self.height = 800
         self.root = tk.Tk()
         self.canvas = Canvas(self.root, bg='white')
         self.left = self.width * 0.01
@@ -18,6 +18,10 @@ class SGE:
         self.bot = self.height * 0.85
         self.cen_x = self.width * 0.5
         self.cen_y = self.height * 0.5
+        self.cen_y_adj = (self.top+self.bot) * 0.5 
+
+        # print("cen_y: ", self.cen_y)
+        # print("cen_y_adj: ", self.cen_y_adj)
 
         self.bot_mid = self.bot - self.height * 0.15
         self.top_mid = self.top + self.height * 0.15
@@ -28,12 +32,15 @@ class SGE:
         self.left_leg = self.width * 0.15
         self.right_leg = self.width * 0.85
 
-        self.entry_offset = self.width * 0.04
+        self.entry_offset = self.width * 0.05
         self.mini_offset = self.width * 0.015
+        self.nature_boxsize = 6
+        self.payoff_boxsize = 3
 
-        self.dr = self.height * 0.01
+        self.dr = self.height * 0.01 # dr = dot radius
 
-        self.nature = [] # Dimensions [2]
+        self.nature_entry = [] # Dimensions [2]
+        self.nature_mat = np.zeros((1,2))
         self.matrix = np.zeros((4,2), dtype='i,i')
         self.entry_list = [] # Dimensions [4][2][2]
 
@@ -41,6 +48,7 @@ class SGE:
         self.saved_dim = "saved_dim_sg.npy"
         self.prev_file = "prev_matrix_sg.npy" 
         self.prev_dim = "prev_dim_sg.npy"
+        self.nature_file = "nature_sg.npy"
         self.matrix_import = np.zeros((4,2), dtype='i,i')
         self.matrix_import_bool = False
     
@@ -58,7 +66,7 @@ class SGE:
 
         ## Spider-Mid
         canvas_in.create_line(self.cen_x, self.top_mid, self.cen_x, self.bot_mid, fill="black", width ='4')
-        canvas_in.create_oval(self.cen_x -self.dr, self.cen_y-self.dr, self.cen_x +self.dr, self.cen_y+self.dr, fill='black')
+        canvas_in.create_oval(self.cen_x -self.dr, self.cen_y_adj-self.dr, self.cen_x +self.dr, self.cen_y_adj+self.dr, fill='black')
         canvas_in.create_line(self.left_mid, self.top_mid, self.right_mid, self.top_mid, fill="black", width ='4')
         canvas_in.create_oval(self.cen_x -self.dr, self.top_mid-self.dr, self.cen_x +self.dr, self.top_mid+self.dr, fill='black')
         canvas_in.create_line(self.left_mid, self.bot_mid, self.right_mid, self.bot_mid, fill="black", width ='4')
@@ -136,11 +144,11 @@ class SGE:
 
         # Nature probabilities
         for i in range(2):
-            self.nature.append(tk.StringVar())
-        entryN0 = tk.Entry (root_in, textvariable=self.nature[0], width = 6)
-        canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.top_mid)/2, window=entryN0)
-        entryN1 = tk.Entry (root_in, textvariable=self.nature[1], width = 6)
-        canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.bot_mid)/2, window=entryN1)
+            self.nature_entry.append(tk.StringVar())
+        entryN0 = tk.Entry (root_in, textvariable=self.nature_entry[0], width = self.nature_boxsize)
+        canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y_adj+self.top_mid)/2, window=entryN0)
+        entryN1 = tk.Entry (root_in, textvariable=self.nature_entry[1], width = self.nature_boxsize)
+        canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y_adj+self.bot_mid)/2, window=entryN1)
 
         for i in range(4): # Corners
             for j in range(2): # up / down
@@ -161,7 +169,7 @@ class SGE:
                 canvas_in.create_text(x_offset, y_offset, text=',', fill="black", font=('Arial 15 bold'))
                 
                 for k in range(2): # tuple
-                    entryLeg = tk.Entry (root_in, textvariable=self.entry_list[i][j][k], width=4)
+                    entryLeg = tk.Entry (root_in, textvariable=self.entry_list[i][j][k], width=self.payoff_boxsize)
                     if (k == 0):
                         canvas_in.create_window(x_offset -self.mini_offset, y_offset, window=entryLeg)
                     else:
@@ -186,6 +194,7 @@ class SGE:
         print(self.matrix)
         print("SUBMIT")
         np.save(self.prev_file, self.matrix)
+        np.save(self.prev_file, self.matrix)
 
     def reset(self):
         for i, i_entry in enumerate(self.entry_list):
@@ -193,6 +202,7 @@ class SGE:
                 for k, k_entry in enumerate(j_entry): # iterate through tuple
                     k_entry.set("")
                     self.matrix[i][j][k] = 0
+        self.nature_entry = [0,0]
         print("RESET")
         np.save(self.prev_file, self.matrix)
 
