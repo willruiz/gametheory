@@ -167,6 +167,20 @@ class SGE:
                     else:
                         canvas_in.create_window(x_offset +self.mini_offset, y_offset, window=entryLeg)
     
+    def enter_saved(self):
+        entry = np.load(self.saved_file)
+        if ((entry.shape[0] == self.rows) and (entry.shape[1] == self.cols)):
+            self.matrix = entry
+            self.fill_entries_from_matrix(entry)
+            print("LOADED")
+        else:
+            print("Saved dimensions do not match - Cannot load")
+
+    def transfer_entries_to_saved(self):
+        self.get_entries_into_matrix()
+        np.save(self.saved_file, self.matrix)
+        print("SAVED")
+    
     def submit(self):
         self.get_entries_into_matrix()
         print(self.matrix)
@@ -193,10 +207,10 @@ class SGE:
     
         sub_btn=tk.Button(root,text = 'Submit', command = lambda: self.submit())
         canvas.create_window(self.cen_x, self.bot+20, window=sub_btn)
-        # saved_btn=tk.Button(root,text = 'Load', command = lambda: self.enter_saved())
-        # canvas.create_window(self.cen_x+160, self.bot+80, window=saved_btn)
-        # prv2pst_btn=tk.Button(root,text = 'Save', command = lambda: self.transfer_entries_to_saved())
-        # canvas.create_window(self.cen_x +160, self.bot+40, window=prv2pst_btn)
+        saved_btn=tk.Button(root,text = 'Load', command = lambda: self.enter_saved())
+        canvas.create_window(self.cen_x+160, self.bot+80, window=saved_btn)
+        prv2pst_btn=tk.Button(root,text = 'Save', command = lambda: self.transfer_entries_to_saved())
+        canvas.create_window(self.cen_x +160, self.bot+40, window=prv2pst_btn)
         reset_btn=tk.Button(root,text = 'Reset', command = lambda: self.reset())
         canvas.create_window(self.cen_x, self.bot+50, window=reset_btn)
         quit_btn = tk.Button(root, text="Exit", command = lambda: self.quit_game())
