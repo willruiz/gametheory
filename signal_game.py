@@ -56,6 +56,9 @@ class SGE:
         self.matrix_import = matrix_in
         self.matrix_import_bool = True
 
+    def seperating_eq(self):
+        pass
+
     def create_spider_grid(self, root_in, canvas_in):
         root_in.geometry(str(self.width) + "x" + str(self.height))
         ## Boundaries
