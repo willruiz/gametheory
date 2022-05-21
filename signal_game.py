@@ -17,11 +17,8 @@ class SGE:
         self.top = self.height * 0.03
         self.bot = self.height * 0.85
         self.cen_x = self.width * 0.5
-        self.cen_y = self.height * 0.5
-        self.cen_y_adj = (self.top+self.bot) * 0.5 
-
-        # print("cen_y: ", self.cen_y)
-        # print("cen_y_adj: ", self.cen_y_adj)
+        self.cen_y_norm = self.height * 0.5
+        self.cen_y = (self.top+self.bot) * 0.5 
 
         self.bot_mid = self.bot - self.height * 0.15
         self.top_mid = self.top + self.height * 0.15
@@ -49,6 +46,7 @@ class SGE:
         self.prev_file = "prev_matrix_sg.npy" 
         self.prev_dim = "prev_dim_sg.npy"
         self.nature_file = "nature_sg.npy"
+        self.nature_prev = "nature_prev_sg.npy"
         self.matrix_import = np.zeros((4,2), dtype='i,i')
         self.matrix_import_bool = False
     
@@ -56,8 +54,32 @@ class SGE:
         self.matrix_import = matrix_in
         self.matrix_import_bool = True
 
-    def seperating_eq(self):
-        pass
+
+
+
+
+
+    def seperating_eq(self, matrix_in):
+        """
+        Process for seperating equilibrium:
+        1. Find your two cases: 
+
+
+        """
+        top = []
+        bot = []
+        print(matrix_in[0][0][1])
+        print(matrix_in[0][1][1])
+        print(matrix_in[1][0][1])
+        print(matrix_in[1][1][1])
+
+    def draw_labels(self, root_in, canvas_in):
+        canvas_in.create_text(self.cen_x-self.entry_offset, (self.cen_y+self.top_mid)/2, text='Strong', fill="blue", font=('Arial 15 bold'))
+        canvas_in.create_text(self.cen_x-self.entry_offset, (self.cen_y+self.bot_mid)/2, text='Weak', fill="blue", font=('Arial 15 bold'))
+        canvas_in.create_text((self.cen_x + self.left_mid)/2, self.top_mid-self.mini_offset, text='Hide', fill="black", font=('Arial 15 bold'))
+        canvas_in.create_text((self.cen_x + self.right_mid)/2, self.top_mid-self.mini_offset, text='Reveal', fill="black", font=('Arial 15 bold'))
+        canvas_in.create_text((self.cen_x + self.left_mid)/2, self.bot_mid-self.mini_offset, text='Hide', fill="black", font=('Arial 15 bold'))
+        canvas_in.create_text((self.cen_x + self.right_mid)/2, self.bot_mid-self.mini_offset, text='Reveal', fill="black", font=('Arial 15 bold'))
 
     def create_spider_grid(self, root_in, canvas_in):
         root_in.geometry(str(self.width) + "x" + str(self.height))
@@ -69,7 +91,7 @@ class SGE:
 
         ## Spider-Mid
         canvas_in.create_line(self.cen_x, self.top_mid, self.cen_x, self.bot_mid, fill="black", width ='4')
-        canvas_in.create_oval(self.cen_x -self.dr, self.cen_y_adj-self.dr, self.cen_x +self.dr, self.cen_y_adj+self.dr, fill='black')
+        canvas_in.create_oval(self.cen_x -self.dr, self.cen_y-self.dr, self.cen_x +self.dr, self.cen_y+self.dr, fill='black')
         canvas_in.create_line(self.left_mid, self.top_mid, self.right_mid, self.top_mid, fill="black", width ='4')
         canvas_in.create_oval(self.cen_x -self.dr, self.top_mid-self.dr, self.cen_x +self.dr, self.top_mid+self.dr, fill='black')
         canvas_in.create_line(self.left_mid, self.bot_mid, self.right_mid, self.bot_mid, fill="black", width ='4')
@@ -104,10 +126,10 @@ class SGE:
         for i, i_entry in enumerate(self.entry_list):
             for j, j_entry in enumerate(i_entry):
                 for k, k_entry in enumerate(j_entry): # iterate through tuple
-                    if (str(matrix_in[i][j][k]) == '0'):
-                        k_entry.set("")    
-                    else:
-                        k_entry.set(str(matrix_in[i][j][k]))
+                    # if (str(matrix_in[i][j][k]) == '0'):
+                    #     k_entry.set("")    
+                    # else:
+                    k_entry.set(str(matrix_in[i][j][k]))
 
     def get_entries_into_matrix(self):
         for i, i_entry in enumerate(self.entry_list):
@@ -149,9 +171,9 @@ class SGE:
         for i in range(2):
             self.nature_entry.append(tk.StringVar())
         entryN0 = tk.Entry (root_in, textvariable=self.nature_entry[0], width = self.nature_boxsize)
-        canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y_adj+self.top_mid)/2, window=entryN0)
+        canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.top_mid)/2, window=entryN0)
         entryN1 = tk.Entry (root_in, textvariable=self.nature_entry[1], width = self.nature_boxsize)
-        canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y_adj+self.bot_mid)/2, window=entryN1)
+        canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.bot_mid)/2, window=entryN1)
 
         for i in range(4): # Corners
             for j in range(2): # up / down
@@ -220,10 +242,14 @@ class SGE:
     
         sub_btn=tk.Button(root,text = 'Submit', command = lambda: self.submit())
         canvas.create_window(self.cen_x, self.bot+20, window=sub_btn)
+
+        seperating_btn=tk.Button(root,text = 'Sepr', command = lambda: self.seperating_eq(self.matrix))
+        canvas.create_window(self.cen_x+80, self.bot+80, window=seperating_btn)
+
         saved_btn=tk.Button(root,text = 'Load', command = lambda: self.enter_saved())
         canvas.create_window(self.cen_x+160, self.bot+80, window=saved_btn)
         prv2pst_btn=tk.Button(root,text = 'Save', command = lambda: self.transfer_entries_to_saved())
-        canvas.create_window(self.cen_x +160, self.bot+40, window=prv2pst_btn)
+        canvas.create_window(self.cen_x +160, self.bot+50, window=prv2pst_btn)
         reset_btn=tk.Button(root,text = 'Reset', command = lambda: self.reset())
         canvas.create_window(self.cen_x, self.bot+50, window=reset_btn)
         quit_btn = tk.Button(root, text="Exit", command = lambda: self.quit_game())
@@ -235,6 +261,7 @@ def main():
     parent.create_spider_grid(parent.root, parent.canvas)
     parent.create_entry_boxes(parent.root, parent.canvas)
     parent.gen_entry_buttons(parent.root, parent.canvas)
+    parent.draw_labels(parent.root, parent.canvas)
     parent.root.mainloop()
 
 if __name__ == '__main__':
