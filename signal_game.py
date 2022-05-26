@@ -62,16 +62,69 @@ class SGE:
     def seperating_eq(self, matrix_in):
         """
         Process for seperating equilibrium:
-        1. Find your two cases: 
-
-
+        X. Select case (A) [Strong > Reveal] [Weak > Hide]
+        1. Nature chooses {Strong}
+        2. Player 1 then chooses signal {Reveal}
+        3. Player 2 chooses Fight or Quit with the best payoff P2   
+        4. Player 1 then analyses P2's choice and the decides 
+        if he has a higher payoff if he switches his signal
         """
-        top = []
-        bot = []
-        print(matrix_in[0][0][1])
-        print(matrix_in[0][1][1])
+        # (Case A) 
+        # Top
+        # 1. Nature chooses Strong > matrix[0 or 1]
+        # 2. Player 1 chooses Reveal > matrix[1] ~[0+1]
+        # 3. Player 2 Finds maximization matrix[1][0] vs matrix[1][1]
+        self.get_entries_into_matrix(matrix_in)
+        
+        p2_top_choice = -1
+        p2_top_alt = -1
+        if (matrix_in[1][0][1] > matrix_in[1][1][1]):
+            p2_top_choice = 0
+            p2_top_alt = 1
+        elif (matrix_in[1][0][1] < matrix_in[1][1][1]):
+            p2_top_choice = 1
+            p2_top_alt = 0
+        else: # equal 
+            p2_top_choice = 2
+
+        print("p2_top_choice: ",p2_top_choice)
+
         print(matrix_in[1][0][1])
         print(matrix_in[1][1][1])
+
+        # Bottom
+        # 1. Nature chooses Weak > matrix[2 or 3]
+        # 2. Player 1 chooses Hide > matrix[2] ~[2+0]
+        # 3. Player 2 Finds maximization matrix[2][0] vs matrix[2][1]
+        
+        p2_bot_choice = -1
+        p2_bot_alt = -1
+        if (matrix_in[2][0][1] > matrix_in[2][1][1]):
+            p2_bot_choice = 0
+            p2_bot_alt = 1
+        elif (matrix_in[1][0][1] < matrix_in[1][1][1]):
+            p2_bot_choice = 1
+            p2_bot_alt = 0
+        else: # equal 
+            p2_top_choice = 2
+
+        print("p2_bot_choice: ",p2_bot_choice)
+
+        print(matrix_in[2][0][1])
+        print(matrix_in[2][1][1])
+
+        # 4. Player 1 then analyses if this is profitable to stay with signal
+        # p1_top_switch = False
+        # if (p2_top_choice != 2):
+        #     if (matrix_in[1][p2_top_choice][0] > matrix_in[2][p2_top_alt][0]):
+        #         p1_switch = False
+        #     elif (matrix_in[0][p2_top_choice][0] < matrix_in[2][p2_top_alt][0]):
+        #         p1_switch = True
+        #     else:
+        #         p1_switch = False
+        # print("p1_switch: ", p1_switch)
+
+
 
     def draw_labels(self, root_in, canvas_in):
         canvas_in.create_text(self.cen_x-self.entry_offset, (self.cen_y+self.top_mid)/2, text='Strong', fill="blue", font=('Arial 15 bold'))
@@ -131,7 +184,7 @@ class SGE:
                     # else:
                     k_entry.set(str(matrix_in[i][j][k]))
 
-    def get_entries_into_matrix(self):
+    def get_entries_into_matrix(self, matrix_in):
         for i, i_entry in enumerate(self.entry_list):
             for j, j_entry in enumerate(i_entry):
                 for k, k_entry in enumerate(j_entry): # iterate through tuple
@@ -141,7 +194,7 @@ class SGE:
                         input = 0
                     else:
                         input = int(str_input)
-                    self.matrix[i][j][k] = input
+                    matrix_in[i][j][k] = input
 
     def create_entry_boxes(self, root_in, canvas_in):
         tA = self.top_mid-self.offset_leg
@@ -210,16 +263,16 @@ class SGE:
             print("Saved dimensions do not match - Cannot load")
 
     def transfer_entries_to_saved(self):
-        self.get_entries_into_matrix()
+        self.get_entries_into_matrix(self.matrix)
         np.save(self.saved_file, self.matrix)
         print("SAVED")
     
     def submit(self):
-        self.get_entries_into_matrix()
+        self.get_entries_into_matrix(self.matrix)
         print(self.matrix)
         print("SUBMIT")
         np.save(self.prev_file, self.matrix)
-        np.save(self.prev_file, self.matrix)
+
 
     def reset(self):
         for i, i_entry in enumerate(self.entry_list):
@@ -232,7 +285,7 @@ class SGE:
         np.save(self.prev_file, self.matrix)
 
     def quit_game(self):
-        self.get_entries_into_matrix()
+        self.get_entries_into_matrix(self.matrix)
         print(self.matrix)
         np.save(self.prev_file, self.matrix)
         print("EXIT")
