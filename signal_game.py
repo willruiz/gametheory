@@ -62,113 +62,6 @@ class SGE:
         self.matrix_import = matrix_in
         self.matrix_import_bool = True
 
-
-    def seperating_eq(self, matrix_in, top_signal, bot_signal):
-        """
-        Process for seperating equilibrium:
-        X. Select case (A) [Strong > Reveal] [Weak > Hide]
-        1. Nature chooses {Strong}
-        2. Player 1 then chooses signal {Reveal}
-        3. Player 2 chooses Fight or Quit with the best payoff P2   
-        4. Player 1 then analyses P2's choice and the decides 
-        if he has a higher payoff if he switches his signal
-        """
-        # (Case A) 
-        # Top
-        # 1. Nature chooses Strong > matrix[0 or 1]
-        # 2. Player 1 chooses Reveal > matrix[1] ~[0+1]
-        # 3. Player 2 Finds maximization matrix[1][0] vs matrix[1][1]
-        top_sig_alt = 0 if (top_signal == 1) else 1
-        bot_sig_alt = 0 if (bot_signal == 1) else 1
-        
-        top_branch = self.top_index_offset + top_signal
-        bot_branch = self.bot_index_offset + bot_signal
-        print("top_branch:", top_branch)
-        print("bot_branch:", bot_branch)        
-        top_alt = self.top_index_offset + top_sig_alt
-        bot_alt = self.bot_index_offset + bot_sig_alt
-        
-        p1_index = 0
-        p2_index = 1
-        self.get_entries_into_matrix(matrix_in)
-        
-        p2_top_choice = -1
-        p2_top_alt = -1
-        if (matrix_in[top_branch][0][p2_index] >= matrix_in[top_branch][1][p2_index]):
-            p2_top_choice = 0
-            p2_top_alt = 1
-        elif (matrix_in[top_branch][0][p2_index] < matrix_in[top_branch][1][p2_index]):
-            p2_top_choice = 1
-            p2_top_alt = 0
-        # else: # equal 
-        #     p2_top_choice = 0
-
-        print("p2_top_choice: ",p2_top_choice)
-
-        print(matrix_in[top_branch][0][p2_index])
-        print(matrix_in[top_branch][1][p2_index])
-
-        # Bottom
-        # 1. Nature chooses Weak > matrix[2 or 3]
-        # 2. Player 1 chooses Hide > matrix[2] ~[2+0]
-        # 3. Player 2 Finds maximization matrix[2][0] vs matrix[2][1]
-        
-        p2_bot_choice = -1
-        p2_bot_alt = -1
-        if (matrix_in[bot_branch][0][p2_index] >= matrix_in[bot_branch][1][p2_index]):
-            p2_bot_choice = 0
-            p2_bot_alt = 1
-            # IF EQUAL, arbitrarily take index zero
-        elif (matrix_in[bot_branch][0][p2_index] < matrix_in[bot_branch][1][p2_index]):
-            p2_bot_choice = 1
-            p2_bot_alt = 0
-        # else: # equal 
-        #     p2_top_choice = 0
-
-        print("p2_bot_choice: ",p2_bot_choice)
-
-        print(matrix_in[bot_branch][0][p2_index])
-        print(matrix_in[bot_branch][1][p2_index])
-
-        # 4a. TOP: Player 1 then analyses TOP if this is profitable to stay with signal
-        p1_top_switch = False
-
-        # Take the P2's OTHER choice to opposite signal to see if P1 changing current top signal is profitable 
-        top_branch_val = matrix_in[top_branch][p2_top_choice][p1_index]
-        top_alt_val = matrix_in[top_alt][p2_bot_choice][p1_index]
-        print("checkA")
-        print("top_alt:",top_alt)
-        print("top_branch_val:", top_branch_val)
-        print("top_alt_val:", top_alt_val)
-        if (top_branch_val > top_alt_val):
-            p1_top_switch = False
-        elif (top_branch_val < top_alt_val):
-            p1_top_switch = True
-        else:
-            p1_top_switch = False
-        print("p1_top_switch: ", p1_top_switch)
-        # 4b. BOTTOM: Player 1 then analyses BOTTOM if this is profitable to stay with signal
-        p1_bot_switch = False
-        bot_branch_val = matrix_in[bot_branch][p2_bot_choice][p1_index]
-        bot_alt_val = matrix_in[bot_alt][p2_top_choice][p1_index]
-        print("checkA")
-        print("bot_alt:",top_alt)
-        print("bot_branch_val:", bot_branch_val)
-        print("bot_alt_val:", bot_alt_val)
-        # Take the P2's OTHER choice to opposite signal to see if P1 changing current top signal is profitable 
-        if (bot_branch_val > bot_alt_val):
-            p1_bot_switch = False
-        elif (bot_branch_val < bot_alt_val):
-            p1_bot_switch = True
-        else:
-            p1_bot_switch = False
-
-        print("p1_bot_switch: ", p1_bot_switch)
-
-
-
-
-
     def draw_labels(self, root_in, canvas_in):
         canvas_in.create_text(self.cen_x-self.entry_offset, (self.cen_y+self.top_mid)/2, text='Strong', fill="blue", font=('Arial 15 bold'))
         canvas_in.create_text(self.cen_x-self.entry_offset, (self.cen_y+self.bot_mid)/2, text='Weak', fill="blue", font=('Arial 15 bold'))
@@ -296,6 +189,136 @@ class SGE:
                     else:
                         canvas_in.create_window(x_offset +self.mini_offset, y_offset, window=entryLeg)
     
+    def draw_sep_eq(self, root_in, canvas_in, matrix_in, top_signal, bot_si):
+        ### Use colored rectangles, solid arrows, and dotted arrows
+        # 1. Draw branch re-sets (solid curved arrows)- signals
+        ## Arrows
+        self.top_branch
+        self.bot_branch
+        # 2. Draw P2 payoffs given signal choices 
+        # (solid colored arrows) and (highlight rectangles)
+        ## Draw branching for all 4 indexes
+        self.p2_top_choice
+        self.p2_bot_choice
+        # 3. Label or draw if P1 decides to swithc signals
+        # (Dotted rectangles) and (highlight rectangles)
+        ## Use text to indeicate no switch
+        ## Highlight payoofs being compared.
+        ## Use text and arrows to indeicate switch
+        self.p1_top_switch
+        self.p1_bot_switch
+
+        ## Write out text to indicate if this is a successful seperating equlibrium and store in self class
+        
+
+    def seperating_eq(self, matrix_in, top_signal, bot_signal):
+        """
+        Process for seperating equilibrium:
+        X. Select case (A) [Strong > Reveal] [Weak > Hide]
+        1. Nature chooses {Strong}
+        2. Player 1 then chooses signal {Reveal}
+        3. Player 2 chooses Fight or Quit with the best payoff P2   
+        4. Player 1 then analyses P2's choice and the decides 
+        if he has a higher payoff if he switches his signal
+        """
+        # (Case A) 
+        # Top
+        # 1. Nature chooses Strong > matrix[0 or 1]
+        # 2. Player 1 chooses Reveal > matrix[1] ~[0+1]
+        # 3. Player 2 Finds maximization matrix[1][0] vs matrix[1][1]
+        top_sig_alt = 0 if (top_signal == 1) else 1
+        bot_sig_alt = 0 if (bot_signal == 1) else 1
+        
+        self.top_branch = self.top_index_offset + top_signal
+        self.bot_branch = self.bot_index_offset + bot_signal
+        print("top_branch:", self.top_branch)
+        print("bot_branch:", self.bot_branch)        
+        top_alt = self.top_index_offset + top_sig_alt
+        bot_alt = self.bot_index_offset + bot_sig_alt
+        
+        p1_index = 0
+        p2_index = 1
+        self.get_entries_into_matrix(matrix_in)
+        
+        self.p2_top_choice = -1
+        p2_top_alt = -1
+        if (matrix_in[self.top_branch][0][p2_index] >= matrix_in[self.top_branch][1][p2_index]):
+            self.p2_top_choice = 0
+            p2_top_alt = 1
+        elif (matrix_in[self.top_branch][0][p2_index] < matrix_in[self.top_branch][1][p2_index]):
+            self.p2_top_choice = 1
+            p2_top_alt = 0
+        # else: # equal 
+        #     self.p2_top_choice = 0
+
+        print("self.p2_top_choice: ",self.p2_top_choice)
+
+        print(matrix_in[self.top_branch][0][p2_index])
+        print(matrix_in[self.top_branch][1][p2_index])
+
+        # Bottom
+        # 1. Nature chooses Weak > matrix[2 or 3]
+        # 2. Player 1 chooses Hide > matrix[2] ~[2+0]
+        # 3. Player 2 Finds maximization matrix[2][0] vs matrix[2][1]
+        
+        self.p2_bot_choice = -1
+        p2_bot_alt = -1
+        if (matrix_in[self.bot_branch][0][p2_index] >= matrix_in[self.bot_branch][1][p2_index]):
+            self.p2_bot_choice = 0
+            p2_bot_alt = 1
+            # IF EQUAL, arbitrarily take index zero
+        elif (matrix_in[self.bot_branch][0][p2_index] < matrix_in[self.bot_branch][1][p2_index]):
+            self.p2_bot_choice = 1
+            p2_bot_alt = 0
+        # else: # equal 
+        #     self.p2_top_choice = 0
+
+        print("self.p2_bot_choice: ",self.p2_bot_choice)
+
+        print(matrix_in[self.bot_branch][0][p2_index])
+        print(matrix_in[self.bot_branch][1][p2_index])
+
+        # 4a. TOP: Player 1 then analyses TOP if this is profitable to stay with signal
+        self.p1_top_switch = False
+
+        # Take the P2's OTHER choice to opposite signal to see if P1 changing current top signal is profitable 
+        top_branch_val = matrix_in[self.top_branch][self.p2_top_choice][p1_index]
+        top_alt_val = matrix_in[top_alt][self.p2_bot_choice][p1_index]
+        # print("checkA")
+        # print("top_alt:",top_alt)
+        # print("top_branch_val:", top_branch_val)
+        # print("top_alt_val:", top_alt_val)
+        if (top_branch_val > top_alt_val):
+            self.p1_top_switch = False
+        elif (top_branch_val < top_alt_val):
+            self.p1_top_switch = True
+        else:
+            self.p1_top_switch = False
+        print("self.p1_top_switch: ", self.p1_top_switch)
+        # 4b. BOTTOM: Player 1 then analyses BOTTOM if this is profitable to stay with signal
+        self.p1_bot_switch = False
+        bot_branch_val = matrix_in[self.bot_branch][self.p2_bot_choice][p1_index]
+        bot_alt_val = matrix_in[bot_alt][self.p2_top_choice][p1_index]
+        # print("checkA")
+        # print("bot_alt:",top_alt)
+        # print("bot_branch_val:", bot_branch_val)
+        # print("bot_alt_val:", bot_alt_val)
+        # Take the P2's OTHER choice to opposite signal to see if P1 changing current top signal is profitable 
+        if (bot_branch_val > bot_alt_val):
+            self.p1_bot_switch = False
+        elif (bot_branch_val < bot_alt_val):
+            self.p1_bot_switch = True
+        else:
+            self.p1_bot_switch = False
+
+        print("self.p1_bot_switch: ", self.p1_bot_switch)
+
+        # subroot = tk.Tk()
+        # subcan = Canvas(subroot, bg='white')
+        # self.create_spider_grid(subroot, subcan)
+        
+
+
     def enter_saved(self):
         entry = np.load(self.saved_file)
         if ((entry.shape[0] == self.rows) and (entry.shape[1] == self.cols)):
@@ -315,6 +338,8 @@ class SGE:
         print(self.matrix)
         print("SUBMIT")
         np.save(self.prev_file, self.matrix)
+        print("self.p2_bot_choice:",self.p2_bot_choice)
+        print("self.top_branch:",self.top_branch)
 
 
     def reset(self):
