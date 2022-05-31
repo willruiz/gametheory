@@ -209,7 +209,7 @@ class SGE:
         self.p1_bot_switch
 
         ## Write out text to indicate if this is a successful seperating equlibrium and store in self class
-        
+
 
     def seperating_eq(self, matrix_in, top_signal, bot_signal):
         """
@@ -364,9 +364,9 @@ class SGE:
         sub_btn=tk.Button(root,text = 'Submit', command = lambda: self.submit())
         canvas.create_window(self.cen_x, self.bot+20, window=sub_btn)
 
-        seperating_btnA=tk.Button(root,text = 'Sepr A', command = lambda: self.seperating_eq(self.matrix, STR_REV, WEK_HID))
-        canvas.create_window(self.cen_x+80, self.bot+40, window=seperating_btnA)
-        seperating_btnB=tk.Button(root,text = 'Sepr B', command = lambda: self.seperating_eq(self.matrix, STR_HID, WEK_REV))
+        seperating_btnA=tk.Button(root,text = 'Sepr A', bg = "red", fg = "white", command = lambda: self.seperating_eq(self.matrix, STR_REV, WEK_HID))
+        canvas.create_window(self.cen_x+80, self.bot+40,  window=seperating_btnA)
+        seperating_btnB=tk.Button(root,text = 'Sepr B', bg = "blue", fg = "white", command = lambda: self.seperating_eq(self.matrix, STR_HID, WEK_REV))
         canvas.create_window(self.cen_x+80, self.bot+80, window=seperating_btnB)
 
         saved_btn=tk.Button(root,text = 'Load', command = lambda: self.enter_saved())
@@ -375,7 +375,7 @@ class SGE:
         canvas.create_window(self.cen_x +160, self.bot+50, window=prv2pst_btn)
         reset_btn=tk.Button(root,text = 'Reset', command = lambda: self.reset())
         canvas.create_window(self.cen_x, self.bot+50, window=reset_btn)
-        quit_btn = tk.Button(root, text="Exit", command = lambda: self.quit_game())
+        quit_btn = tk.Button(root, text="Exit", bg = "#FA8072", command = lambda: self.quit_game())
         canvas.create_window(self.cen_x, self.bot+80, window=quit_btn)
 
 

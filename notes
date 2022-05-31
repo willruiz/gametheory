@@ -1,0 +1,24 @@
+Variables I need to draw:
+
+branch indexes (top and bot)
+p2_choices (top and bot)
+p1_switch
+
+Draw out two canvas that illustrate seperating equilibrium
+
+Next step:
+Pooling 
+Create "save as" entry function
+Improve class structure of SGE
+
+What components do I have?
+
+Possible subclasses 
+1. tkinter GUI functions
+- Draws lines
+- Takes in user entries
+- Stores them into matrix
+2. Numpy external file matrix handlers
+- Handles matrix and loads/saves them to outside .npy files
+3. Signal game logic code
+- Handles matrix and runs payoff logic
