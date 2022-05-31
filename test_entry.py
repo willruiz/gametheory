@@ -5,9 +5,11 @@ import numpy as np
 import sys
 
 
-#matrix = np.zeros((4,2,2))
-matrix = np.zeros((4,2), dtype='i,i')
-matrix[0][1][1] = 3
-print(matrix)
+master = Tk()
 
-tot = np.linspace((1,9),(8,16),8)
+w = Canvas(master, width=200, height=100)
+w.pack()
+
+w.create_line(150,0, 100,50, 50,0, 0,50, smooth=1)
+
+mainloop()

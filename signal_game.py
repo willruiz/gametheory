@@ -109,6 +109,9 @@ class SGE:
         canvas_in.create_line(self.left_mid, self.bot_mid, self.left_leg, bB, fill="black", width ='4')
         canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, bA, fill="black", width ='4')
         canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, bB, fill="black", width ='4')
+
+        ## Experiment:
+        
         canvas_in.pack(fill=BOTH, expand=1)
 
     def fill_entries_from_matrix(self, matrix_in):
@@ -189,12 +192,34 @@ class SGE:
                     else:
                         canvas_in.create_window(x_offset +self.mini_offset, y_offset, window=entryLeg)
     
-    def draw_sep_eq(self, root_in, canvas_in, matrix_in, top_signal, bot_si):
+    def draw_sep_logic(self, root_in, canvas_in, matrix_in, top_signal, bot_signal):
         ### Use colored rectangles, solid arrows, and dotted arrows
         # 1. Draw branch re-sets (solid curved arrows)- signals
-        ## Arrows
-        self.top_branch
-        self.bot_branch
+        #- Arrows
+        # Top
+        print("self.bot_branch:", self.bot_branch)
+        Atx = self.cen_x-self.mini_offset + (self.top_signal*2*self.mini_offset)
+        Aty = self.cen_y-self.mini_offset
+        Btx = self.cen_x-self.mini_offset + (self.top_signal*2*self.mini_offset)
+        Bty = self.top_mid+self.mini_offset
+        Ctx = self.left_mid+self.mini_offset + (self.top_signal*((2*self.width * 0.25)-(2*self.mini_offset)))
+        Cty = self.top_mid+self.mini_offset
+        
+        canvas_in.create_line(Atx, Aty, Btx, Bty, fill="green", width ='3')
+        canvas_in.create_line(Btx, Bty, Ctx, Cty, fill="green", width ='3',arrow=tk.LAST)
+
+        # Bot
+        Abx = self.cen_x-self.mini_offset + (self.bot_signal*2*self.mini_offset)
+        Aby = self.cen_y+self.mini_offset
+        Bbx = self.cen_x-self.mini_offset + (self.bot_signal*2*self.mini_offset)
+        Bby = self.bot_mid-self.mini_offset
+        Cbx = self.left_mid+self.mini_offset + (self.bot_signal*((2*self.width * 0.25)-(2*self.mini_offset)))
+        Cby = self.bot_mid-self.mini_offset
+        
+        canvas_in.create_line(Abx, Aby, Bbx, Bby, fill="green", width ='3')
+        canvas_in.create_line(Bbx, Bby, Cbx, Cby, fill="green", width ='3',arrow=tk.LAST)
+
+
         # 2. Draw P2 payoffs given signal choices 
         # (solid colored arrows) and (highlight rectangles)
         ## Draw branching for all 4 indexes
@@ -210,6 +235,14 @@ class SGE:
 
         ## Write out text to indicate if this is a successful seperating equlibrium and store in self class
 
+
+    def sep_base(self,  matrix_in, top_signal, bot_signal):
+        subroot = tk.Tk()
+        subcan = Canvas(subroot, bg='white')
+        
+        subroot.geometry(str(self.width) + "x" + str(self.height))
+        self.draw_sep_logic(subroot, subcan, matrix_in, top_signal, bot_signal)
+        self.create_spider_grid(subroot, subcan)
 
     def seperating_eq(self, matrix_in, top_signal, bot_signal):
         """
@@ -228,6 +261,9 @@ class SGE:
         # 3. Player 2 Finds maximization matrix[1][0] vs matrix[1][1]
         top_sig_alt = 0 if (top_signal == 1) else 1
         bot_sig_alt = 0 if (bot_signal == 1) else 1
+
+        self.top_signal = top_signal
+        self.bot_signal = bot_signal
         
         self.top_branch = self.top_index_offset + top_signal
         self.bot_branch = self.bot_index_offset + bot_signal
@@ -313,11 +349,8 @@ class SGE:
 
         print("self.p1_bot_switch: ", self.p1_bot_switch)
 
-        # subroot = tk.Tk()
-        # subcan = Canvas(subroot, bg='white')
-        # self.create_spider_grid(subroot, subcan)
+        self.sep_base(matrix_in, top_signal, bot_signal)
         
-
 
     def enter_saved(self):
         entry = np.load(self.saved_file)
