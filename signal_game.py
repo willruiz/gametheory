@@ -67,8 +67,8 @@ class SGE:
         canvas_in.create_text(self.cen_x-self.entry_offset, (self.cen_y+self.bot_mid)/2, text='Weak', fill="blue", font=('Arial 15 bold'))
         canvas_in.create_text((self.cen_x + self.left_mid)/2, self.top_mid-self.mini_offset, text='Hide', fill="black", font=('Arial 15 bold'))
         canvas_in.create_text((self.cen_x + self.right_mid)/2, self.top_mid-self.mini_offset, text='Reveal', fill="black", font=('Arial 15 bold'))
-        canvas_in.create_text((self.cen_x + self.left_mid)/2, self.bot_mid-self.mini_offset, text='Hide', fill="black", font=('Arial 15 bold'))
-        canvas_in.create_text((self.cen_x + self.right_mid)/2, self.bot_mid-self.mini_offset, text='Reveal', fill="black", font=('Arial 15 bold'))
+        canvas_in.create_text((self.cen_x + self.left_mid)/2, self.bot_mid+self.mini_offset, text='Hide', fill="black", font=('Arial 15 bold'))
+        canvas_in.create_text((self.cen_x + self.right_mid)/2, self.bot_mid+self.mini_offset, text='Reveal', fill="black", font=('Arial 15 bold'))
 
     def create_spider_grid(self, root_in, canvas_in):
         root_in.geometry(str(self.width) + "x" + str(self.height))
@@ -192,8 +192,40 @@ class SGE:
                     else:
                         canvas_in.create_window(x_offset +self.mini_offset, y_offset, window=entryLeg)
     
-    def draw_sep_logic(self, root_in, canvas_in, matrix_in, top_signal, bot_signal):
+    def draw_sep_logic(self, root_in, canvas_in, matrix_in):
         ### Use colored rectangles, solid arrows, and dotted arrows
+        # X. Text out payoffs
+        tA = self.top_mid-self.offset_leg
+        tB = self.top_mid+self.offset_leg
+        bA = self.bot_mid-self.offset_leg
+        bB = self.bot_mid+self.offset_leg
+
+        for i in range(4): # Corners
+            for j in range(2): # up / down
+                x_offset = 0
+                y_offset = 0
+                if (j == 0 and i <= 1):
+                    y_offset = tA
+                elif (j == 1 and i <= 1):
+                    y_offset = tB
+                elif (j == 0 and i > 1):
+                    y_offset = bA
+                else:
+                    y_offset = bB
+                if (i % 2 == 0):
+                    x_offset = self.left_leg-self.entry_offset
+                else:
+                    x_offset = self.right_leg+self.entry_offset
+                canvas_in.create_text(x_offset, y_offset, text=',', fill="black", font=('Arial 15 bold'))
+                
+                for k in range(2): # tuple
+                    xtext = 0
+                    if (k == 0):
+                        xtext = x_offset -self.mini_offset
+                    else:
+                        xtext = x_offset +self.mini_offset
+                    canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill="black", font=('Arial 15 bold'))
+
         # 1. Draw branch re-sets (solid curved arrows)- signals
         #- Arrows
         # Top
@@ -223,6 +255,13 @@ class SGE:
         # 2. Draw P2 payoffs given signal choices 
         # (solid colored arrows) and (highlight rectangles)
         ## Draw branching for all 4 indexes
+        # if (self.p2_top_choice == 0):
+        #     canvas_in.create_line(Btx, Bty, Ctx, Cty, fill="green", width ='3',arrow=tk.LAST)
+        if (self.p2_top_choice == 0):
+            canvas_in.create_line(self.left_mid, self.top_mid-self.mini_offset, self.left_leg, self.top_branch-self.mini_offset, fill="lawn green", width ='3',arrow=tk.LAST)
+        else:
+            canvas_in.create_line(self.left_mid, self.top_mid-self.mini_offset, self.left_leg, self.bot_branch-self.mini_offset, fill="lawn green", width ='3',arrow=tk.LAST)
+
         self.p2_top_choice
         self.p2_bot_choice
         # 3. Label or draw if P1 decides to swithc signals
@@ -236,13 +275,14 @@ class SGE:
         ## Write out text to indicate if this is a successful seperating equlibrium and store in self class
 
 
-    def sep_base(self,  matrix_in, top_signal, bot_signal):
+    def draw_sep_base(self,  matrix_in):
         subroot = tk.Tk()
         subcan = Canvas(subroot, bg='white')
         
         subroot.geometry(str(self.width) + "x" + str(self.height))
-        self.draw_sep_logic(subroot, subcan, matrix_in, top_signal, bot_signal)
+        self.draw_sep_logic(subroot, subcan, matrix_in)
         self.create_spider_grid(subroot, subcan)
+        self.draw_labels(subroot, subcan)
 
     def seperating_eq(self, matrix_in, top_signal, bot_signal):
         """
@@ -349,7 +389,7 @@ class SGE:
 
         print("self.p1_bot_switch: ", self.p1_bot_switch)
 
-        self.sep_base(matrix_in, top_signal, bot_signal)
+        self.draw_sep_base(matrix_in)
         
 
     def enter_saved(self):
