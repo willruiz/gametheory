@@ -110,6 +110,9 @@ class SGE:
         canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, bA, fill="black", width ='4')
         canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, bB, fill="black", width ='4')
 
+        # Grid labels:
+        canvas_in.create_line(self.cen_x, self.top, self.cen_x, self.bot, fill="#bebebe ", width ='1')
+
         ## Experiment:
         
         canvas_in.pack(fill=BOTH, expand=1)
@@ -257,10 +260,14 @@ class SGE:
         ## Draw branching for all 4 indexes
         # if (self.p2_top_choice == 0):
         #     canvas_in.create_line(Btx, Bty, Ctx, Cty, fill="green", width ='3',arrow=tk.LAST)
-        if (self.p2_top_choice == 0):
-            canvas_in.create_line(self.left_mid, self.top_mid-self.mini_offset, self.left_leg, self.top_branch-self.mini_offset, fill="lawn green", width ='3',arrow=tk.LAST)
-        else:
-            canvas_in.create_line(self.left_mid, self.top_mid-self.mini_offset, self.left_leg, self.bot_branch-self.mini_offset, fill="lawn green", width ='3',arrow=tk.LAST)
+        canvas_in.create_line(Ctx, Cty, Ctx+self.entry_offset, Cty+self.offset_leg, fill="lime green", width ='8',arrow=tk.LAST)
+
+        # if (self.p2_top_choice == 0):
+        #     print("checkA")
+        #     canvas_in.create_line(Ctx, Cty, self.left_leg-self.mini_offset, tA-self.mini_offset, fill="lime green", width ='8',arrow=tk.LAST)
+        # else:
+        #     print("checkB")
+        #     canvas_in.create_line(Ctx, Cty, Ctx+self.entry_offset, Cty+self.offset_leg, fill="lime green", width ='8',arrow=tk.LAST)
 
         self.p2_top_choice
         self.p2_bot_choice
