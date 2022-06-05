@@ -11,12 +11,18 @@ WEK_REV = 1
 
 class SGE:
     def __init__(self):
+        ## Dimensions
         self.rows = 4
         self.cols = 2
         self.width = 1200
         self.height = 800
+
+        ## TKinter Classes
         self.root = tk.Tk()
         self.canvas = Canvas(self.root, bg='white')
+
+        
+        ## Base Coordinates
         self.left = self.width * 0.01
         self.right = self.width * 0.99
         self.top = self.height * 0.03
@@ -25,8 +31,13 @@ class SGE:
         self.cen_y_norm = self.height * 0.5
         self.cen_y = (self.top+self.bot) * 0.5 
 
-        self.bot_mid = self.bot - self.height * 0.15
-        self.top_mid = self.top + self.height * 0.15
+        ## Distances
+        self.cf_vert_mid = self.height * 0.25
+        self.cf_horz_mid = self.width * 0.25
+
+
+        self.bot_mid = self.cen_y + self.cf_vert_mid 
+        self.top_mid = self.cen_y - self.cf_vert_mid 
         self.left_mid = self.width * 0.25
         self.right_mid = self.width * 0.75
 
@@ -34,18 +45,27 @@ class SGE:
         self.left_leg = self.width * 0.15
         self.right_leg = self.width * 0.85
 
+        self.tA = self.top_mid-self.offset_leg
+        self.tB = self.top_mid+self.offset_leg
+        self.bA = self.bot_mid-self.offset_leg
+        self.bB = self.bot_mid+self.offset_leg
+
+        ## Offsets
         self.entry_offset = self.width * 0.05
-        self.mini_offset = self.width * 0.015
+        self.text_offset  = self.width * 0.03
+        self.mini_offset  = self.width * 0.015
         self.nature_boxsize = 6
         self.payoff_boxsize = 3
 
         self.dr = self.height * 0.01 # dr = dot radius
 
+        # Data structures
         self.nature_entry = [] # Dimensions [2]
         self.nature_mat = np.zeros((1,2))
         self.matrix = np.zeros((4,2), dtype='i,i')
         self.entry_list = [] # Dimensions [4][2][2]
 
+        # Save files
         self.saved_file = "saved_matrix_sg.npy"
         self.saved_dim = "saved_dim_sg.npy"
         self.prev_file = "prev_matrix_sg.npy" 
@@ -55,6 +75,7 @@ class SGE:
         self.matrix_import = np.zeros((4,2), dtype='i,i')
         self.matrix_import_bool = False
 
+        # Matrix indexing
         self.top_index_offset = 0
         self.bot_index_offset = 2
     
@@ -95,27 +116,54 @@ class SGE:
         canvas_in.create_oval(self.right_mid -self.dr, self.bot_mid -self.dr, self.right_mid +self.dr, self.bot_mid +self.dr, fill='black')
         
         # Spider-Legs - Top
-        tA = self.top_mid-self.offset_leg
-        tB = self.top_mid+self.offset_leg
-        bA = self.bot_mid-self.offset_leg
-        bB = self.bot_mid+self.offset_leg
-        canvas_in.create_line(self.left_mid, self.top_mid, self.left_leg, tA, fill="black", width ='4')
-        canvas_in.create_line(self.left_mid, self.top_mid, self.left_leg, tB, fill="black", width ='4')
-        canvas_in.create_line(self.right_mid, self.top_mid, self.right_leg, tA, fill="black", width ='4')
-        canvas_in.create_line(self.right_mid, self.top_mid, self.right_leg, tB, fill="black", width ='4')
+
+        canvas_in.create_line(self.left_mid, self.top_mid, self.left_leg, self.tA, fill="black", width ='4')
+        canvas_in.create_line(self.left_mid, self.top_mid, self.left_leg, self.tB, fill="black", width ='4')
+        canvas_in.create_line(self.right_mid, self.top_mid, self.right_leg, self.tA, fill="black", width ='4')
+        canvas_in.create_line(self.right_mid, self.top_mid, self.right_leg, self.tB, fill="black", width ='4')
 
         # Spider-Legs - Bot
-        canvas_in.create_line(self.left_mid, self.bot_mid, self.left_leg, bA, fill="black", width ='4')
-        canvas_in.create_line(self.left_mid, self.bot_mid, self.left_leg, bB, fill="black", width ='4')
-        canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, bA, fill="black", width ='4')
-        canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, bB, fill="black", width ='4')
+        canvas_in.create_line(self.left_mid, self.bot_mid, self.left_leg, self.bA, fill="black", width ='4')
+        canvas_in.create_line(self.left_mid, self.bot_mid, self.left_leg, self.bB, fill="black", width ='4')
+        canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, self.bA, fill="black", width ='4')
+        canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, self.bB, fill="black", width ='4')
 
-        # Grid labels:
-        canvas_in.create_line(self.cen_x, self.top, self.cen_x, self.bot, fill="#bebebe ", width ='1')
 
         ## Experiment:
         
         canvas_in.pack(fill=BOTH, expand=1)
+
+    def label_grid(self, root_in, canvas_in):
+        # Grid labels:
+        # Top labels:
+        canvas_in.create_line(self.cen_x, self.top, self.cen_x, self.bot, fill="#bebebe", width ='1')
+        canvas_in.create_line(self.left_mid, self.top, self.left_mid, self.bot, fill="#bebebe", width ='1')
+        canvas_in.create_line(self.left_leg, self.top, self.left_leg, self.bot, fill="#bebebe", width ='1')
+        canvas_in.create_line(self.right_mid, self.top, self.right_mid, self.bot, fill="#bebebe", width ='1')
+        canvas_in.create_line(self.right_leg, self.top, self.right_leg, self.bot, fill="#bebebe", width ='1')
+
+        canvas_in.create_text(self.cen_x, self.top+self.mini_offset, text='CEN_X', fill="#545454", font=('Arial 12'))
+        canvas_in.create_text(self.left_mid, self.top+self.mini_offset, text='LEFT_MID', fill="#545454", font=('Arial 12'))
+        canvas_in.create_text(self.left_leg, self.top+self.mini_offset, text='LEFT_LEG', fill="#545454", font=('Arial 12'))
+        canvas_in.create_text(self.right_mid, self.top+self.mini_offset, text='RIGHT_MID', fill="#545454", font=('Arial 12'))
+        canvas_in.create_text(self.right_leg, self.top+self.mini_offset, text='RIGHT_LEG', fill="#545454", font=('Arial 12'))
+
+        # Left Labels
+        canvas_in.create_line(self.left, self.cen_y, self.right, self.cen_y, fill="#bebebe", width ='1')
+        canvas_in.create_line(self.left, self.top_mid, self.right, self.top_mid, fill="#bebebe", width ='1')
+        canvas_in.create_line(self.left, self.bot_mid, self.right, self.bot_mid, fill="#bebebe", width ='1')
+        canvas_in.create_line(self.left, self.tA, self.right, self.tA, fill="#bebebe", width ='1')
+        canvas_in.create_line(self.left, self.tB, self.right, self.tB, fill="#bebebe", width ='1')
+        canvas_in.create_line(self.left, self.bA, self.right, self.bA, fill="#bebebe", width ='1')
+        canvas_in.create_line(self.left, self.bB, self.right, self.bB, fill="#bebebe", width ='1')
+
+        canvas_in.create_text(self.left+self.text_offset, self.cen_y, text='CEN_Y', fill="#545454", font=('Arial 12'))
+        canvas_in.create_text(self.left+self.text_offset, self.top_mid, text='TOP_MID', fill="#545454", font=('Arial 12'))
+        canvas_in.create_text(self.left+self.text_offset, self.bot_mid, text='BOT_MID', fill="#545454", font=('Arial 12'))
+        canvas_in.create_text(self.left+self.text_offset, self.tA, text='tA', fill="#545454", font=('Arial 12'))
+        canvas_in.create_text(self.left+self.text_offset, self.tB, text='tB', fill="#545454", font=('Arial 12'))
+        canvas_in.create_text(self.left+self.text_offset, self.bA, text='bA', fill="#545454", font=('Arial 12'))
+        canvas_in.create_text(self.left+self.text_offset, self.bB, text='bB', fill="#545454", font=('Arial 12'))
 
     def fill_entries_from_matrix(self, matrix_in):
         for i, i_entry in enumerate(self.entry_list):
@@ -139,11 +187,6 @@ class SGE:
                     matrix_in[i][j][k] = input
 
     def create_entry_boxes(self, root_in, canvas_in):
-        tA = self.top_mid-self.offset_leg
-        tB = self.top_mid+self.offset_leg
-        bA = self.bot_mid-self.offset_leg
-        bB = self.bot_mid+self.offset_leg
-
         # Player entry_list [4][2][2]
         for i in range(4):
             in_tuple = []
@@ -175,13 +218,13 @@ class SGE:
                 x_offset = 0
                 y_offset = 0
                 if (j == 0 and i <= 1):
-                    y_offset = tA
+                    y_offset = self.tA
                 elif (j == 1 and i <= 1):
-                    y_offset = tB
+                    y_offset = self.tB
                 elif (j == 0 and i > 1):
-                    y_offset = bA
+                    y_offset = self.bA
                 else:
-                    y_offset = bB
+                    y_offset = self.bB
                 if (i % 2 == 0):
                     x_offset = self.left_leg-self.entry_offset
                 else:
@@ -198,23 +241,19 @@ class SGE:
     def draw_sep_logic(self, root_in, canvas_in, matrix_in):
         ### Use colored rectangles, solid arrows, and dotted arrows
         # X. Text out payoffs
-        tA = self.top_mid-self.offset_leg
-        tB = self.top_mid+self.offset_leg
-        bA = self.bot_mid-self.offset_leg
-        bB = self.bot_mid+self.offset_leg
 
         for i in range(4): # Corners
             for j in range(2): # up / down
                 x_offset = 0
                 y_offset = 0
                 if (j == 0 and i <= 1):
-                    y_offset = tA
+                    y_offset = self.tA
                 elif (j == 1 and i <= 1):
-                    y_offset = tB
+                    y_offset = self.tB
                 elif (j == 0 and i > 1):
-                    y_offset = bA
+                    y_offset = self.bA
                 else:
-                    y_offset = bB
+                    y_offset = self.bB
                 if (i % 2 == 0):
                     x_offset = self.left_leg-self.entry_offset
                 else:
@@ -290,6 +329,7 @@ class SGE:
         self.draw_sep_logic(subroot, subcan, matrix_in)
         self.create_spider_grid(subroot, subcan)
         self.draw_labels(subroot, subcan)
+        self.label_grid(subroot, subcan)
 
     def seperating_eq(self, matrix_in, top_signal, bot_signal):
         """
@@ -462,6 +502,7 @@ class SGE:
 def main():
     parent = SGE()
     parent.create_spider_grid(parent.root, parent.canvas)
+    parent.label_grid(parent.root, parent.canvas)
     parent.create_entry_boxes(parent.root, parent.canvas)
     parent.gen_entry_buttons(parent.root, parent.canvas)
     parent.draw_labels(parent.root, parent.canvas)
