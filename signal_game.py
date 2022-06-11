@@ -34,7 +34,8 @@ class SGE:
         ## Distances
         self.cf_vert_mid = self.height * 0.25
         self.cf_horz_mid = self.width * 0.25
-        self.cf_leg      = self.width * 0.35
+        self.cf_full_leg   = self.width * 0.35
+        self.cf_branch_leg = self.width * 0.1
 
         self.top_mid = self.cen_y - self.cf_vert_mid
         self.bot_mid = self.cen_y + self.cf_vert_mid 
@@ -42,8 +43,8 @@ class SGE:
         self.right_mid = self.cen_x + self.cf_horz_mid
 
         self.offset_leg = self.height * 0.10
-        self.left_leg = self.cen_x - self.cf_leg
-        self.right_leg = self.cen_x + self.cf_leg
+        self.left_leg = self.cen_x - self.cf_full_leg
+        self.right_leg = self.cen_x + self.cf_full_leg
 
         self.tA = self.top_mid-self.offset_leg
         self.tB = self.top_mid+self.offset_leg
@@ -54,6 +55,7 @@ class SGE:
         self.entry_offset = self.width * 0.05
         self.text_offset  = self.width * 0.03
         self.mini_offset  = self.width * 0.015
+        self.text_height = self.height * 0.05
         self.nature_boxsize = 6
         self.payoff_boxsize = 3
 
@@ -288,8 +290,9 @@ class SGE:
         Cbx = self.left_mid+self.mini_offset + (self.bot_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
         Cby = self.bot_mid-self.mini_offset
         
-        canvas_in.create_line(Abx, Aby, Bbx, Bby, fill="green", width ='3')
-        canvas_in.create_line(Bbx, Bby, Cbx, Cby, fill="green", width ='3',arrow=tk.LAST)
+        canvas_in.create_line(Abx, Aby, Bbx, Bby, fill="lime green", width ='3')
+        canvas_in.create_line(Bbx, Bby, Cbx, Cby, fill="lime green", width ='3',arrow=tk.LAST)
+        
 
 
         # 2. Draw P2 payoffs given signal choices 
@@ -297,9 +300,15 @@ class SGE:
         ## Draw branching for all 4 indexes
         # if (self.p2_top_choice == 0):
         #     canvas_in.create_line(Btx, Bty, Ctx, Cty, fill="green", width ='3',arrow=tk.LAST)
-        Dtx = self.left_mid + (self.top_signal*(2*self.cf_horz_mid))
-        Dty = self.top_mid+self.mini_offset
-        canvas_in.create_line(Dtx, Dty, Ctx+self.entry_offset, Cty+self.offset_leg, fill="lime green", width ='8',arrow=tk.LAST)
+        MO  = self.mini_offset
+        JTS = self.top_signal*2
+        Dtx = self.left_mid + (JTS*self.cf_horz_mid)
+        Dty = self.top_mid
+        Etx = Dtx -self.cf_branch_leg +(JTS*self.cf_branch_leg)
+        Ety = Dty -self.offset_leg + (self.p2_top_choice*(2*self.offset_leg))
+        
+        canvas_in.create_line(Dtx, Dty+MO, Etx , Ety+MO, fill="lime green", width ='8',arrow=tk.LAST)
+        canvas_in.create_rectangle(Etx-MO+JTS*MO, Ety-self.text_height, Etx-2*self.entry_offset+(2*JTS*self.entry_offset) - MO, Ety+self.text_height, outline='red', width = '3')
 
         # if (self.p2_top_choice == 0):
         #     print("checkA")
@@ -330,6 +339,8 @@ class SGE:
         self.create_spider_grid(subroot, subcan)
         self.draw_labels(subroot, subcan)
         self.label_grid(subroot, subcan)
+        quit_btn = tk.Button(subroot, text="Exit", bg = "#FA8072", command = lambda: self.quit_game(subroot))
+        subcan.create_window(self.cen_x, self.bot+80, window=quit_btn)
 
     def seperating_eq(self, matrix_in, top_signal, bot_signal):
         """
@@ -472,12 +483,12 @@ class SGE:
         print("RESET")
         np.save(self.prev_file, self.matrix)
 
-    def quit_game(self):
+    def quit_game(self, root_in):
         self.get_entries_into_matrix(self.matrix)
         print(self.matrix)
         np.save(self.prev_file, self.matrix)
         print("EXIT")
-        self.root.destroy()
+        root_in.destroy()
         
     def gen_entry_buttons(self, root, canvas):
     
@@ -495,7 +506,7 @@ class SGE:
         canvas.create_window(self.cen_x +160, self.bot+50, window=prv2pst_btn)
         reset_btn=tk.Button(root,text = 'Reset', command = lambda: self.reset())
         canvas.create_window(self.cen_x, self.bot+50, window=reset_btn)
-        quit_btn = tk.Button(root, text="Exit", bg = "#FA8072", command = lambda: self.quit_game())
+        quit_btn = tk.Button(root, text="Exit", bg = "#FA8072", command = lambda: self.quit_game(self.root))
         canvas.create_window(self.cen_x, self.bot+80, window=quit_btn)
 
 
