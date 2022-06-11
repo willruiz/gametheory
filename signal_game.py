@@ -34,16 +34,16 @@ class SGE:
         ## Distances
         self.cf_vert_mid = self.height * 0.25
         self.cf_horz_mid = self.width * 0.25
+        self.cf_leg      = self.width * 0.35
 
-
+        self.top_mid = self.cen_y - self.cf_vert_mid
         self.bot_mid = self.cen_y + self.cf_vert_mid 
-        self.top_mid = self.cen_y - self.cf_vert_mid 
-        self.left_mid = self.width * 0.25
-        self.right_mid = self.width * 0.75
+        self.left_mid = self.cen_x - self.cf_horz_mid  #self.width * 0.25
+        self.right_mid = self.cen_x + self.cf_horz_mid
 
         self.offset_leg = self.height * 0.10
-        self.left_leg = self.width * 0.15
-        self.right_leg = self.width * 0.85
+        self.left_leg = self.cen_x - self.cf_leg
+        self.right_leg = self.cen_x + self.cf_leg
 
         self.tA = self.top_mid-self.offset_leg
         self.tB = self.top_mid+self.offset_leg
@@ -127,8 +127,6 @@ class SGE:
         canvas_in.create_line(self.left_mid, self.bot_mid, self.left_leg, self.bB, fill="black", width ='4')
         canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, self.bA, fill="black", width ='4')
         canvas_in.create_line(self.right_mid, self.bot_mid, self.right_leg, self.bB, fill="black", width ='4')
-
-
         ## Experiment:
         
         canvas_in.pack(fill=BOTH, expand=1)
@@ -276,7 +274,7 @@ class SGE:
         Aty = self.cen_y-self.mini_offset
         Btx = self.cen_x-self.mini_offset + (self.top_signal*2*self.mini_offset)
         Bty = self.top_mid+self.mini_offset
-        Ctx = self.left_mid+self.mini_offset + (self.top_signal*((2*self.width * 0.25)-(2*self.mini_offset)))
+        Ctx = self.left_mid+self.mini_offset + (self.top_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
         Cty = self.top_mid+self.mini_offset
         
         canvas_in.create_line(Atx, Aty, Btx, Bty, fill="green", width ='3')
@@ -287,7 +285,7 @@ class SGE:
         Aby = self.cen_y+self.mini_offset
         Bbx = self.cen_x-self.mini_offset + (self.bot_signal*2*self.mini_offset)
         Bby = self.bot_mid-self.mini_offset
-        Cbx = self.left_mid+self.mini_offset + (self.bot_signal*((2*self.width * 0.25)-(2*self.mini_offset)))
+        Cbx = self.left_mid+self.mini_offset + (self.bot_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
         Cby = self.bot_mid-self.mini_offset
         
         canvas_in.create_line(Abx, Aby, Bbx, Bby, fill="green", width ='3')
@@ -299,7 +297,9 @@ class SGE:
         ## Draw branching for all 4 indexes
         # if (self.p2_top_choice == 0):
         #     canvas_in.create_line(Btx, Bty, Ctx, Cty, fill="green", width ='3',arrow=tk.LAST)
-        canvas_in.create_line(Ctx, Cty, Ctx+self.entry_offset, Cty+self.offset_leg, fill="lime green", width ='8',arrow=tk.LAST)
+        Dtx = self.left_mid + (self.top_signal*(2*self.cf_horz_mid))
+        Dty = self.top_mid+self.mini_offset
+        canvas_in.create_line(Dtx, Dty, Ctx+self.entry_offset, Cty+self.offset_leg, fill="lime green", width ='8',arrow=tk.LAST)
 
         # if (self.p2_top_choice == 0):
         #     print("checkA")
