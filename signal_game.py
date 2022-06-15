@@ -279,8 +279,8 @@ class SGE:
         Ctx = self.left_mid+self.mini_offset + (self.top_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
         Cty = self.top_mid+self.mini_offset
         
-        canvas_in.create_line(Atx, Aty, Btx, Bty, fill="green", width ='3')
-        canvas_in.create_line(Btx, Bty, Ctx, Cty, fill="green", width ='3',arrow=tk.LAST)
+        canvas_in.create_line(Atx, Aty, Btx, Bty, fill="lime green", width ='3')
+        canvas_in.create_line(Btx, Bty, Ctx, Cty, fill="lime green", width ='3',arrow=tk.LAST)
 
         # Bot
         Abx = self.cen_x-self.mini_offset + (self.bot_signal*2*self.mini_offset)
@@ -307,8 +307,9 @@ class SGE:
         Etx = Dtx -self.cf_branch_leg +(JTS*self.cf_branch_leg)
         Ety = Dty -self.offset_leg + (self.p2_top_choice*(2*self.offset_leg))
         
-        canvas_in.create_line(Dtx, Dty+MO, Etx , Ety+MO, fill="lime green", width ='8',arrow=tk.LAST)
-        canvas_in.create_rectangle(Etx-MO+JTS*MO, Ety-self.text_height, Etx-2*self.entry_offset+(2*JTS*self.entry_offset) - MO, Ety+self.text_height, outline='red', width = '3')
+        canvas_in.create_line(Dtx, Dty+MO, Etx , Ety+MO, fill="##ff5fff", width ='8',arrow=tk.LAST)
+        canvas_in.create_rectangle(Etx-MO+JTS*MO, Ety-self.text_height, 
+            Etx-2*self.entry_offset+(2*JTS*self.entry_offset) - MO, Ety+self.text_height, outline='red', width = '3')
 
         # if (self.p2_top_choice == 0):
         #     print("checkA")
