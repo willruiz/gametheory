@@ -307,7 +307,7 @@ class SGE:
         Etx = Dtx -self.cf_branch_leg +(JTS*self.cf_branch_leg)
         Ety = Dty -self.offset_leg + (self.p2_top_choice*(2*self.offset_leg))
         
-        canvas_in.create_line(Dtx, Dty+MO, Etx , Ety+MO, fill="##ff5fff", width ='8',arrow=tk.LAST)
+        canvas_in.create_line(Dtx, Dty+MO, Etx , Ety+MO, fill="#ff5fff", width ='8',arrow=tk.LAST)
         canvas_in.create_rectangle(Etx-MO+JTS*MO, Ety-self.text_height, 
             Etx-2*self.entry_offset+(2*JTS*self.entry_offset) - MO, Ety+self.text_height, outline='red', width = '3')
 
