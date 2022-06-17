@@ -20,8 +20,6 @@ class SGE:
         ## TKinter Classes
         self.root = tk.Tk()
         self.canvas = Canvas(self.root, bg='white')
-
-        
         ## Base Coordinates
         self.left = self.width * 0.01
         self.right = self.width * 0.99
@@ -314,6 +312,18 @@ class SGE:
             (Etx-2*(EO-MO/2))+TSJ*(2*(EO-MO/2)), Ety+self.text_height, 
             outline='red', width = '3')
 
+        ## TOP-ALT
+        TAP2 = self.p2_top_alt
+        Ftx = Dtx
+        Fty = self.bot_mid # want Bot
+        Gtx = Etx
+        Gty = Fty -self.offset_leg + (self.p2_top_choice*(2*self.offset_leg))
+        canvas_in.create_line(Ftx, Fty-MO+TJP2*MO, Gtx , Gty-MO+TJP2*MO, fill="#fdddff", width ='5',arrow=tk.LAST)
+        canvas_in.create_rectangle(
+            (Gtx-MO)+TSJ*MO, Gty-self.text_height, 
+            (Gtx-2*(EO-MO/2))+TSJ*(2*(EO-MO/2)), Gty+self.text_height, 
+            outline='#ffdddd', width = '2')
+
         ## BOT MAGENTA
         BSJ = self.bot_signal*2     # Bot signal jump
         BJP2 = self.p2_bot_choice*2   # P2 Bot Jump
@@ -329,8 +339,16 @@ class SGE:
             (Ebx-2*(EO-MO/2))+BSJ*(2*(EO-MO/2)), Eby+self.text_height, 
             outline='red', width = '3')
 
-        self.p2_top_choice
-        self.p2_bot_choice
+        ## BOT-ALT
+        Fbx = Dbx
+        Fby = self.top_mid # want Top
+        Gbx = Ebx
+        Gby = Fby -self.offset_leg + (self.p2_bot_choice*(2*self.offset_leg))
+        canvas_in.create_line(Fbx, Fby-MO+TJP2*MO, Gbx , Gby-MO+TJP2*MO, fill="#fdddff", width ='5',arrow=tk.LAST)
+        canvas_in.create_rectangle(
+            (Gbx-MO)+TSJ*MO, Gby-self.text_height, 
+            (Gbx-2*(EO-MO/2))+TSJ*(2*(EO-MO/2)), Gby+self.text_height, 
+            outline='#ffdddd', width = '2')
         # 3. Label or draw if P1 decides to swithc signals
         # (Dotted rectangles) and (highlight rectangles)
         ## Use text to indeicate no switch
@@ -340,7 +358,6 @@ class SGE:
         self.p1_bot_switch
 
         ## Write out text to indicate if this is a successful seperating equlibrium and store in self class
-
 
     def draw_sep_base(self,  matrix_in):
         subroot = tk.Tk()
@@ -387,13 +404,13 @@ class SGE:
         self.get_entries_into_matrix(matrix_in)
         
         self.p2_top_choice = -1
-        p2_top_alt = -1
+        self.p2_top_alt = -1
         if (matrix_in[self.top_branch][0][p2_index] >= matrix_in[self.top_branch][1][p2_index]):
             self.p2_top_choice = 0
-            p2_top_alt = 1
+            self.p2_top_alt = 1
         elif (matrix_in[self.top_branch][0][p2_index] < matrix_in[self.top_branch][1][p2_index]):
             self.p2_top_choice = 1
-            p2_top_alt = 0
+            self.p2_top_alt = 0
         # else: # equal 
         #     self.p2_top_choice = 0
 
@@ -408,14 +425,14 @@ class SGE:
         # 3. Player 2 Finds maximization matrix[2][0] vs matrix[2][1]
         
         self.p2_bot_choice = -1
-        p2_bot_alt = -1
+        self.p2_bot_alt = -1
         if (matrix_in[self.bot_branch][0][p2_index] >= matrix_in[self.bot_branch][1][p2_index]):
             self.p2_bot_choice = 0
-            p2_bot_alt = 1
+            self.p2_bot_alt = 1
             # IF EQUAL, arbitrarily take index zero
         elif (matrix_in[self.bot_branch][0][p2_index] < matrix_in[self.bot_branch][1][p2_index]):
             self.p2_bot_choice = 1
-            p2_bot_alt = 0
+            self.p2_bot_alt = 0
         # else: # equal 
         #     self.p2_top_choice = 0
 
@@ -430,10 +447,7 @@ class SGE:
         # Take the P2's OTHER choice to opposite signal to see if P1 changing current top signal is profitable 
         top_branch_val = matrix_in[self.top_branch][self.p2_top_choice][p1_index]
         top_alt_val = matrix_in[self.top_alt][self.p2_bot_choice][p1_index]
-        # print("checkA")
-        # print("top_alt:",top_alt)
-        # print("top_branch_val:", top_branch_val)
-        # print("top_alt_val:", top_alt_val)
+
         if (top_branch_val > top_alt_val):
             self.p1_top_switch = False
         elif (top_branch_val < top_alt_val):
@@ -445,11 +459,7 @@ class SGE:
         self.p1_bot_switch = False
         bot_branch_val = matrix_in[self.bot_branch][self.p2_bot_choice][p1_index]
         bot_alt_val = matrix_in[self.bot_alt][self.p2_top_choice][p1_index]
-        # print("checkA")
-        # print("bot_alt:",top_alt)
-        # print("bot_branch_val:", bot_branch_val)
-        # print("bot_alt_val:", bot_alt_val)
-        # Take the P2's OTHER choice to opposite signal to see if P1 changing current top signal is profitable 
+
         if (bot_branch_val > bot_alt_val):
             self.p1_bot_switch = False
         elif (bot_branch_val < bot_alt_val):
@@ -490,7 +500,6 @@ class SGE:
         np.save(self.prev_file, self.matrix)
         print("self.p2_bot_choice:",self.p2_bot_choice)
         print("self.top_branch:",self.top_branch)
-
 
     def reset(self):
         for i, i_entry in enumerate(self.entry_list):
