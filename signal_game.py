@@ -55,7 +55,7 @@ class SGE:
         self.entry_offset = self.width * 0.05
         self.text_offset  = self.width * 0.03
         self.mini_offset  = self.width * 0.015
-        self.text_height = self.height * 0.05
+        self.text_height = self.height * 0.04
         self.nature_boxsize = 6
         self.payoff_boxsize = 3
 
@@ -241,6 +241,8 @@ class SGE:
     def draw_sep_logic(self, root_in, canvas_in, matrix_in):
         ### Use colored rectangles, solid arrows, and dotted arrows
         # X. Text out payoffs
+        MO  = self.mini_offset      # mini_offset
+        EO  = self.entry_offset
 
         for i in range(4): # Corners
             for j in range(2): # up / down
@@ -272,51 +274,60 @@ class SGE:
         #- Arrows
         # Top
         print("self.bot_branch:", self.bot_branch)
-        Atx = self.cen_x-self.mini_offset + (self.top_signal*2*self.mini_offset)
-        Aty = self.cen_y-self.mini_offset
-        Btx = self.cen_x-self.mini_offset + (self.top_signal*2*self.mini_offset)
-        Bty = self.top_mid+self.mini_offset
-        Ctx = self.left_mid+self.mini_offset + (self.top_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
-        Cty = self.top_mid+self.mini_offset
+        
+        Atx = self.cen_x-MO + (self.top_signal*2*MO)
+        Aty = self.cen_y-MO # Green branch center point
+        Btx = self.cen_x-MO + (self.top_signal*2*MO)
+        Bty = self.top_mid+MO # Green branch center cen vert point
+        Ctx = self.left_mid+MO + (self.top_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
+        Cty = self.top_mid+MO # Green branch center mid horz point
         
         canvas_in.create_line(Atx, Aty, Btx, Bty, fill="lime green", width ='3')
         canvas_in.create_line(Btx, Bty, Ctx, Cty, fill="lime green", width ='3',arrow=tk.LAST)
 
         # Bot
-        Abx = self.cen_x-self.mini_offset + (self.bot_signal*2*self.mini_offset)
-        Aby = self.cen_y+self.mini_offset
-        Bbx = self.cen_x-self.mini_offset + (self.bot_signal*2*self.mini_offset)
-        Bby = self.bot_mid-self.mini_offset
-        Cbx = self.left_mid+self.mini_offset + (self.bot_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
-        Cby = self.bot_mid-self.mini_offset
+        Abx = self.cen_x-MO + (self.bot_signal*2*MO)
+        Aby = self.cen_y+MO
+        Bbx = self.cen_x-MO + (self.bot_signal*2*MO)
+        Bby = self.bot_mid-MO
+        Cbx = self.left_mid+MO + (self.bot_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
+        Cby = self.bot_mid-MO
         
         canvas_in.create_line(Abx, Aby, Bbx, Bby, fill="lime green", width ='3')
         canvas_in.create_line(Bbx, Bby, Cbx, Cby, fill="lime green", width ='3',arrow=tk.LAST)
-        
-
 
         # 2. Draw P2 payoffs given signal choices 
         # (solid colored arrows) and (highlight rectangles)
-        ## Draw branching for all 4 indexes
-        # if (self.p2_top_choice == 0):
-        #     canvas_in.create_line(Btx, Bty, Ctx, Cty, fill="green", width ='3',arrow=tk.LAST)
-        MO  = self.mini_offset
-        JTS = self.top_signal*2
-        Dtx = self.left_mid + (JTS*self.cf_horz_mid)
+
+        ## TOP MAGENTA
+        TSJ = self.top_signal*2     # Top signal jump
+        TJP2 = self.p2_top_choice*2   # P2 Top Jump
+        
+        Dtx = self.left_mid + (TSJ*self.cf_horz_mid) # Magenta same with Ctx without mini_offset
         Dty = self.top_mid
-        Etx = Dtx -self.cf_branch_leg +(JTS*self.cf_branch_leg)
+        Etx = Dtx -self.cf_branch_leg +(TSJ*self.cf_branch_leg) # Magenta Leg point
         Ety = Dty -self.offset_leg + (self.p2_top_choice*(2*self.offset_leg))
         
-        canvas_in.create_line(Dtx, Dty+MO, Etx , Ety+MO, fill="#ff5fff", width ='8',arrow=tk.LAST)
-        canvas_in.create_rectangle(Etx-MO+JTS*MO, Ety-self.text_height, 
-            Etx-2*self.entry_offset+(2*JTS*self.entry_offset) - MO, Ety+self.text_height, outline='red', width = '3')
+        canvas_in.create_line(Dtx, Dty-MO+TJP2*MO, Etx , Ety-MO+TJP2*MO, fill="#ff5fff", width ='8',arrow=tk.LAST)
+        canvas_in.create_rectangle(
+            (Etx-MO)+TSJ*MO, Ety-self.text_height, 
+            (Etx-2*(EO-MO/2))+TSJ*(2*(EO-MO/2)), Ety+self.text_height, 
+            outline='red', width = '3')
 
-        # if (self.p2_top_choice == 0):
-        #     print("checkA")
-        #     canvas_in.create_line(Ctx, Cty, self.left_leg-self.mini_offset, tA-self.mini_offset, fill="lime green", width ='8',arrow=tk.LAST)
-        # else:
-        #     print("checkB")
-        #     canvas_in.create_line(Ctx, Cty, Ctx+self.entry_offset, Cty+self.offset_leg, fill="lime green", width ='8',arrow=tk.LAST)
+        ## BOT MAGENTA
+        BSJ = self.bot_signal*2     # Bot signal jump
+        BJP2 = self.p2_bot_choice*2   # P2 Bot Jump
+        # Magenta same with Ctx without mini_offset
+        Dbx = self.left_mid + (BSJ*self.cf_horz_mid)
+        Dby = self.bot_mid
+        Ebx = Dbx -self.cf_branch_leg +(BSJ*self.cf_branch_leg)
+        Eby = Dby -self.offset_leg + (self.p2_bot_choice*(2*self.offset_leg))
+
+        canvas_in.create_line(Dbx, Dby-MO+BJP2*MO, Ebx , Eby-MO+BJP2*MO, fill="#ff5fff", width ='8',arrow=tk.LAST)
+        canvas_in.create_rectangle(
+            (Ebx-MO)+BSJ*MO, Eby-self.text_height, 
+            (Ebx-2*(EO-MO/2))+BSJ*(2*(EO-MO/2)), Eby+self.text_height, 
+            outline='red', width = '3')
 
         self.p2_top_choice
         self.p2_bot_choice
@@ -368,8 +379,8 @@ class SGE:
         self.bot_branch = self.bot_index_offset + bot_signal
         print("top_branch:", self.top_branch)
         print("bot_branch:", self.bot_branch)        
-        top_alt = self.top_index_offset + top_sig_alt
-        bot_alt = self.bot_index_offset + bot_sig_alt
+        self.top_alt = self.top_index_offset + top_sig_alt
+        self.bot_alt = self.bot_index_offset + bot_sig_alt
         
         p1_index = 0
         p2_index = 1
@@ -418,7 +429,7 @@ class SGE:
 
         # Take the P2's OTHER choice to opposite signal to see if P1 changing current top signal is profitable 
         top_branch_val = matrix_in[self.top_branch][self.p2_top_choice][p1_index]
-        top_alt_val = matrix_in[top_alt][self.p2_bot_choice][p1_index]
+        top_alt_val = matrix_in[self.top_alt][self.p2_bot_choice][p1_index]
         # print("checkA")
         # print("top_alt:",top_alt)
         # print("top_branch_val:", top_branch_val)
@@ -433,7 +444,7 @@ class SGE:
         # 4b. BOTTOM: Player 1 then analyses BOTTOM if this is profitable to stay with signal
         self.p1_bot_switch = False
         bot_branch_val = matrix_in[self.bot_branch][self.p2_bot_choice][p1_index]
-        bot_alt_val = matrix_in[bot_alt][self.p2_top_choice][p1_index]
+        bot_alt_val = matrix_in[self.bot_alt][self.p2_top_choice][p1_index]
         # print("checkA")
         # print("bot_alt:",top_alt)
         # print("bot_branch_val:", bot_branch_val)
