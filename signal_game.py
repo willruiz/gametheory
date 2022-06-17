@@ -448,7 +448,14 @@ class SGE:
         print("self.p1_bot_switch: ", self.p1_bot_switch)
 
         self.draw_sep_base(matrix_in)
-        
+    
+    ## Incomplete 
+    def pooling_eq(self, matrix_in, top_signal, bot_signal):
+        top_sig_alt = 0 if (top_signal == 1) else 1
+        bot_sig_alt = 0 if (bot_signal == 1) else 1
+
+        self.top_signal = top_signal
+        self.bot_signal = bot_signal
 
     def enter_saved(self):
         entry = np.load(self.saved_file)
