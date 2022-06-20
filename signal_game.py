@@ -15,7 +15,7 @@ class SGE:
         self.rows = 4
         self.cols = 2
         self.width = 1200
-        self.height = 800
+        self.height = 900
 
         ## TKinter Classes
         self.root = tk.Tk()
@@ -64,6 +64,7 @@ class SGE:
         self.nature_mat = np.zeros((1,2))
         self.matrix = np.zeros((4,2), dtype='i,i')
         self.entry_list = [] # Dimensions [4][2][2]
+        self.p1_payoff_deviation = np.zeros((2,2))
 
         # Save files
         self.saved_file = "saved_matrix_sg.npy"
@@ -91,6 +92,24 @@ class SGE:
         canvas_in.create_text((self.cen_x + self.left_mid)/2, self.bot_mid+self.mini_offset, text='Hide', fill="black", font=('Arial 15 bold'))
         canvas_in.create_text((self.cen_x + self.right_mid)/2, self.bot_mid+self.mini_offset, text='Reveal', fill="black", font=('Arial 15 bold'))
 
+        canvas_in.create_text((self.left_leg+self.left_mid)/2, self.tA, text='Fight', fill='green', font=('Arial 12 bold'))
+        canvas_in.create_text((self.left_leg+self.left_mid)/2, self.tB, text='Retreat', fill='green', font=('Arial 12 bold'))
+        canvas_in.create_text((self.right_leg+self.right_mid)/2, self.tA, text='Fight', fill='green', font=('Arial 12 bold'))
+        canvas_in.create_text((self.right_leg+self.right_mid)/2, self.tB, text='Retreat', fill='green', font=('Arial 12 bold'))
+        
+        canvas_in.create_text((self.left_leg+self.left_mid)/2, self.bA, text='Fight', fill='green', font=('Arial 12 bold'))
+        canvas_in.create_text((self.left_leg+self.left_mid)/2, self.bB, text='Retreat', fill='green', font=('Arial 12 bold'))
+        canvas_in.create_text((self.right_leg+self.right_mid)/2, self.bA, text='Fight', fill='green', font=('Arial 12 bold'))
+        canvas_in.create_text((self.right_leg+self.right_mid)/2, self.bB, text='Retreat', fill='green', font=('Arial 12 bold'))
+
+        canvas_in.create_text((self.cen_x), (self.tA+self.top_mid)/2, text='P1', fill='#960091', font=('Arial 12 bold'))
+        canvas_in.create_text((self.cen_x), (self.bB+self.bot_mid)/2, text='P1', fill='#960091', font=('Arial 12 bold'))
+
+        canvas_in.create_text((self.left_mid), (self.tA+self.top_mid)/2, text='P2', fill='teal', font=('Arial 12 bold'))
+        canvas_in.create_text((self.right_mid), (self.tA+self.top_mid)/2, text='P2', fill='teal', font=('Arial 12 bold'))
+        canvas_in.create_text((self.left_mid), (self.bB+self.bot_mid)/2, text='P2', fill='teal', font=('Arial 12 bold'))
+        canvas_in.create_text((self.right_mid), (self.bB+self.bot_mid)/2, text='P2', fill='teal', font=('Arial 12 bold'))
+
     def create_spider_grid(self, root_in, canvas_in):
         root_in.geometry(str(self.width) + "x" + str(self.height))
         ## Boundaries
@@ -116,7 +135,6 @@ class SGE:
         canvas_in.create_oval(self.right_mid -self.dr, self.bot_mid -self.dr, self.right_mid +self.dr, self.bot_mid +self.dr, fill='black')
         
         # Spider-Legs - Top
-
         canvas_in.create_line(self.left_mid, self.top_mid, self.left_leg, self.tA, fill="black", width ='4')
         canvas_in.create_line(self.left_mid, self.top_mid, self.left_leg, self.tB, fill="black", width ='4')
         canvas_in.create_line(self.right_mid, self.top_mid, self.right_leg, self.tA, fill="black", width ='4')
@@ -243,14 +261,18 @@ class SGE:
         EO  = self.entry_offset
 
         for i in range(4): # Corners
+            # i = 0,1 -> Top
+            # i = 2,3 -> Bot
+            bool_top = i <= 1
+            bool_bot = i > 1
             for j in range(2): # up / down
                 x_offset = 0
                 y_offset = 0
-                if (j == 0 and i <= 1):
+                if (j == 0 and bool_top):
                     y_offset = self.tA
-                elif (j == 1 and i <= 1):
+                elif (j == 1 and bool_top):
                     y_offset = self.tB
-                elif (j == 0 and i > 1):
+                elif (j == 0 and bool_bot):
                     y_offset = self.bA
                 else:
                     y_offset = self.bB
@@ -266,7 +288,18 @@ class SGE:
                         xtext = x_offset -self.mini_offset
                     else:
                         xtext = x_offset +self.mini_offset
-                    canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill="black", font=('Arial 15 bold'))
+
+                    # Color in the payoff of p1 to compare if switching 
+                    if(k == 0 and 
+                      ((bool_top and j == self.p2_top_choice and self.top_signal == i) 
+                    or (bool_bot and j == self.p2_bot_choice and self.bot_signal == i-2)
+                    or (bool_top and j == self.p2_top_alt    and self.top_alt    == i)
+                    or (bool_bot and j == self.p2_bot_alt    and self.bot_alt    == i-2)
+                    )):
+                        canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill="#db3052", font=('Arial 15 bold'))
+                    else:
+                        canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill="black", font=('Arial 15 bold'))
+                    
 
         # 1. Draw branch re-sets (solid curved arrows)- signals
         #- Arrows
@@ -320,8 +353,8 @@ class SGE:
         Gty = Fty -self.offset_leg + (self.p2_top_choice*(2*self.offset_leg))
         canvas_in.create_line(Ftx, Fty-MO+TJP2*MO, Gtx , Gty-MO+TJP2*MO, fill="#fdddff", width ='5',arrow=tk.LAST)
         canvas_in.create_rectangle(
-            (Gtx-MO)+TSJ*MO, Gty-self.text_height, 
-            (Gtx-2*(EO-MO/2))+TSJ*(2*(EO-MO/2)), Gty+self.text_height, 
+            (Gtx-MO)+TSJ*MO,                        Gty-self.text_height, 
+            (Gtx-2*(EO-MO/2))+TSJ*(2*(EO-MO/2)),    Gty+self.text_height, 
             outline='#ffdddd', width = '2')
 
         ## BOT MAGENTA
@@ -344,10 +377,10 @@ class SGE:
         Fby = self.top_mid # want Top
         Gbx = Ebx
         Gby = Fby -self.offset_leg + (self.p2_bot_choice*(2*self.offset_leg))
-        canvas_in.create_line(Fbx, Fby-MO+TJP2*MO, Gbx , Gby-MO+TJP2*MO, fill="#fdddff", width ='5',arrow=tk.LAST)
+        canvas_in.create_line(Fbx, Fby-MO+BJP2*MO, Gbx , Gby-MO+BJP2*MO, fill="#fdddff", width ='5',arrow=tk.LAST)
         canvas_in.create_rectangle(
-            (Gbx-MO)+TSJ*MO, Gby-self.text_height, 
-            (Gbx-2*(EO-MO/2))+TSJ*(2*(EO-MO/2)), Gby+self.text_height, 
+            (Gbx-MO)+BSJ*MO, Gby-self.text_height, 
+            (Gbx-2*(EO-MO/2))+BSJ*(2*(EO-MO/2)), Gby+self.text_height, 
             outline='#ffdddd', width = '2')
         # 3. Label or draw if P1 decides to swithc signals
         # (Dotted rectangles) and (highlight rectangles)
@@ -396,8 +429,8 @@ class SGE:
         self.bot_branch = self.bot_index_offset + bot_signal
         print("top_branch:", self.top_branch)
         print("bot_branch:", self.bot_branch)        
-        self.top_alt = self.top_index_offset + top_sig_alt
-        self.bot_alt = self.bot_index_offset + bot_sig_alt
+        self.top_alt = top_sig_alt
+        self.bot_alt = bot_sig_alt
         
         p1_index = 0
         p2_index = 1
@@ -446,7 +479,7 @@ class SGE:
 
         # Take the P2's OTHER choice to opposite signal to see if P1 changing current top signal is profitable 
         top_branch_val = matrix_in[self.top_branch][self.p2_top_choice][p1_index]
-        top_alt_val = matrix_in[self.top_alt][self.p2_bot_choice][p1_index]
+        top_alt_val = matrix_in[self.top_alt + self.top_index_offset][self.p2_bot_choice][p1_index]
 
         if (top_branch_val > top_alt_val):
             self.p1_top_switch = False
@@ -458,7 +491,7 @@ class SGE:
         # 4b. BOTTOM: Player 1 then analyses BOTTOM if this is profitable to stay with signal
         self.p1_bot_switch = False
         bot_branch_val = matrix_in[self.bot_branch][self.p2_bot_choice][p1_index]
-        bot_alt_val = matrix_in[self.bot_alt][self.p2_top_choice][p1_index]
+        bot_alt_val = matrix_in[self.bot_alt + self.bot_index_offset][self.p2_top_choice][p1_index]
 
         if (bot_branch_val > bot_alt_val):
             self.p1_bot_switch = False
@@ -473,6 +506,11 @@ class SGE:
     
     ## Incomplete 
     def pooling_eq(self, matrix_in, top_signal, bot_signal):
+        # 1. Choose case - (need input p and q (signal probablilties determined by nature))
+        # 2. Find U_p2 of each action of player 2 (F or R) (Fight or Retreat)
+        # 3. Check for p1 deviation > if deviate, not pooling [DONE]
+        # 4. If no deviation, find oppoisite signal probability
+        # 5. Find the deviation point for oppositie signal probability
         top_sig_alt = 0 if (top_signal == 1) else 1
         bot_sig_alt = 0 if (bot_signal == 1) else 1
 
