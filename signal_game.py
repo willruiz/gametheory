@@ -3,8 +3,9 @@ import tkinter as tk
 import math
 import numpy as np
 import sys
-import gui_sigconf
-import np_sigconf
+import sig_gui
+import sig_np
+import sig_btn
 
 STR_HID = 0
 STR_REV = 1
@@ -226,10 +227,10 @@ class SGE:
         
         subroot.geometry(str(self.width) + "x" + str(self.height))
         self.draw_sep_logic(subroot, subcan, matrix_in)
-        gui_sigconf.create_spider_grid(self, subroot, subcan)
-        gui_sigconf.draw_labels(self, subroot, subcan)
-        gui_sigconf.label_grid(self, subroot, subcan)
-        quit_btn = tk.Button(subroot, text="Exit", bg = "#FA8072", command = lambda: self.quit_game(subroot))
+        sig_gui.create_spider_grid(self, subroot, subcan)
+        sig_gui.draw_labels(self, subroot, subcan)
+        sig_gui.label_grid(self, subroot, subcan)
+        quit_btn = tk.Button(subroot, text="Exit", bg = "#FA8072", command = lambda: sig_btn.quit_game(self, subroot))
         subcan.create_window(self.cen_x, self.bot+80, window=quit_btn)
 
     def seperating_eq(self, matrix_in, top_signal, bot_signal):
@@ -262,7 +263,7 @@ class SGE:
         
         p1_index = 0
         p2_index = 1
-        np_sigconf.get_entries_into_matrix(self, matrix_in)
+        sig_np.get_entries_into_matrix(self, matrix_in)
         
         self.p2_top_choice = -1
         self.p2_top_alt = -1
@@ -343,54 +344,15 @@ class SGE:
         bot_sig_alt = 0 if (bot_signal == 1) else 1
 
         self.top_signal = top_signal
-        self.bot_signal = bot_signal
-
-    def enter_saved(self):
-        entry = np.load(self.saved_file)
-        if ((entry.shape[0] == self.rows) and (entry.shape[1] == self.cols)):
-            self.matrix = entry
-            np_sigconf.fill_entries_from_matrix(self, entry)
-            print("LOADED")
-        else:
-            print("Saved dimensions do not match - Cannot load")
-
-    def transfer_entries_to_saved(self):
-        np_sigconf.get_entries_into_matrix(self, self.matrix)
-        np.save(self.saved_file, self.matrix)
-        print("SAVED")
-    
-    def submit(self):
-        np_sigconf.get_entries_into_matrix(self, self.matrix)
-        print(self.matrix)
-        print("SUBMIT")
-        np.save(self.prev_file, self.matrix)
-        print("self.p2_bot_choice:",self.p2_bot_choice)
-        print("self.top_branch:",self.top_branch)
-
-    def reset(self):
-        for i, i_entry in enumerate(self.entry_list):
-            for j, j_entry in enumerate(i_entry):
-                for k, k_entry in enumerate(j_entry): # iterate through tuple
-                    k_entry.set("")
-                    self.matrix[i][j][k] = 0
-        self.nature_entry = [0,0]
-        print("RESET")
-        np.save(self.prev_file, self.matrix)
-
-    def quit_game(self, root_in):
-        np_sigconf.get_entries_into_matrix(self, self.matrix)
-        print(self.matrix)
-        np.save(self.prev_file, self.matrix)
-        print("EXIT")
-        root_in.destroy()
+        self.bot_signal = bot_signal   
 
 def main():
     parent = SGE()
-    gui_sigconf.create_spider_grid(parent, parent.root, parent.canvas)
-    gui_sigconf.label_grid(parent, parent.root, parent.canvas)
-    gui_sigconf.create_entry_boxes(parent, parent.root, parent.canvas)
-    gui_sigconf.gen_entry_buttons(parent, parent.root, parent.canvas)
-    gui_sigconf.draw_labels(parent, parent.root, parent.canvas)
+    sig_gui.create_spider_grid(parent, parent.root, parent.canvas)
+    sig_gui.label_grid(parent, parent.root, parent.canvas)
+    sig_gui.create_entry_boxes(parent, parent.root, parent.canvas)
+    sig_gui.gen_entry_buttons(parent, parent.root, parent.canvas)
+    sig_gui.draw_labels(parent, parent.root, parent.canvas)
     parent.root.mainloop()
 
 if __name__ == '__main__':
