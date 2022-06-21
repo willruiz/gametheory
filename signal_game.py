@@ -269,28 +269,25 @@ class SGE:
                     canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill="black", font=('Arial 15 bold'))
 
         # 1. Draw branch re-sets (solid curved arrows)- signals
-        #- Arrows
         # Top
         print("self.bot_branch:", self.bot_branch)
         
-        Atx = self.cen_x-MO + (self.top_signal*2*MO)
-        Aty = self.cen_y-MO # Green branch center point
-        Btx = self.cen_x-MO + (self.top_signal*2*MO)
-        Bty = self.top_mid+MO # Green branch center cen vert point
-        Ctx = self.left_mid+MO + (self.top_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
-        Cty = self.top_mid+MO # Green branch center mid horz point
-        
+        Atx = self.cen_x    - MO + (self.top_signal*2*MO)
+        Aty = self.cen_y    - MO # Green branch center point
+        Btx = self.cen_x    - MO + (self.top_signal*2*MO)
+        Bty = self.top_mid  + MO # Green branch center cen vert point
+        Ctx = self.left_mid + MO + (self.top_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
+        Cty = self.top_mid  + MO # Green branch center mid horz point
         canvas_in.create_line(Atx, Aty, Btx, Bty, fill="lime green", width ='3')
         canvas_in.create_line(Btx, Bty, Ctx, Cty, fill="lime green", width ='3',arrow=tk.LAST)
 
         # Bot
-        Abx = self.cen_x-MO + (self.bot_signal*2*MO)
-        Aby = self.cen_y+MO
-        Bbx = self.cen_x-MO + (self.bot_signal*2*MO)
-        Bby = self.bot_mid-MO
-        Cbx = self.left_mid+MO + (self.bot_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
-        Cby = self.bot_mid-MO
-        
+        Abx = self.cen_x    - MO + (self.bot_signal*2*MO)
+        Aby = self.cen_y    + MO
+        Bbx = self.cen_x    - MO + (self.bot_signal*2*MO)
+        Bby = self.bot_mid  - MO
+        Cbx = self.left_mid + MO + (self.bot_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
+        Cby = self.bot_mid  - MO
         canvas_in.create_line(Abx, Aby, Bbx, Bby, fill="lime green", width ='3')
         canvas_in.create_line(Bbx, Bby, Cbx, Cby, fill="lime green", width ='3',arrow=tk.LAST)
 
@@ -318,18 +315,18 @@ class SGE:
         Fty = self.bot_mid # want Bot
         Gtx = Etx
         Gty = Fty -self.offset_leg + (self.p2_top_choice*(2*self.offset_leg))
-        canvas_in.create_line(Ftx, Fty-MO+TJP2*MO, Gtx , Gty-MO+TJP2*MO, fill="#fdddff", width ='5',arrow=tk.LAST)
+        canvas_in.create_line(Ftx, Fty-MO+TJP2*MO, Gtx , Gty-MO+TJP2*MO, fill="#ffa2e3", width ='5',arrow=tk.LAST)
         canvas_in.create_rectangle(
             (Gtx-MO)+TSJ*MO, Gty-self.text_height, 
             (Gtx-2*(EO-MO/2))+TSJ*(2*(EO-MO/2)), Gty+self.text_height, 
-            outline='#ffdddd', width = '2')
+            outline='#ffa2a2', width = '2')
 
         ## BOT MAGENTA
         BSJ = self.bot_signal*2     # Bot signal jump
         BJP2 = self.p2_bot_choice*2   # P2 Bot Jump
-        # Magenta same with Ctx without mini_offset
+        
         Dbx = self.left_mid + (BSJ*self.cf_horz_mid)
-        Dby = self.bot_mid
+        Dby = self.bot_mid  # Magenta same with Ctx without mini_offset
         Ebx = Dbx -self.cf_branch_leg +(BSJ*self.cf_branch_leg)
         Eby = Dby -self.offset_leg + (self.p2_bot_choice*(2*self.offset_leg))
 
@@ -344,11 +341,11 @@ class SGE:
         Fby = self.top_mid # want Top
         Gbx = Ebx
         Gby = Fby -self.offset_leg + (self.p2_bot_choice*(2*self.offset_leg))
-        canvas_in.create_line(Fbx, Fby-MO+TJP2*MO, Gbx , Gby-MO+TJP2*MO, fill="#fdddff", width ='5',arrow=tk.LAST)
+        canvas_in.create_line(Fbx, Fby-2*MO+TJP2*MO, Gbx , Gby-2*MO+TJP2*MO, fill="#ffa2e3", width ='5',arrow=tk.LAST)
         canvas_in.create_rectangle(
             (Gbx-MO)+TSJ*MO, Gby-self.text_height, 
             (Gbx-2*(EO-MO/2))+TSJ*(2*(EO-MO/2)), Gby+self.text_height, 
-            outline='#ffdddd', width = '2')
+            outline='#ffa2a2', width = '2')
         # 3. Label or draw if P1 decides to swithc signals
         # (Dotted rectangles) and (highlight rectangles)
         ## Use text to indeicate no switch
