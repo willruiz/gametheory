@@ -129,8 +129,6 @@ def draw_sep_logic(self, root_in, canvas_in, matrix_in):
     # (solid colored arrows) and (highlight rectangles)
 
     ## TOP MAGENTA
-    
-    
     canvas_in.create_line(Dtx, Dty-MO+TJP2*MO, Etx , Ety-MO+TJP2*MO, fill="#ff5fff", width ='8',arrow=tk.LAST)
     canvas_in.create_rectangle(
         (Etx-MO)+TSJ*MO, Ety-self.text_height, 
@@ -138,7 +136,6 @@ def draw_sep_logic(self, root_in, canvas_in, matrix_in):
         outline='red', width = '3')
 
     ## TOP-ALT
-    
     canvas_in.create_line(Ftx, Fty-MO+TJP2*MO, Gtx , Gty-MO+TJP2*MO, fill="#fdddff", width ='5',arrow=tk.LAST)
     canvas_in.create_rectangle(
         (Gtx-MO)+TSJ*MO,                        Gty-self.text_height, 
@@ -146,8 +143,6 @@ def draw_sep_logic(self, root_in, canvas_in, matrix_in):
         outline='#ffdddd', width = '2')
 
     ## BOT MAGENTA
-    
-
     canvas_in.create_line(Dbx, Dby-MO+BJP2*MO, Ebx , Eby-MO+BJP2*MO, fill="#ff5fff", width ='8',arrow=tk.LAST)
     canvas_in.create_rectangle(
         (Ebx-MO)+BSJ*MO, Eby-self.text_height, 
@@ -155,7 +150,6 @@ def draw_sep_logic(self, root_in, canvas_in, matrix_in):
         outline='red', width = '3')
 
     ## BOT-ALT
-    
     canvas_in.create_line(Fbx, Fby-MO+BJP2*MO, Gbx , Gby-MO+BJP2*MO, fill="#fdddff", width ='5',arrow=tk.LAST)
     canvas_in.create_rectangle(
         (Gbx-MO)+BSJ*MO, Gby-self.text_height, 
