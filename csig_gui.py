@@ -3,6 +3,7 @@ import tkinter as tk
 import numpy as np
 import csig_np
 import csig_btn
+import csig_sep
 
 STR_HID = 0
 STR_REV = 1
@@ -163,9 +164,9 @@ def gen_entry_buttons(self, root, canvas):
     sub_btn=tk.Button(root,text = 'Submit', command = lambda: csig_btn.submit(self))
     canvas.create_window(self.cen_x, self.bot+20, window=sub_btn)
 
-    seperating_btnA=tk.Button(root,text = 'Sepr A', bg = "red", fg = "white", command = lambda: self.seperating_eq(self.matrix, STR_REV, WEK_HID))
+    seperating_btnA=tk.Button(root,text = 'Sepr A', bg = "red", fg = "white", command = lambda: csig_sep.seperating_eq(self, self.matrix, STR_REV, WEK_HID))
     canvas.create_window(self.cen_x+80, self.bot+40,  window=seperating_btnA)
-    seperating_btnB=tk.Button(root,text = 'Sepr B', bg = "blue", fg = "white", command = lambda: self.seperating_eq(self.matrix, STR_HID, WEK_REV))
+    seperating_btnB=tk.Button(root,text = 'Sepr B', bg = "blue", fg = "white", command = lambda: csig_sep.seperating_eq(self, self.matrix, STR_HID, WEK_REV))
     canvas.create_window(self.cen_x+80, self.bot+80, window=seperating_btnB)
     saved_btn=tk.Button(root,text = 'Load', command = lambda: csig_btn.enter_saved(self))
     canvas.create_window(self.cen_x+160, self.bot+80, window=saved_btn)
@@ -175,3 +176,15 @@ def gen_entry_buttons(self, root, canvas):
     canvas.create_window(self.cen_x, self.bot+50, window=reset_btn)
     quit_btn = tk.Button(root, text="Exit", bg = "#FA8072", command = lambda: csig_btn.quit_game(self, self.root))
     canvas.create_window(self.cen_x, self.bot+80, window=quit_btn)
+
+def draw_sep_base(self, matrix_in):
+        subroot = tk.Tk()
+        subcan = Canvas(subroot, bg='white')
+        
+        subroot.geometry(str(self.width) + "x" + str(self.height))
+        csig_sep.draw_sep_logic(self, subroot, subcan, matrix_in)
+        create_spider_grid(self, subroot, subcan)
+        draw_labels(self, subroot, subcan)
+        label_grid(self, subroot, subcan)
+        quit_btn = tk.Button(subroot, text="Exit", bg = "#FA8072", command = lambda: csig_btn.quit_game(self, subroot))
+        subcan.create_window(self.cen_x, self.bot+80, window=quit_btn)
