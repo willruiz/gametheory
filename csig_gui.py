@@ -1,10 +1,8 @@
 from tkinter import *
 import tkinter as tk
-import math
 import numpy as np
-import sys
-import sig_np
-import sig_btn
+import csig_np
+import csig_btn
 
 STR_HID = 0
 STR_REV = 1
@@ -29,13 +27,13 @@ def draw_labels(self, root_in, canvas_in):
         canvas_in.create_text((self.right_leg+self.right_mid)/2, self.bA, text='Fight', fill='green', font=('Arial 12 bold'))
         canvas_in.create_text((self.right_leg+self.right_mid)/2, self.bB, text='Retreat', fill='green', font=('Arial 12 bold'))
 
-        canvas_in.create_text((self.cen_x), (self.tA+self.top_mid)/2, text='P1', fill='#960091', font=('Arial 12 bold'))
-        canvas_in.create_text((self.cen_x), (self.bB+self.bot_mid)/2, text='P1', fill='#960091', font=('Arial 12 bold'))
+        canvas_in.create_text((self.cen_x), (self.tA+self.top_mid*2)/3, text='P1', fill='#960091', font=('Arial 12 bold'))
+        canvas_in.create_text((self.cen_x), (self.bB+self.bot_mid*2)/3, text='P1', fill='#960091', font=('Arial 12 bold'))
 
-        canvas_in.create_text((self.left_mid), (self.tA+self.top_mid)/2, text='P2', fill='teal', font=('Arial 12 bold'))
-        canvas_in.create_text((self.right_mid), (self.tA+self.top_mid)/2, text='P2', fill='teal', font=('Arial 12 bold'))
-        canvas_in.create_text((self.left_mid), (self.bB+self.bot_mid)/2, text='P2', fill='teal', font=('Arial 12 bold'))
-        canvas_in.create_text((self.right_mid), (self.bB+self.bot_mid)/2, text='P2', fill='teal', font=('Arial 12 bold'))
+        canvas_in.create_text((self.left_mid), (self.tA+self.top_mid*2)/3, text='P2', fill='teal', font=('Arial 12 bold'))
+        canvas_in.create_text((self.right_mid), (self.tA+self.top_mid*2)/3, text='P2', fill='teal', font=('Arial 12 bold'))
+        canvas_in.create_text((self.left_mid), (self.bB+self.bot_mid*2)/3, text='P2', fill='teal', font=('Arial 12 bold'))
+        canvas_in.create_text((self.right_mid), (self.bB+self.bot_mid*2)/3, text='P2', fill='teal', font=('Arial 12 bold'))
 
 def create_spider_grid(self, root_in, canvas_in):
         root_in.geometry(str(self.width) + "x" + str(self.height))
@@ -120,12 +118,12 @@ def create_entry_boxes(self, root_in, canvas_in):
             prev_mat = np.load(self.prev_file)
             if ((prev_mat.shape[0] == self.rows) and (prev_mat.shape[1] == self.cols)):
                 print("Loading prev")
-                sig_np.fill_entries_from_matrix(self, prev_mat)
+                csig_np.fill_entries_from_matrix(self, prev_mat)
             else:
                 print("Prev is not loaded")
         else:
             print("Importing saved")
-            sig_np.fill_entries_from_matrix(self, self.matrix_import)
+            csig_np.fill_entries_from_matrix(self, self.matrix_import)
 
         # Nature probabilities
         for i in range(2):
@@ -162,18 +160,18 @@ def create_entry_boxes(self, root_in, canvas_in):
 
 def gen_entry_buttons(self, root, canvas):
 
-    sub_btn=tk.Button(root,text = 'Submit', command = lambda: sig_btn.submit(self))
+    sub_btn=tk.Button(root,text = 'Submit', command = lambda: csig_btn.submit(self))
     canvas.create_window(self.cen_x, self.bot+20, window=sub_btn)
 
     seperating_btnA=tk.Button(root,text = 'Sepr A', bg = "red", fg = "white", command = lambda: self.seperating_eq(self.matrix, STR_REV, WEK_HID))
     canvas.create_window(self.cen_x+80, self.bot+40,  window=seperating_btnA)
     seperating_btnB=tk.Button(root,text = 'Sepr B', bg = "blue", fg = "white", command = lambda: self.seperating_eq(self.matrix, STR_HID, WEK_REV))
     canvas.create_window(self.cen_x+80, self.bot+80, window=seperating_btnB)
-    saved_btn=tk.Button(root,text = 'Load', command = lambda: sig_btn.enter_saved(self))
+    saved_btn=tk.Button(root,text = 'Load', command = lambda: csig_btn.enter_saved(self))
     canvas.create_window(self.cen_x+160, self.bot+80, window=saved_btn)
     prv2pst_btn=tk.Button(root,text = 'Save', command = lambda: self.transfer_entries_to_saved(self))
     canvas.create_window(self.cen_x +160, self.bot+50, window=prv2pst_btn)
-    reset_btn=tk.Button(root,text = 'Reset', command = lambda: sig_btn.reset(self))
+    reset_btn=tk.Button(root,text = 'Reset', command = lambda: csig_btn.reset(self))
     canvas.create_window(self.cen_x, self.bot+50, window=reset_btn)
-    quit_btn = tk.Button(root, text="Exit", bg = "#FA8072", command = lambda: sig_btn.quit_game(self, self.root))
+    quit_btn = tk.Button(root, text="Exit", bg = "#FA8072", command = lambda: csig_btn.quit_game(self, self.root))
     canvas.create_window(self.cen_x, self.bot+80, window=quit_btn)

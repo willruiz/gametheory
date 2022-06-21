@@ -3,9 +3,10 @@ import tkinter as tk
 import math
 import numpy as np
 import sys
-import sig_gui
-import sig_np
-import sig_btn
+import csig_gui
+import csig_np
+import csig_btn
+import csig_sep
 
 STR_HID = 0
 STR_REV = 1
@@ -83,9 +84,7 @@ class SGE:
         self.top_index_offset = 0
         self.bot_index_offset = 2
 
-    def draw_sep_logic(self, root_in, canvas_in, matrix_in):
-        ### Use colored rectangles, solid arrows, and dotted arrows
-        # X. Text out payoffs
+    def write_sep_payoff(self, canvas_in, matrix_in):
         MO  = self.mini_offset      # mini_offset
         EO  = self.entry_offset
 
@@ -128,33 +127,41 @@ class SGE:
                         canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill="#db3052", font=('Arial 15 bold'))
                     else:
                         canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill="black", font=('Arial 15 bold'))
-                    
+
+    def draw_sep_logic(self, root_in, canvas_in, matrix_in):
+        ### Use colored rectangles, solid arrows, and dotted arrows
+        # X. Text out payoffs
+        MO  = self.mini_offset      # mini_offset
+        EO  = self.entry_offset
+        TO  = self.text_offset
+
+        self.write_sep_payoff(canvas_in, matrix_in)
 
         # 1. Draw branch re-sets (solid curved arrows)- signals
         #- Arrows
         # Top
         print("self.bot_branch:", self.bot_branch)
         
-        Atx = self.cen_x-MO + (self.top_signal*2*MO)
-        Aty = self.cen_y-MO # Green branch center point
-        Btx = self.cen_x-MO + (self.top_signal*2*MO)
-        Bty = self.top_mid+MO # Green branch center cen vert point
-        Ctx = self.left_mid+MO + (self.top_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
-        Cty = self.top_mid+MO # Green branch center mid horz point
+        Atx = self.cen_x + (self.top_signal*2*MO)
+        Aty = self.cen_y # Green branch center point
+        Btx = self.cen_x + (self.top_signal*2*MO)
+        Bty = self.top_mid # Green branch center cen vert point
+        Ctx = self.left_mid + (self.top_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
+        Cty = self.top_mid # Green branch center mid horz point
         
-        canvas_in.create_line(Atx, Aty, Btx, Bty, fill="lime green", width ='3')
-        canvas_in.create_line(Btx, Bty, Ctx, Cty, fill="lime green", width ='3',arrow=tk.LAST)
+        canvas_in.create_line(Atx-MO, Aty-MO, Btx-MO, Bty+MO, fill="lime green", width ='3')
+        canvas_in.create_line(Btx-MO, Bty+MO, Ctx+MO, Cty+MO, fill="lime green", width ='3',arrow=tk.LAST)
 
         # Bot
-        Abx = self.cen_x-MO + (self.bot_signal*2*MO)
-        Aby = self.cen_y+MO
-        Bbx = self.cen_x-MO + (self.bot_signal*2*MO)
-        Bby = self.bot_mid-MO
-        Cbx = self.left_mid+MO + (self.bot_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
-        Cby = self.bot_mid-MO
+        Abx = self.cen_x + (self.bot_signal*2*MO)
+        Aby = self.cen_y
+        Bbx = self.cen_x + (self.bot_signal*2*MO)
+        Bby = self.bot_mid
+        Cbx = self.left_mid + (self.bot_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
+        Cby = self.bot_mid
         
-        canvas_in.create_line(Abx, Aby, Bbx, Bby, fill="lime green", width ='3')
-        canvas_in.create_line(Bbx, Bby, Cbx, Cby, fill="lime green", width ='3',arrow=tk.LAST)
+        canvas_in.create_line(Abx-MO, Aby+MO, Bbx-MO, Bby-MO, fill="lime green", width ='3')
+        canvas_in.create_line(Bbx-MO, Bby-MO, Cbx+MO, Cby-MO, fill="lime green", width ='3',arrow=tk.LAST)
 
         # 2. Draw P2 payoffs given signal choices 
         # (solid colored arrows) and (highlight rectangles)
@@ -216,10 +223,42 @@ class SGE:
         ## Use text to indeicate no switch
         ## Highlight payoofs being compared.
         ## Use text and arrows to indeicate switch
-        self.p1_top_switch
-        self.p1_bot_switch
-
+        sigT_offset = 2*MO - self.top_signal*3*MO
+        SAtx = self.left_mid + MO - self.top_signal*2*MO + (self.top_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
+        SBtx = self.left_mid + MO - self.top_alt*2*MO + (self.top_alt*((2*self.cf_horz_mid)-(2*self.mini_offset)))
+        Sty = (self.top_mid + self.tA)/2
+        
+        sigB_offset = 2*MO - self.bot_signal*3*MO
+        SAbx = self.left_mid + MO - self.bot_signal*2*MO + (self.bot_signal*((2*self.cf_horz_mid)-(2*self.mini_offset)))
+        SBbx = self.left_mid + MO - self.bot_alt*2*MO + (self.bot_alt*((2*self.cf_horz_mid)-(2*self.mini_offset)))
+        Sby = (self.bot_mid + self.bB)/2
+        if(self.p1_top_switch):
+            canvas_in.create_line(SAtx, Sty, SBtx, Sty, fill="#b8a200", width ='5',arrow=tk.LAST, arrowshape=(14,15,8))
+        else:
+            canvas_in.create_text(SAtx + 2*sigT_offset, Sty, text="No Deviation",fill="#b8a200", font=('Arial 15 bold'))
+        if(self.p1_bot_switch):
+            canvas_in.create_line(SAbx, Sby, SBbx, Sby, fill="#b8a200", width ='5',arrow=tk.LAST, arrowshape=(14,15,8))
+        else:
+            canvas_in.create_text(SAbx + 2*sigB_offset, Sby, text="No Deviation",fill="#b8a200", font=('Arial 15 bold'))
+        
         ## Write out text to indicate if this is a successful seperating equlibrium and store in self class
+        if(not self.p1_top_switch and  not self.p1_bot_switch):
+            canvas_in.create_rectangle(
+            self.cen_x-EO*2, self.bB-MO, 
+            self.cen_x+EO*2, self.bB+TO, 
+            outline='orange', width = '3')
+
+            canvas_in.create_text(self.cen_x, self.bB, text="Seperating",fill="orange", font=('Arial 15 bold'))
+            canvas_in.create_text(self.cen_x, self.bB+MO, text="Equilibrium",fill="orange", font=('Arial 15 bold'))
+        else:
+            canvas_in.create_rectangle(
+            self.cen_x-EO*2, self.bB-MO, 
+            self.cen_x+EO*2, self.bB+TO, 
+            outline='orange', width = '3')
+
+            canvas_in.create_text(self.cen_x, self.bB, text="Not Seperating",fill="orange", font=('Arial 15 bold'))
+            canvas_in.create_text(self.cen_x, self.bB+MO, text="Equilibrium",fill="orange", font=('Arial 15 bold'))
+
 
     def draw_sep_base(self,  matrix_in):
         subroot = tk.Tk()
@@ -227,10 +266,10 @@ class SGE:
         
         subroot.geometry(str(self.width) + "x" + str(self.height))
         self.draw_sep_logic(subroot, subcan, matrix_in)
-        sig_gui.create_spider_grid(self, subroot, subcan)
-        sig_gui.draw_labels(self, subroot, subcan)
-        sig_gui.label_grid(self, subroot, subcan)
-        quit_btn = tk.Button(subroot, text="Exit", bg = "#FA8072", command = lambda: sig_btn.quit_game(self, subroot))
+        csig_gui.create_spider_grid(self, subroot, subcan)
+        csig_gui.draw_labels(self, subroot, subcan)
+        csig_gui.label_grid(self, subroot, subcan)
+        quit_btn = tk.Button(subroot, text="Exit", bg = "#FA8072", command = lambda: csig_btn.quit_game(self, subroot))
         subcan.create_window(self.cen_x, self.bot+80, window=quit_btn)
 
     def seperating_eq(self, matrix_in, top_signal, bot_signal):
@@ -263,7 +302,7 @@ class SGE:
         
         p1_index = 0
         p2_index = 1
-        sig_np.get_entries_into_matrix(self, matrix_in)
+        csig_np.get_entries_into_matrix(self, matrix_in)
         
         self.p2_top_choice = -1
         self.p2_top_alt = -1
@@ -348,11 +387,11 @@ class SGE:
 
 def main():
     parent = SGE()
-    sig_gui.create_spider_grid(parent, parent.root, parent.canvas)
-    sig_gui.label_grid(parent, parent.root, parent.canvas)
-    sig_gui.create_entry_boxes(parent, parent.root, parent.canvas)
-    sig_gui.gen_entry_buttons(parent, parent.root, parent.canvas)
-    sig_gui.draw_labels(parent, parent.root, parent.canvas)
+    csig_gui.create_spider_grid(parent, parent.root, parent.canvas)
+    csig_gui.label_grid(parent, parent.root, parent.canvas)
+    csig_gui.create_entry_boxes(parent, parent.root, parent.canvas)
+    csig_gui.gen_entry_buttons(parent, parent.root, parent.canvas)
+    csig_gui.draw_labels(parent, parent.root, parent.canvas)
     parent.root.mainloop()
 
 if __name__ == '__main__':

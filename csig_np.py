@@ -1,10 +1,7 @@
 from tkinter import *
 import tkinter as tk
-import math
 import numpy as np
-import sys
-import sig_gui
-import sig_btn
+
 
 
 def import_matrix(self, matrix_in): # FOR CUSTOM MATRIX INPUT FOR TEST SUITE
