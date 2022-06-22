@@ -53,15 +53,19 @@ def eq_setup(parent_in, matrix_in, top_signal, bot_signal):
 def pooling_eq(self, matrix_in, top_signal, bot_signal):
     """
         1. Choose case - (need input p and q (signal probablilties determined by nature))
-        2. Find U_p2 of each action of player 2 (F or R) (Fight or Retreat)
+        2. Find Bayesian payoffs U_p2 of each action of player 2 (F or R) (Fight or Retreat)
         3. Check for p1 deviation > if deviate, not pooling [DONE]
         4. If no deviation, find oppoisite signal probability
         5. Find the deviation point for oppositie signal probability
     """
+    # Step 1: Case is determined by parameter signal inputs
+    assert(top_signal == bot_signal)
     eq_setup(self, matrix_in, top_signal, bot_signal)
-    draw_eq_base(self, matrix_in, POOL_INDEX)
 
-    ## (CASE A): Both choose reveal
+    # Step 2: Find Bayesian payoffs - start with saving nature entries [DONE]
+
+
+    draw_eq_base(self, matrix_in, POOL_INDEX)
 
 def seperating_eq(self, matrix_in, top_signal, bot_signal):
     """
@@ -78,6 +82,7 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
     # 1. Nature chooses Strong > matrix[0 or 1]
     # 2. Player 1 chooses Reveal > matrix[1] ~[0+1]
     # 3. Player 2 Finds maximization matrix[1][0] vs matrix[1][1]
+    assert(top_signal != bot_signal)
     eq_setup(self, matrix_in, top_signal, bot_signal)
     
     if (matrix_in[self.top_branch][0][self.index_p2] >= matrix_in[self.top_branch][1][self.index_p2]):
@@ -123,6 +128,7 @@ class EQ_GUI:
     def __init__(self, parent_in):
         self.parent = parent_in
         self.MO  = parent_in.mini_offset
+        self.HMO = parent_in.mini_offset/2
         self.EO  = parent_in.entry_offset
         self.TO  = parent_in.text_offset
         self.TH  = parent_in.text_height
@@ -226,28 +232,28 @@ class EQ_GUI:
         # 2. Draw P2 payoffs given signal choices 
         # (solid colored arrows) and (highlight rectangles)
         ## TOP MAGENTA
-        canvas_in.create_line(self.Dtx, self.Dty-self.MO+self.TJP2*self.MO, self.Etx , self.Ety-self.MO+self.TJP2*self.MO, fill=cd.rglr_magnta, width ='8',arrow=tk.LAST)
+        canvas_in.create_line(self.Dtx, self.Dty-self.HMO+self.TJP2*self.HMO, self.Etx , self.Ety-self.HMO+self.TJP2*self.HMO, fill=cd.rglr_magnta, width ='8',arrow=tk.LAST)
         canvas_in.create_rectangle(
             (self.Etx-self.MO)+self.TSJ*self.MO, self.Ety-self.TH, 
             (self.Etx-2*(self.EO-self.MO/2))+self.TSJ*(2*(self.EO-self.MO/2)), self.Ety+self.TH, 
             outline='red', width = '3')
 
         ## TOP-ALT
-        canvas_in.create_line(self.Ftx, self.Fty-self.MO+self.TJP2*self.MO, self.Gtx , self.Gty-self.MO+self.TJP2*self.MO, fill=cd.pale_magnta, width ='5',arrow=tk.LAST)
+        canvas_in.create_line(self.Ftx, self.Fty-self.HMO+self.TJP2*self.HMO, self.Gtx , self.Gty-self.HMO+self.TJP2*self.HMO, fill=cd.pale_magnta, width ='5',arrow=tk.LAST)
         canvas_in.create_rectangle(
             (self.Gtx-self.MO)+self.TSJ*self.MO,                        self.Gty-self.TH, 
             (self.Gtx-2*(self.EO-self.MO/2))+self.TSJ*(2*(self.EO-self.MO/2)),    self.Gty+self.TH, 
             outline=cd.pale_red, width = '2')
 
         ## BOT MAGENTA
-        canvas_in.create_line(self.Dbx, self.Dby-self.MO+self.BJP2*self.MO, self.Ebx , self.Eby-self.MO+self.BJP2*self.MO, fill=cd.rglr_magnta, width ='8',arrow=tk.LAST)
+        canvas_in.create_line(self.Dbx, self.Dby-self.HMO+self.BJP2*self.HMO, self.Ebx , self.Eby-self.HMO+self.BJP2*self.HMO, fill=cd.rglr_magnta, width ='8',arrow=tk.LAST)
         canvas_in.create_rectangle(
             (self.Ebx-self.MO)+self.BSJ*self.MO, self.Eby-self.TH, 
             (self.Ebx-2*(self.EO-self.MO/2))+self.BSJ*(2*(self.EO-self.MO/2)), self.Eby+self.TH, 
             outline='red', width = '3')
 
         ## BOT-ALT
-        canvas_in.create_line(self.Fbx, self.Fby-self.MO+self.BJP2*self.MO, self.Gbx , self.Gby-self.MO+self.BJP2*self.MO, fill=cd.pale_magnta, width ='5',arrow=tk.LAST)
+        canvas_in.create_line(self.Fbx, self.Fby-self.HMO+self.BJP2*self.HMO, self.Gbx , self.Gby-self.HMO+self.BJP2*self.HMO, fill=cd.pale_magnta, width ='5',arrow=tk.LAST)
         canvas_in.create_rectangle(
             (self.Gbx-self.MO)+self.BSJ*self.MO, self.Gby-self.TH, 
             (self.Gbx-2*(self.EO-self.MO/2))+self.BSJ*(2*(self.EO-self.MO/2)), self.Gby+self.TH, 
@@ -273,15 +279,15 @@ class EQ_GUI:
             parent_in.cen_x-self.EO*2, parent_in.bB-self.MO, 
             parent_in.cen_x+self.EO*2, parent_in.bB+self.TO, 
             outline='orange', width = '3')
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB, text="Seperating",fill="orange", font=('Arial 15 bold'))
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium",fill="orange", font=('Arial 15 bold'))
+            canvas_in.create_text(parent_in.cen_x, parent_in.bB, text="Seperating",fill=cd.success_green, font=('Arial 15 bold'))
+            canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium",fill=cd.success_green, font=('Arial 15 bold'))
         else:
             canvas_in.create_rectangle(
             parent_in.cen_x-self.EO*2, parent_in.bB-self.MO, 
             parent_in.cen_x+self.EO*2, parent_in.bB+self.TO, 
             outline='orange', width = '3')
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB, text="Not Seperating",fill="orange", font=('Arial 15 bold'))
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium",fill="orange", font=('Arial 15 bold'))
+            canvas_in.create_text(parent_in.cen_x, parent_in.bB, text="Not Seperating",fill=cd.fail_red, font=('Arial 15 bold'))
+            canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium",fill=cd.fail_red, font=('Arial 15 bold'))
 
     def draw_pool_logic(self, parent_in, root_in, canvas_in, matrix_in):
         pass

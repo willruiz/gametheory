@@ -57,7 +57,7 @@ class SGE:
         ## Offsets
         self.entry_offset = self.width * 0.05
         self.text_offset  = self.width * 0.03
-        self.mini_offset  = self.width * 0.015
+        self.mini_offset  = self.width * 0.016
         self.text_height = self.height * 0.04
         self.nature_boxsize = 6
         self.payoff_boxsize = 3

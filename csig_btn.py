@@ -5,25 +5,36 @@ import csig_np as cn
 
 def enter_saved(self):
         entry = np.load(self.saved_file)
-        if ((entry.shape[0] == self.rows) and (entry.shape[1] == self.cols)):
+        if (entry.shape == (4,2)):
             self.matrix = entry
             cn.fill_entries_from_matrix(self, entry)
-            print("LOADED")
+            print("MATRIX LOADED")
         else:
-            print("Saved dimensions do not match - Cannot load")
+            print("Saved dimensions is not a signal game - Cannot load")
+        nature = np.load(self.nature_file)
+        if (nature.shape == (1,2)):
+            self.nature_mat = nature
+            #print("checkC:",nature)
+            cn.fill_nature_entry_from_Natrix(self, nature)
+            print("NATURE LOADED")
+        else:
+            print("Saved nature is not compatible - Cannot load")
+
 
 def transfer_entries_to_saved(self):
     cn.get_entries_into_matrix(self, self.matrix)
+    cn.get_nature_entries_into_Natrix(self, self.nature_mat)
     np.save(self.saved_file, self.matrix)
+    np.save(self.nature_file, self.nature_mat)
     print("SAVED")
 
 def submit(self):
     cn.get_entries_into_matrix(self, self.matrix)
+    cn.get_nature_entries_into_Natrix(self, self.nature_mat)
     print(self.matrix)
     print("SUBMIT")
     np.save(self.prev_file, self.matrix)
-    print("self.p2_bot_choice:",self.p2_bot_choice)
-    print("self.top_branch:",self.top_branch)
+    np.save(self.nature_prev, self.nature_mat)
 
 def reset(self):
     for i, i_entry in enumerate(self.entry_list):
@@ -31,13 +42,19 @@ def reset(self):
             for k, k_entry in enumerate(j_entry): # iterate through tuple
                 k_entry.set("")
                 self.matrix[i][j][k] = 0
-    self.nature_entry = [0,0]
+    for i, i_entry in enumerate(self.nature_entry):
+        i_entry.set("")
+    self.nature_mat = np.zeros((1,2))
+
     print("RESET")
     np.save(self.prev_file, self.matrix)
+    np.save(self.nature_prev, self.nature_mat)
 
 def quit_game(self, root_in):
     cn.get_entries_into_matrix(self, self.matrix)
+    cn.get_nature_entries_into_Natrix(self, self.nature_mat)
     print(self.matrix)
     np.save(self.prev_file, self.matrix)
+    np.save(self.nature_prev, self.nature_mat)
     print("EXIT")
     root_in.destroy()
