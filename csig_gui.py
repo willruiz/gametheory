@@ -177,14 +177,3 @@ def gen_entry_buttons(self, root, canvas):
     quit_btn = tk.Button(root, text="Exit", bg = "#FA8072", command = lambda: csig_btn.quit_game(self, self.root))
     canvas.create_window(self.cen_x, self.bot+80, window=quit_btn)
 
-def draw_sep_base(self, matrix_in):
-        subroot = tk.Tk()
-        subcan = Canvas(subroot, bg='white')
-        
-        subroot.geometry(str(self.width) + "x" + str(self.height))
-        csig_sep.draw_sep_logic(self, subroot, subcan, matrix_in)
-        create_spider_grid(self, subroot, subcan)
-        draw_labels(self, subroot, subcan)
-        label_grid(self, subroot, subcan)
-        quit_btn = tk.Button(subroot, text="Exit", bg = "#FA8072", command = lambda: csig_btn.quit_game(self, subroot))
-        subcan.create_window(self.cen_x, self.bot+80, window=quit_btn)
