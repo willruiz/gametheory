@@ -10,18 +10,24 @@ import math
 import numpy as np
 import sys
 
-def draw_eq_base(parent_in,  matrix_in):
+SEPR_INDEX = 0
+POOL_INDEX = 1
+
+def draw_eq_base(parent_in,  matrix_in, eq_type):
     subroot = tk.Tk()
     subcan = Canvas(subroot, bg='white')
-    
     subroot.geometry(str(parent_in.width) + "x" + str(parent_in.height))
-    sep_inst = EQULIBRUIM(parent_in)
-    sep_inst.draw_sep_logic(parent_in, subroot, subcan, matrix_in)
+    inst = EQ_GUI(parent_in)
+    
     cg.create_spider_grid(parent_in, subroot, subcan)
     cg.draw_labels(parent_in, subroot, subcan)
     cg.label_grid(parent_in, subroot, subcan)
     quit_btn = tk.Button(subroot, text="Exit", width = 24, height = 4, bg = cd.lite_ornge, command = lambda: cb.quit_game(parent_in, subroot))
     subcan.create_window(parent_in.cen_x, parent_in.bot+60, window=quit_btn)
+    if eq_type == SEPR_INDEX:
+        inst.draw_sep_logic(parent_in, subroot, subcan, matrix_in)
+    else:
+        inst.draw_pool_logic(parent_in, subroot, subcan, matrix_in)
 
 def eq_setup(parent_in, matrix_in, top_signal, bot_signal):
     top_sig_alt = 0 if (top_signal == 1) else 1
@@ -53,6 +59,7 @@ def pooling_eq(self, matrix_in, top_signal, bot_signal):
         5. Find the deviation point for oppositie signal probability
     """
     eq_setup(self, matrix_in, top_signal, bot_signal)
+    draw_eq_base(self, matrix_in, POOL_INDEX)
 
     ## (CASE A): Both choose reveal
 
@@ -110,9 +117,9 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
     print(matrix_in[self.bot_branch][1][self.index_p2])
     print("self.p1_top_switch: ", self.p1_top_switch)
     print("self.p1_bot_switch: ", self.p1_bot_switch)
-    draw_eq_base(self, matrix_in)
+    draw_eq_base(self, matrix_in, SEPR_INDEX)
 
-class EQULIBRUIM:
+class EQ_GUI:
     def __init__(self, parent_in):
         self.parent = parent_in
         self.MO  = parent_in.mini_offset
@@ -275,3 +282,6 @@ class EQULIBRUIM:
             outline='orange', width = '3')
             canvas_in.create_text(parent_in.cen_x, parent_in.bB, text="Not Seperating",fill="orange", font=('Arial 15 bold'))
             canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium",fill="orange", font=('Arial 15 bold'))
+
+    def draw_pool_logic(self, parent_in, root_in, canvas_in, matrix_in):
+        pass
