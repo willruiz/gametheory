@@ -6,7 +6,7 @@ import sys
 import csig_gui
 import csig_np
 import csig_btn
-import csig_sep
+import csig_logic
 
 STR_HID = 0
 STR_REV = 1
@@ -83,19 +83,8 @@ class SGE:
         # Matrix indexing
         self.top_index_offset = 0
         self.bot_index_offset = 2
-    
-    ## Incomplete 
-    def pooling_eq(self, matrix_in, top_signal, bot_signal):
-        # 1. Choose case - (need input p and q (signal probablilties determined by nature))
-        # 2. Find U_p2 of each action of player 2 (F or R) (Fight or Retreat)
-        # 3. Check for p1 deviation > if deviate, not pooling [DONE]
-        # 4. If no deviation, find oppoisite signal probability
-        # 5. Find the deviation point for oppositie signal probability
-        top_sig_alt = 0 if (top_signal == 1) else 1
-        bot_sig_alt = 0 if (bot_signal == 1) else 1
-
-        self.top_signal = top_signal
-        self.bot_signal = bot_signal   
+        self.index_p1 = 0
+        self.index_p2 = 1
 
 def main():
     parent = SGE()

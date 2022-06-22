@@ -1,7 +1,6 @@
 import csig_gui
 import csig_np
 import csig_btn
-import csig_sep
 import signal_game as sg
 from tkinter import *
 import tkinter as tk
@@ -10,18 +9,47 @@ import numpy as np
 import sys
 
 
-def draw_sep_base(self,  matrix_in):
+def draw_eq_base(parent_in,  matrix_in):
     subroot = tk.Tk()
     subcan = Canvas(subroot, bg='white')
     
-    subroot.geometry(str(self.width) + "x" + str(self.height))
-    sep_inst = SEPR(self)
-    sep_inst.draw_sep_logic(self, subroot, subcan, matrix_in)
-    csig_gui.create_spider_grid(self, subroot, subcan)
-    csig_gui.draw_labels(self, subroot, subcan)
-    csig_gui.label_grid(self, subroot, subcan)
-    quit_btn = tk.Button(subroot, text="Exit", bg = "#FA8072", command = lambda: csig_btn.quit_game(self, subroot))
-    subcan.create_window(self.cen_x, self.bot+80, window=quit_btn)
+    subroot.geometry(str(parent_in.width) + "x" + str(parent_in.height))
+    sep_inst = EQULIBRUIM(parent_in)
+    sep_inst.draw_sep_logic(parent_in, subroot, subcan, matrix_in)
+    csig_gui.create_spider_grid(parent_in, subroot, subcan)
+    csig_gui.draw_labels(parent_in, subroot, subcan)
+    csig_gui.label_grid(parent_in, subroot, subcan)
+    quit_btn = tk.Button(subroot, text="Exit", width = 24, height = 4, bg = "#fad096", command = lambda: csig_btn.quit_game(parent_in, subroot))
+    subcan.create_window(parent_in.cen_x, parent_in.bot+60, window=quit_btn)
+
+def eq_setup(parent_in, matrix_in, top_signal, bot_signal):
+    top_sig_alt = 0 if (top_signal == 1) else 1
+    bot_sig_alt = 0 if (bot_signal == 1) else 1
+
+    parent_in.top_signal = top_signal
+    parent_in.bot_signal = bot_signal
+    
+    parent_in.top_branch = parent_in.top_index_offset + top_signal
+    parent_in.bot_branch = parent_in.bot_index_offset + bot_signal
+    print("top_branch:", parent_in.top_branch)
+    print("bot_branch:", parent_in.bot_branch)        
+    parent_in.top_alt = top_sig_alt
+    parent_in.bot_alt = bot_sig_alt
+    csig_np.get_entries_into_matrix(parent_in, matrix_in)
+
+def pooling_eq(self, matrix_in, top_signal, bot_signal):
+    """
+        1. Choose case - (need input p and q (signal probablilties determined by nature))
+        2. Find U_p2 of each action of player 2 (F or R) (Fight or Retreat)
+        3. Check for p1 deviation > if deviate, not pooling [DONE]
+        4. If no deviation, find oppoisite signal probability
+        5. Find the deviation point for oppositie signal probability
+    """
+    eq_setup(self, matrix_in, top_signal, bot_signal)
+
+    ## (CASE A): Both choose reveal
+
+
 
 def seperating_eq(self, matrix_in, top_signal, bot_signal):
     """
@@ -38,29 +66,14 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
     # 1. Nature chooses Strong > matrix[0 or 1]
     # 2. Player 1 chooses Reveal > matrix[1] ~[0+1]
     # 3. Player 2 Finds maximization matrix[1][0] vs matrix[1][1]
-    top_sig_alt = 0 if (top_signal == 1) else 1
-    bot_sig_alt = 0 if (bot_signal == 1) else 1
-
-    self.top_signal = top_signal
-    self.bot_signal = bot_signal
-    
-    self.top_branch = self.top_index_offset + top_signal
-    self.bot_branch = self.bot_index_offset + bot_signal
-    print("top_branch:", self.top_branch)
-    print("bot_branch:", self.bot_branch)        
-    self.top_alt = top_sig_alt
-    self.bot_alt = bot_sig_alt
-    
-    p1_index = 0
-    p2_index = 1
-    csig_np.get_entries_into_matrix(self, matrix_in)
-    
+    eq_setup(self, matrix_in, top_signal, bot_signal)
+     
     self.p2_top_choice = -1
     self.p2_top_alt = -1
-    if (matrix_in[self.top_branch][0][p2_index] >= matrix_in[self.top_branch][1][p2_index]):
+    if (matrix_in[self.top_branch][0][self.index_p2] >= matrix_in[self.top_branch][1][self.index_p2]):
         self.p2_top_choice = 0
         self.p2_top_alt = 1
-    elif (matrix_in[self.top_branch][0][p2_index] < matrix_in[self.top_branch][1][p2_index]):
+    elif (matrix_in[self.top_branch][0][self.index_p2] < matrix_in[self.top_branch][1][self.index_p2]):
         self.p2_top_choice = 1
         self.p2_top_alt = 0
     # else: # equal 
@@ -68,8 +81,8 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
 
     print("self.p2_top_choice: ",self.p2_top_choice)
 
-    print(matrix_in[self.top_branch][0][p2_index])
-    print(matrix_in[self.top_branch][1][p2_index])
+    print(matrix_in[self.top_branch][0][self.index_p2])
+    print(matrix_in[self.top_branch][1][self.index_p2])
 
     # Bottom
     # 1. Nature chooses Weak > matrix[2 or 3]
@@ -78,11 +91,11 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
     
     self.p2_bot_choice = -1
     self.p2_bot_alt = -1
-    if (matrix_in[self.bot_branch][0][p2_index] >= matrix_in[self.bot_branch][1][p2_index]):
+    if (matrix_in[self.bot_branch][0][self.index_p2] >= matrix_in[self.bot_branch][1][self.index_p2]):
         self.p2_bot_choice = 0
         self.p2_bot_alt = 1
         # IF EQUAL, arbitrarily take index zero
-    elif (matrix_in[self.bot_branch][0][p2_index] < matrix_in[self.bot_branch][1][p2_index]):
+    elif (matrix_in[self.bot_branch][0][self.index_p2] < matrix_in[self.bot_branch][1][self.index_p2]):
         self.p2_bot_choice = 1
         self.p2_bot_alt = 0
     # else: # equal 
@@ -90,15 +103,15 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
 
     print("self.p2_bot_choice: ",self.p2_bot_choice)
 
-    print(matrix_in[self.bot_branch][0][p2_index])
-    print(matrix_in[self.bot_branch][1][p2_index])
+    print(matrix_in[self.bot_branch][0][self.index_p2])
+    print(matrix_in[self.bot_branch][1][self.index_p2])
 
     # 4a. TOP: Player 1 then analyses TOP if this is profitable to stay with signal
     self.p1_top_switch = False
 
     # Take the P2's OTHER choice to opposite signal to see if P1 changing current top signal is profitable 
-    top_branch_val = matrix_in[self.top_branch][self.p2_top_choice][p1_index]
-    top_alt_val = matrix_in[self.top_alt + self.top_index_offset][self.p2_bot_choice][p1_index]
+    top_branch_val = matrix_in[self.top_branch][self.p2_top_choice][self.index_p1]
+    top_alt_val = matrix_in[self.top_alt + self.top_index_offset][self.p2_bot_choice][self.index_p1]
 
     if (top_branch_val > top_alt_val):
         self.p1_top_switch = False
@@ -109,8 +122,8 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
     print("self.p1_top_switch: ", self.p1_top_switch)
     # 4b. BOTTOM: Player 1 then analyses BOTTOM if this is profitable to stay with signal
     self.p1_bot_switch = False
-    bot_branch_val = matrix_in[self.bot_branch][self.p2_bot_choice][p1_index]
-    bot_alt_val = matrix_in[self.bot_alt + self.bot_index_offset][self.p2_top_choice][p1_index]
+    bot_branch_val = matrix_in[self.bot_branch][self.p2_bot_choice][self.index_p1]
+    bot_alt_val = matrix_in[self.bot_alt + self.bot_index_offset][self.p2_top_choice][self.index_p1]
 
     if (bot_branch_val > bot_alt_val):
         self.p1_bot_switch = False
@@ -121,10 +134,9 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
 
     print("self.p1_bot_switch: ", self.p1_bot_switch)
 
-    draw_sep_base(self, matrix_in)
+    draw_eq_base(self, matrix_in)
 
-
-class SEPR:
+class EQULIBRUIM:
     def __init__(self, parent_in):
         self.parent = parent_in
         self.MO  = parent_in.mini_offset
@@ -179,7 +191,7 @@ class SEPR:
         self.SB_bx = parent_in.left_mid + self.MO - parent_in.bot_alt*2*self.MO + (parent_in.bot_alt*((2*parent_in.cf_horz_mid)-(2*self.MO)))
         self.Sby = (parent_in.bot_mid + parent_in.bB)/2
 
-    def write_sep_payoff(self, parent_in, canvas_in, matrix_in):
+    def write_eq_payoff(self, parent_in, canvas_in, matrix_in):
         for i in range(4): # Corners
             # i = 0,1 -> Top
             # i = 2,3 -> Bot
@@ -221,14 +233,12 @@ class SEPR:
                         canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill="black", font=('Arial 15 bold'))
 
     def draw_sep_logic(self, parent_in, root_in, canvas_in, matrix_in):
-        self.write_sep_payoff(parent_in, canvas_in, matrix_in)
+        self.write_eq_payoff(parent_in, canvas_in, matrix_in)
 
         # 1. Draw branch re-sets (solid curved arrows)- signals
         #- Arrows
         # Top
         print("parent_in.bot_branch:", parent_in.bot_branch)
-        
-       
         
         canvas_in.create_line(self.Atx-self.MO, self.Aty-self.MO, self.Btx-self.MO, self.Bty+self.MO, fill="lime green", width ='3')
         canvas_in.create_line(self.Btx-self.MO, self.Bty+self.MO, self.Ctx+self.MO, self.Cty+self.MO, fill="lime green", width ='3',arrow=tk.LAST)

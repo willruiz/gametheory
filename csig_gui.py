@@ -3,7 +3,7 @@ import tkinter as tk
 import numpy as np
 import csig_np
 import csig_btn
-import csig_sep
+import csig_logic
 
 STR_HID = 0
 STR_REV = 1
@@ -161,19 +161,28 @@ def create_entry_boxes(self, root_in, canvas_in):
 
 def gen_entry_buttons(self, root, canvas):
 
-    sub_btn=tk.Button(root,text = 'Submit', command = lambda: csig_btn.submit(self))
-    canvas.create_window(self.cen_x, self.bot+20, window=sub_btn)
+    
 
-    seperating_btnA=tk.Button(root,text = 'Sepr A', bg = "red", fg = "white", command = lambda: csig_sep.seperating_eq(self, self.matrix, STR_REV, WEK_HID))
-    canvas.create_window(self.cen_x+80, self.bot+40,  window=seperating_btnA)
-    seperating_btnB=tk.Button(root,text = 'Sepr B', bg = "blue", fg = "white", command = lambda: csig_sep.seperating_eq(self, self.matrix, STR_HID, WEK_REV))
-    canvas.create_window(self.cen_x+80, self.bot+80, window=seperating_btnB)
-    saved_btn=tk.Button(root,text = 'Load', command = lambda: csig_btn.enter_saved(self))
-    canvas.create_window(self.cen_x+160, self.bot+80, window=saved_btn)
+    SEPR_btn_A=tk.Button(root,text = 'SEPR A', bg = "red", fg = "white", command = lambda: csig_logic.seperating_eq(self, self.matrix, STR_REV, WEK_HID))
+    canvas.create_window(self.cen_x-60, self.bot+40,  window=SEPR_btn_A)
+    SEPR_btn_B=tk.Button(root,text = 'SEPR B', bg = "blue", fg = "white", command = lambda: csig_logic.seperating_eq(self, self.matrix, STR_HID, WEK_REV))
+    canvas.create_window(self.cen_x-60, self.bot+80, window=SEPR_btn_B)
+
+    POOL_btn_A=tk.Button(root,text = 'POOL A', bg = "#f75757", fg = "white", command = lambda: csig_logic.pooling_eq(self, self.matrix, STR_REV, WEK_REV))
+    canvas.create_window(self.cen_x+60, self.bot+40,  window=POOL_btn_A)
+    POOL_btn_B=tk.Button(root,text = 'POOL B', bg = "#665af2", fg = "white", command = lambda: csig_logic.pooling_eq(self, self.matrix, STR_HID, WEK_HID))
+    canvas.create_window(self.cen_x+60, self.bot+80, window=POOL_btn_B)
+
+    sub_btn=tk.Button(root,text = 'Submit', command = lambda: csig_btn.submit(self))
+    canvas.create_window(self.cen_x-320, self.bot+40, window=sub_btn)
+    reset_btn=tk.Button(root,text = 'Reset', bg = "#77fc98", fg = "black", command = lambda: csig_btn.reset(self))
+    canvas.create_window(self.cen_x-320, self.bot+70, window=reset_btn)
     prv2pst_btn=tk.Button(root,text = 'Save', command = lambda: self.transfer_entries_to_saved(self))
-    canvas.create_window(self.cen_x +160, self.bot+50, window=prv2pst_btn)
-    reset_btn=tk.Button(root,text = 'Reset', command = lambda: csig_btn.reset(self))
-    canvas.create_window(self.cen_x, self.bot+50, window=reset_btn)
-    quit_btn = tk.Button(root, text="Exit", bg = "#FA8072", command = lambda: csig_btn.quit_game(self, self.root))
-    canvas.create_window(self.cen_x, self.bot+80, window=quit_btn)
+    canvas.create_window(self.cen_x-240, self.bot+40, window=prv2pst_btn)
+    saved_btn=tk.Button(root,text = 'Load', bg = "#77fc98", fg = "black", command = lambda: csig_btn.enter_saved(self))
+    canvas.create_window(self.cen_x-240, self.bot+70, window=saved_btn)
+    
+
+    quit_btn = tk.Button(root, text="Exit", width = 16, height = 3, bg = "#fad096", command = lambda: csig_btn.quit_game(self, self.root))
+    canvas.create_window(self.cen_x+300, self.bot+60, window=quit_btn)
 
