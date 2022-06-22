@@ -3,10 +3,11 @@ import tkinter as tk
 import math
 import numpy as np
 import sys
-import csig_gui
-import csig_np
-import csig_btn
-import csig_logic
+import csig_gui     as cg
+import csig_btn     as cb
+import csig_logic   as cl
+import csig_def     as cd
+import csig_def     as cd
 
 STR_HID = 0
 STR_REV = 1
@@ -88,11 +89,11 @@ class SGE:
 
 def main():
     parent = SGE()
-    csig_gui.create_spider_grid(parent, parent.root, parent.canvas)
-    csig_gui.label_grid(parent, parent.root, parent.canvas)
-    csig_gui.create_entry_boxes(parent, parent.root, parent.canvas)
-    csig_gui.gen_entry_buttons(parent, parent.root, parent.canvas)
-    csig_gui.draw_labels(parent, parent.root, parent.canvas)
+    cg.create_spider_grid(parent, parent.root, parent.canvas)
+    cg.label_grid(parent, parent.root, parent.canvas)
+    cg.create_entry_boxes(parent, parent.root, parent.canvas)
+    cg.gen_entry_buttons(parent, parent.root, parent.canvas)
+    cg.draw_labels(parent, parent.root, parent.canvas)
     parent.root.mainloop()
 
 if __name__ == '__main__':

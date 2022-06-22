@@ -1,24 +1,24 @@
 from tkinter import *
 import tkinter as tk
 import numpy as np
-import csig_np
+import csig_np as cn
 
 def enter_saved(self):
         entry = np.load(self.saved_file)
         if ((entry.shape[0] == self.rows) and (entry.shape[1] == self.cols)):
             self.matrix = entry
-            csig_np.fill_entries_from_matrix(self, entry)
+            cn.fill_entries_from_matrix(self, entry)
             print("LOADED")
         else:
             print("Saved dimensions do not match - Cannot load")
 
 def transfer_entries_to_saved(self):
-    csig_np.get_entries_into_matrix(self, self.matrix)
+    cn.get_entries_into_matrix(self, self.matrix)
     np.save(self.saved_file, self.matrix)
     print("SAVED")
 
 def submit(self):
-    csig_np.get_entries_into_matrix(self, self.matrix)
+    cn.get_entries_into_matrix(self, self.matrix)
     print(self.matrix)
     print("SUBMIT")
     np.save(self.prev_file, self.matrix)
@@ -36,7 +36,7 @@ def reset(self):
     np.save(self.prev_file, self.matrix)
 
 def quit_game(self, root_in):
-    csig_np.get_entries_into_matrix(self, self.matrix)
+    cn.get_entries_into_matrix(self, self.matrix)
     print(self.matrix)
     np.save(self.prev_file, self.matrix)
     print("EXIT")

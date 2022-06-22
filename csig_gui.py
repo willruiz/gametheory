@@ -1,9 +1,10 @@
 from tkinter import *
-import tkinter as tk
-import numpy as np
-import csig_np
-import csig_btn
-import csig_logic
+import tkinter      as tk
+import numpy        as np
+import csig_np      as cn
+import csig_btn     as cb
+import csig_logic   as cl
+import csig_def     as cd
 
 STR_HID = 0
 STR_REV = 1
@@ -78,34 +79,34 @@ def create_spider_grid(self, root_in, canvas_in):
 def label_grid(self, root_in, canvas_in):
     # Grid labels:
     # Top labels:
-    canvas_in.create_line(self.cen_x, self.top, self.cen_x, self.bot, fill="#bebebe", width ='1')
-    canvas_in.create_line(self.left_mid, self.top, self.left_mid, self.bot, fill="#bebebe", width ='1')
-    canvas_in.create_line(self.left_leg, self.top, self.left_leg, self.bot, fill="#bebebe", width ='1')
-    canvas_in.create_line(self.right_mid, self.top, self.right_mid, self.bot, fill="#bebebe", width ='1')
-    canvas_in.create_line(self.right_leg, self.top, self.right_leg, self.bot, fill="#bebebe", width ='1')
+    canvas_in.create_line(self.cen_x,     self.top, self.cen_x,     self.bot, fill=cd.dark_gray, width ='1')
+    canvas_in.create_line(self.left_mid,  self.top, self.left_mid,  self.bot, fill=cd.dark_gray, width ='1')
+    canvas_in.create_line(self.left_leg,  self.top, self.left_leg,  self.bot, fill=cd.dark_gray, width ='1')
+    canvas_in.create_line(self.right_mid, self.top, self.right_mid, self.bot, fill=cd.dark_gray, width ='1')
+    canvas_in.create_line(self.right_leg, self.top, self.right_leg, self.bot, fill=cd.dark_gray, width ='1')
 
-    canvas_in.create_text(self.cen_x, self.top+self.mini_offset, text='CEN_X', fill="#545454", font=('Arial 12'))
-    canvas_in.create_text(self.left_mid, self.top+self.mini_offset, text='LEFT_MID', fill="#545454", font=('Arial 12'))
-    canvas_in.create_text(self.left_leg, self.top+self.mini_offset, text='LEFT_LEG', fill="#545454", font=('Arial 12'))
-    canvas_in.create_text(self.right_mid, self.top+self.mini_offset, text='RIGHT_MID', fill="#545454", font=('Arial 12'))
-    canvas_in.create_text(self.right_leg, self.top+self.mini_offset, text='RIGHT_LEG', fill="#545454", font=('Arial 12'))
+    canvas_in.create_text(self.cen_x,     self.top+self.mini_offset, text='CEN_X', fill=cd.lite_gray, font=('Arial 12'))
+    canvas_in.create_text(self.left_mid,  self.top+self.mini_offset, text='LEFT_MID', fill=cd.lite_gray, font=('Arial 12'))
+    canvas_in.create_text(self.left_leg,  self.top+self.mini_offset, text='LEFT_LEG', fill=cd.lite_gray, font=('Arial 12'))
+    canvas_in.create_text(self.right_mid, self.top+self.mini_offset, text='RIGHT_MID', fill=cd.lite_gray, font=('Arial 12'))
+    canvas_in.create_text(self.right_leg, self.top+self.mini_offset, text='RIGHT_LEG', fill=cd.lite_gray, font=('Arial 12'))
 
     # Left Labels
-    canvas_in.create_line(self.left, self.cen_y, self.right, self.cen_y, fill="#bebebe", width ='1')
-    canvas_in.create_line(self.left, self.top_mid, self.right, self.top_mid, fill="#bebebe", width ='1')
-    canvas_in.create_line(self.left, self.bot_mid, self.right, self.bot_mid, fill="#bebebe", width ='1')
-    canvas_in.create_line(self.left, self.tA, self.right, self.tA, fill="#bebebe", width ='1')
-    canvas_in.create_line(self.left, self.tB, self.right, self.tB, fill="#bebebe", width ='1')
-    canvas_in.create_line(self.left, self.bA, self.right, self.bA, fill="#bebebe", width ='1')
-    canvas_in.create_line(self.left, self.bB, self.right, self.bB, fill="#bebebe", width ='1')
+    canvas_in.create_line(self.left, self.cen_y,   self.right, self.cen_y,   fill=cd.dark_gray, width ='1')
+    canvas_in.create_line(self.left, self.top_mid, self.right, self.top_mid, fill=cd.dark_gray, width ='1')
+    canvas_in.create_line(self.left, self.bot_mid, self.right, self.bot_mid, fill=cd.dark_gray, width ='1')
+    canvas_in.create_line(self.left, self.tA,      self.right, self.tA,      fill=cd.dark_gray, width ='1')
+    canvas_in.create_line(self.left, self.tB,      self.right, self.tB,      fill=cd.dark_gray, width ='1')
+    canvas_in.create_line(self.left, self.bA,      self.right, self.bA,      fill=cd.dark_gray, width ='1')
+    canvas_in.create_line(self.left, self.bB,      self.right, self.bB,      fill=cd.dark_gray, width ='1')
 
-    canvas_in.create_text(self.left+self.text_offset, self.cen_y, text='CEN_Y', fill="#545454", font=('Arial 12'))
-    canvas_in.create_text(self.left+self.text_offset, self.top_mid, text='TOP_MID', fill="#545454", font=('Arial 12'))
-    canvas_in.create_text(self.left+self.text_offset, self.bot_mid, text='BOT_MID', fill="#545454", font=('Arial 12'))
-    canvas_in.create_text(self.left+self.text_offset, self.tA, text='tA', fill="#545454", font=('Arial 12'))
-    canvas_in.create_text(self.left+self.text_offset, self.tB, text='tB', fill="#545454", font=('Arial 12'))
-    canvas_in.create_text(self.left+self.text_offset, self.bA, text='bA', fill="#545454", font=('Arial 12'))
-    canvas_in.create_text(self.left+self.text_offset, self.bB, text='bB', fill="#545454", font=('Arial 12'))
+    canvas_in.create_text(self.left+self.text_offset, self.cen_y,   text='CEN_Y',   fill=cd.lite_gray, font=('Arial 12'))
+    canvas_in.create_text(self.left+self.text_offset, self.top_mid, text='TOP_MID', fill=cd.lite_gray, font=('Arial 12'))
+    canvas_in.create_text(self.left+self.text_offset, self.bot_mid, text='BOT_MID', fill=cd.lite_gray, font=('Arial 12'))
+    canvas_in.create_text(self.left+self.text_offset, self.tA,      text='tA',      fill=cd.lite_gray, font=('Arial 12'))
+    canvas_in.create_text(self.left+self.text_offset, self.tB,      text='tB',      fill=cd.lite_gray, font=('Arial 12'))
+    canvas_in.create_text(self.left+self.text_offset, self.bA,      text='bA',      fill=cd.lite_gray, font=('Arial 12'))
+    canvas_in.create_text(self.left+self.text_offset, self.bB,      text='bB',      fill=cd.lite_gray, font=('Arial 12'))
 
 def create_entry_boxes(self, root_in, canvas_in):
         # Player entry_list [4][2][2]
@@ -119,12 +120,12 @@ def create_entry_boxes(self, root_in, canvas_in):
             prev_mat = np.load(self.prev_file)
             if ((prev_mat.shape[0] == self.rows) and (prev_mat.shape[1] == self.cols)):
                 print("Loading prev")
-                csig_np.fill_entries_from_matrix(self, prev_mat)
+                cn.fill_entries_from_matrix(self, prev_mat)
             else:
                 print("Prev is not loaded")
         else:
             print("Importing saved")
-            csig_np.fill_entries_from_matrix(self, self.matrix_import)
+            cn.fill_entries_from_matrix(self, self.matrix_import)
 
         # Nature probabilities
         for i in range(2):
@@ -161,28 +162,23 @@ def create_entry_boxes(self, root_in, canvas_in):
 
 def gen_entry_buttons(self, root, canvas):
 
+    SEPR_btn_A  = tk.Button(root,text = 'SEPR A', bg = "red",        fg = "white", command = lambda: cl.seperating_eq(self, self.matrix, STR_REV, WEK_HID))
+    SEPR_btn_B  = tk.Button(root,text = 'SEPR B', bg = "blue",       fg = "white", command = lambda: cl.seperating_eq(self, self.matrix, STR_HID, WEK_REV))
+    POOL_btn_A  = tk.Button(root,text = 'POOL A', bg = cd.mute_red,  fg = "white", command = lambda: cl.pooling_eq(self, self.matrix, STR_REV, WEK_REV))
+    POOL_btn_B  = tk.Button(root,text = 'POOL B', bg = cd.mute_blue, fg = "white", command = lambda: cl.pooling_eq(self, self.matrix, STR_HID, WEK_HID))
+    reset_btn   = tk.Button(root,text = 'Reset',  bg = cd.lite_teal, fg = "black", command = lambda: cb.reset(self))
+    saved_btn   = tk.Button(root,text = 'Load',   bg = cd.lite_teal, fg = "black", command = lambda: cb.enter_saved(self))
+    sub_btn     = tk.Button(root,text = 'Submit',                                  command = lambda: cb.submit(self))
+    prv2pst_btn = tk.Button(root,text = 'Save',                                    command = lambda: cb.transfer_entries_to_saved(self))
+    quit_btn    = tk.Button(root, text= "Exit",   width = 16, height = 3, bg = cd.lite_ornge, command = lambda: cb.quit_game(self, self.root))
     
-
-    SEPR_btn_A=tk.Button(root,text = 'SEPR A', bg = "red", fg = "white", command = lambda: csig_logic.seperating_eq(self, self.matrix, STR_REV, WEK_HID))
     canvas.create_window(self.cen_x-60, self.bot+40,  window=SEPR_btn_A)
-    SEPR_btn_B=tk.Button(root,text = 'SEPR B', bg = "blue", fg = "white", command = lambda: csig_logic.seperating_eq(self, self.matrix, STR_HID, WEK_REV))
     canvas.create_window(self.cen_x-60, self.bot+80, window=SEPR_btn_B)
-
-    POOL_btn_A=tk.Button(root,text = 'POOL A', bg = "#f75757", fg = "white", command = lambda: csig_logic.pooling_eq(self, self.matrix, STR_REV, WEK_REV))
     canvas.create_window(self.cen_x+60, self.bot+40,  window=POOL_btn_A)
-    POOL_btn_B=tk.Button(root,text = 'POOL B', bg = "#665af2", fg = "white", command = lambda: csig_logic.pooling_eq(self, self.matrix, STR_HID, WEK_HID))
     canvas.create_window(self.cen_x+60, self.bot+80, window=POOL_btn_B)
-
-    sub_btn=tk.Button(root,text = 'Submit', command = lambda: csig_btn.submit(self))
     canvas.create_window(self.cen_x-320, self.bot+40, window=sub_btn)
-    reset_btn=tk.Button(root,text = 'Reset', bg = "#77fc98", fg = "black", command = lambda: csig_btn.reset(self))
     canvas.create_window(self.cen_x-320, self.bot+70, window=reset_btn)
-    prv2pst_btn=tk.Button(root,text = 'Save', command = lambda: self.transfer_entries_to_saved(self))
     canvas.create_window(self.cen_x-240, self.bot+40, window=prv2pst_btn)
-    saved_btn=tk.Button(root,text = 'Load', bg = "#77fc98", fg = "black", command = lambda: csig_btn.enter_saved(self))
     canvas.create_window(self.cen_x-240, self.bot+70, window=saved_btn)
-    
-
-    quit_btn = tk.Button(root, text="Exit", width = 16, height = 3, bg = "#fad096", command = lambda: csig_btn.quit_game(self, self.root))
     canvas.create_window(self.cen_x+300, self.bot+60, window=quit_btn)
 
