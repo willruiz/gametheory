@@ -86,6 +86,8 @@ class SGE:
         self.bot_index_offset = 2
         self.index_p1 = 0
         self.index_p2 = 1
+        self.action1_p2 = 0
+        self.action2_p2 = 1
 
 def main():
     parent = SGE()

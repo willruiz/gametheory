@@ -39,7 +39,7 @@ def get_nature_entries_into_Natrix(self, matrix_in):
         str_input = i_entry.get()
         input = 0.0 
         if (str_input == ""):
-            input = 0.0
+            input = 0.5
         elif (not isfloat(str_input)):
             print("Non-numerical nature probability entered")
             break
@@ -47,9 +47,10 @@ def get_nature_entries_into_Natrix(self, matrix_in):
             input = float(str_input)
         matrix_in[0][i] = input
     checksum = np.sum(matrix_in)
-    # if checksum != 1.0:
-    #     print("Nature probabilities must equal 1.0")
-    #     assert(False)
+    print("checksum:",checksum)
+    if checksum != 1.0:
+        print("Nature probabilities must equal 1.0")
+        assert(False)
     
 
 def fill_nature_entry_from_Natrix(self, matrix_in): # 1x2 matrix

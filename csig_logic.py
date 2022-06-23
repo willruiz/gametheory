@@ -9,6 +9,7 @@ import tkinter as tk
 import math
 import numpy as np
 import sys
+from sympy import symbols, Eq, solve
 
 SEPR_INDEX = 0
 POOL_INDEX = 1
@@ -25,7 +26,7 @@ def draw_eq_base(parent_in,  matrix_in, eq_type):
     quit_btn = tk.Button(subroot, text="Exit", width = 24, height = 4, bg = cd.lite_ornge, command = lambda: cb.quit_game(parent_in, subroot))
     subcan.create_window(parent_in.cen_x, parent_in.bot+60, window=quit_btn)
     if eq_type == SEPR_INDEX:
-        inst.draw_sep_logic(parent_in, subroot, subcan, matrix_in)
+        inst.draw_sepr_logic(parent_in, subroot, subcan, matrix_in)
     else:
         inst.draw_pool_logic(parent_in, subroot, subcan, matrix_in)
 
@@ -63,7 +64,52 @@ def pooling_eq(self, matrix_in, top_signal, bot_signal):
     eq_setup(self, matrix_in, top_signal, bot_signal)
 
     # Step 2: Find Bayesian payoffs - start with saving nature entries [DONE]
+    p = self.nature_mat[0][0]
+    pn = self.nature_mat[0][1]
+    p2_pool1_top = matrix_in[self.top_branch][self.action1_p2][self.index_p2]
+    p2_pool1_bot = matrix_in[self.bot_branch][self.action1_p2][self.index_p2]
+    p2_pool2_top = matrix_in[self.top_branch][self.action2_p2][self.index_p2]
+    p2_pool2_bot = matrix_in[self.bot_branch][self.action2_p2][self.index_p2]
+    p2_pool1 = (p2_pool1_top*p) + (p2_pool1_bot*pn)
+    p2_pool2 = (p2_pool2_top*p) + (p2_pool2_bot*pn)
+    
+    self.p2_pool_action = -1
+    if (p2_pool1 >= p2_pool2):
+        self.p2_pool_action = 0
+    else:
+        self.p2_pool_action = 1
+    
+    # Steo 3: Check to see if p1 will deviate
+    p1_pool_top = matrix_in[self.top_branch][self.p2_pool_action][self.index_p1]
+    p1_pool_bot = matrix_in[self.bot_branch][self.p2_pool_action][self.index_p1]
+    p1_alt_top  = matrix_in[self.top_alt][self.p2_pool_action][self.index_p1]
+    p1_alt_bot  = matrix_in[self.bot_alt][self.p2_pool_action][self.index_p1]
 
+    self.p1_pool_deviation_top = (p1_alt_top > p1_pool_top)
+    self.p1_pool_deviation_bot = (p1_alt_bot > p1_pool_bot)
+    self.p1_pool_deviation = self.p1_pool_deviation_top or self.p1_pool_deviation_bot
+    # Step 4: If no deviation, find probability q
+    
+    if (not self.p1_pool_deviation):
+        print("CHECKD")
+        p2_alt1_top  = matrix_in[self.top_alt][self.action1_p2][self.index_p2]
+        p2_alt1_bot  = matrix_in[self.bot_alt][self.action1_p2][self.index_p2]
+        p2_alt2_top  = matrix_in[self.top_alt][self.action2_p2][self.index_p2]
+        p2_alt2_bot  = matrix_in[self.bot_alt][self.action2_p2][self.index_p2]
+        print(p2_alt1_top)
+        print(p2_alt1_bot)
+        print(p2_alt2_top)
+        print(p2_alt2_bot)
+        q = symbols('q')
+        exprA = q*p2_alt1_top + (1-q)*p2_alt1_bot
+        exprB = q*p2_alt2_top + (1-q)*p2_alt2_bot
+        raw_sol = solve(Eq(exprA, exprB),q)
+        solution = 0.0
+        if(bool(raw_sol)):
+            solution = float(raw_sol[0]) 
+        else:
+            pass
+        print(solution)
 
     draw_eq_base(self, matrix_in, POOL_INDEX)
 
@@ -85,18 +131,17 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
     assert(top_signal != bot_signal)
     eq_setup(self, matrix_in, top_signal, bot_signal)
     
-    if (matrix_in[self.top_branch][0][self.index_p2] >= matrix_in[self.top_branch][1][self.index_p2]):
+    if (matrix_in[self.top_branch][self.action1_p2][self.index_p2] >= matrix_in[self.action2_p2][1][self.index_p2]):
         self.p2_top_choice = 0
         self.p2_top_alt = 1
     else:
         self.p2_top_choice = 1
         self.p2_top_alt = 0
-
     # Bottom
     # 1. Nature chooses Weak > matrix[2 or 3]
     # 2. Player 1 chooses Hide > matrix[2] ~[2+0]
     # 3. Player 2 Finds maximization matrix[2][0] vs matrix[2][1]
-    if (matrix_in[self.bot_branch][0][self.index_p2] >= matrix_in[self.bot_branch][1][self.index_p2]):
+    if (matrix_in[self.bot_branch][self.action1_p2][self.index_p2] >= matrix_in[self.bot_branch][self.action2_p2][self.index_p2]):
         self.p2_bot_choice = 0
         self.p2_bot_alt = 1
         # IF EQUAL, arbitrarily take index zero
@@ -115,11 +160,11 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
     self.p1_bot_switch = bot_branch_val < bot_alt_val
 
     print("self.p2_top_choice: ",self.p2_top_choice)
-    print(matrix_in[self.top_branch][0][self.index_p2])
-    print(matrix_in[self.top_branch][1][self.index_p2])
+    print(matrix_in[self.top_branch][self.action1_p2][self.index_p2])
+    print(matrix_in[self.top_branch][self.action2_p2][self.index_p2])
     print("self.p2_bot_choice: ",self.p2_bot_choice)
-    print(matrix_in[self.bot_branch][0][self.index_p2])
-    print(matrix_in[self.bot_branch][1][self.index_p2])
+    print(matrix_in[self.bot_branch][self.action1_p2][self.index_p2])
+    print(matrix_in[self.bot_branch][self.action2_p2][self.index_p2])
     print("self.p1_top_switch: ", self.p1_top_switch)
     print("self.p1_bot_switch: ", self.p1_bot_switch)
     draw_eq_base(self, matrix_in, SEPR_INDEX)
@@ -216,7 +261,7 @@ class EQ_GUI:
                     else:
                         canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill="black", font=('Arial 15 bold'))
 
-    def draw_sep_logic(self, parent_in, root_in, canvas_in, matrix_in):
+    def draw_sepr_logic(self, parent_in, root_in, canvas_in, matrix_in):
         self.write_eq_payoff(parent_in, canvas_in, matrix_in)
         # 1. Draw branch re-sets (solid curved arrows)- signals
         #- Arrows
@@ -290,4 +335,4 @@ class EQ_GUI:
             canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium",fill=cd.fail_red, font=('Arial 15 bold'))
 
     def draw_pool_logic(self, parent_in, root_in, canvas_in, matrix_in):
-        pass
+        self.write_eq_payoff(parent_in, canvas_in, matrix_in)

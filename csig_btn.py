@@ -44,7 +44,8 @@ def reset(self):
                 self.matrix[i][j][k] = 0
     for i, i_entry in enumerate(self.nature_entry):
         i_entry.set("")
-    self.nature_mat = np.zeros((1,2))
+    # self.nature_mat[0][0] = 0.5
+    # self.nature_mat[0][1] = 0.5
 
     print("RESET")
     np.save(self.prev_file, self.matrix)
