@@ -31,18 +31,18 @@ def draw_eq_base(parent_in,  matrix_in, eq_type):
         inst.draw_pool_logic(parent_in, subroot, subcan, matrix_in)
 
 def eq_setup(parent_in, matrix_in, top_signal, bot_signal):
-    top_sig_alt = 0 if (top_signal == 1) else 1
-    bot_sig_alt = 0 if (bot_signal == 1) else 1
+    parent_in.top_sig_alt = 0 if (top_signal == 1) else 1
+    parent_in.bot_sig_alt = 0 if (bot_signal == 1) else 1
 
     parent_in.top_signal = top_signal
     parent_in.bot_signal = bot_signal
     
-    parent_in.top_branch = parent_in.top_index_offset + top_signal
-    parent_in.bot_branch = parent_in.bot_index_offset + bot_signal
+    parent_in.top_branch = top_signal + parent_in.top_index_offset
+    parent_in.bot_branch = bot_signal + parent_in.bot_index_offset
     print("top_branch:", parent_in.top_branch)
     print("bot_branch:", parent_in.bot_branch)        
-    parent_in.top_alt = top_sig_alt
-    parent_in.bot_alt = bot_sig_alt
+    parent_in.top_alt = parent_in.top_sig_alt + parent_in.top_index_offset
+    parent_in.bot_alt = parent_in.bot_sig_alt + parent_in.bot_index_offset
     cn.get_entries_into_matrix(parent_in, matrix_in)
     parent_in.p2_top_choice = -1
     parent_in.p2_top_alt = -1
@@ -82,8 +82,8 @@ def pooling_eq(self, matrix_in, top_signal, bot_signal):
     # Steo 3: Check to see if p1 will deviate
     p1_pool_top = matrix_in[self.top_branch][self.p2_pool_action][self.index_p1]
     p1_pool_bot = matrix_in[self.bot_branch][self.p2_pool_action][self.index_p1]
-    p1_alt_top  = matrix_in[self.top_alt][self.p2_pool_action][self.index_p1]
-    p1_alt_bot  = matrix_in[self.bot_alt][self.p2_pool_action][self.index_p1]
+    p1_alt_top  = matrix_in[self.top_sig_alt][self.p2_pool_action][self.index_p1]
+    p1_alt_bot  = matrix_in[self.bot_sig_alt][self.p2_pool_action][self.index_p1]
 
     self.p1_pool_deviation_top = (p1_alt_top > p1_pool_top)
     self.p1_pool_deviation_bot = (p1_alt_bot > p1_pool_bot)
@@ -96,6 +96,8 @@ def pooling_eq(self, matrix_in, top_signal, bot_signal):
         p2_alt1_bot  = matrix_in[self.bot_alt][self.action1_p2][self.index_p2]
         p2_alt2_top  = matrix_in[self.top_alt][self.action2_p2][self.index_p2]
         p2_alt2_bot  = matrix_in[self.bot_alt][self.action2_p2][self.index_p2]
+        # print("self.top_alt:",self.top_alt)
+        # print("self.bot_alt:",self.bot_alt)
         print(p2_alt1_top)
         print(p2_alt1_bot)
         print(p2_alt2_top)
@@ -104,12 +106,12 @@ def pooling_eq(self, matrix_in, top_signal, bot_signal):
         exprA = q*p2_alt1_top + (1-q)*p2_alt1_bot
         exprB = q*p2_alt2_top + (1-q)*p2_alt2_bot
         raw_sol = solve(Eq(exprA, exprB),q)
-        solution = 0.0
+        self.solution = -1.0
         if(bool(raw_sol)):
-            solution = float(raw_sol[0]) 
+            self.solution = round(float(raw_sol[0]),3) 
         else:
-            pass
-        print(solution)
+            print("[Undefined alternate probability solution]")
+        print(self.solution)
 
     draw_eq_base(self, matrix_in, POOL_INDEX)
 
@@ -152,9 +154,11 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
     # 4a. TOP: Player 1 then analyses TOP if this is profitable to stay with signal
     # Take the P2's OTHER choice to opposite signal to see if P1 changing current top signal is profitable 
     top_branch_val = matrix_in[self.top_branch][self.p2_top_choice][self.index_p1]
-    top_alt_val = matrix_in[self.top_alt + self.top_index_offset][self.p2_bot_choice][self.index_p1]
+    top_alt_val = matrix_in[self.top_alt][self.p2_bot_choice][self.index_p1]
     bot_branch_val = matrix_in[self.bot_branch][self.p2_bot_choice][self.index_p1]
-    bot_alt_val = matrix_in[self.bot_alt + self.bot_index_offset][self.p2_top_choice][self.index_p1]
+    bot_alt_val = matrix_in[self.bot_alt][self.p2_top_choice][self.index_p1]
+
+
 
     self.p1_top_switch = top_branch_val < top_alt_val
     self.p1_bot_switch = bot_branch_val < bot_alt_val
@@ -217,12 +221,12 @@ class EQ_GUI:
 
         self.sigT_offset = 2*self.MO - parent_in.top_signal*4*self.MO
         self.SA_tx = parent_in.left_mid + self.MO + (parent_in.top_signal*((2*parent_in.cf_horz_mid)-(2*self.MO)))
-        self.SB_tx = parent_in.left_mid + self.MO + (parent_in.top_alt*((2*parent_in.cf_horz_mid)-(2*self.MO)))
+        self.SB_tx = parent_in.left_mid + self.MO + (parent_in.top_sig_alt*((2*parent_in.cf_horz_mid)-(2*self.MO)))
         self.Sty = (parent_in.top_mid + parent_in.tA)/2
         
         self.sigB_offset = 2*self.MO - parent_in.bot_signal*4*self.MO
         self.SA_bx = parent_in.left_mid + self.MO + (parent_in.bot_signal*((2*parent_in.cf_horz_mid)-(2*self.MO)))
-        self.SB_bx = parent_in.left_mid + self.MO + (parent_in.bot_alt*((2*parent_in.cf_horz_mid)-(2*self.MO)))
+        self.SB_bx = parent_in.left_mid + self.MO + (parent_in.bot_sig_alt*((2*parent_in.cf_horz_mid)-(2*self.MO)))
         self.Sby = (parent_in.bot_mid + parent_in.bB)/2
 
     def write_eq_payoff(self, parent_in, canvas_in, matrix_in):
@@ -254,19 +258,13 @@ class EQ_GUI:
                     if(k == 0 and 
                         ((bool_top and j == parent_in.p2_top_choice and parent_in.top_signal == i) 
                       or (bool_bot and j == parent_in.p2_bot_choice and parent_in.bot_signal == i-2)
-                      or (bool_top and j == parent_in.p2_bot_choice    and parent_in.top_alt    == i)
-                      or (bool_bot and j == parent_in.p2_top_choice    and parent_in.bot_alt    == i-2)
+                      or (bool_top and j == parent_in.p2_bot_choice    and parent_in.top_sig_alt    == i)
+                      or (bool_bot and j == parent_in.p2_top_choice    and parent_in.bot_sig_alt    == i-2)
                     )):
                         canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill=cd.dark_red, font=('Arial 15 bold'))
                     else:
                         canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill="black", font=('Arial 15 bold'))
-
-    def draw_sepr_logic(self, parent_in, root_in, canvas_in, matrix_in):
-        self.write_eq_payoff(parent_in, canvas_in, matrix_in)
-        # 1. Draw branch re-sets (solid curved arrows)- signals
-        #- Arrows
-        # Top
-        print("parent_in.bot_branch:", parent_in.bot_branch)
+    def draw_sig_arrows(self, canvas_in):
         canvas_in.create_line(self.Atx-self.MO, self.Aty-self.MO, self.Btx-self.MO, self.Bty+self.MO, fill="lime green", width ='3')
         canvas_in.create_line(self.Btx-self.MO, self.Bty+self.MO, self.Ctx+self.MO, self.Cty+self.MO, fill="lime green", width ='3',arrow=tk.LAST)
 
@@ -274,20 +272,24 @@ class EQ_GUI:
         canvas_in.create_line(self.Abx-self.MO, self.Aby+self.MO, self.Bbx-self.MO, self.Bby-self.MO, fill="lime green", width ='3')
         canvas_in.create_line(self.Bbx-self.MO, self.Bby-self.MO, self.Cbx+self.MO, self.Cby-self.MO, fill="lime green", width ='3',arrow=tk.LAST)
 
+    def draw_sepr_logic(self, parent_in, root_in, canvas_in, matrix_in):
+        self.write_eq_payoff(parent_in, canvas_in, matrix_in)
+        # 1. Draw branch re-sets (solid curved arrows)- signals
+        self.draw_sig_arrows(canvas_in)
+
         # 2. Draw P2 payoffs given signal choices 
-        # (solid colored arrows) and (highlight rectangles)
         ## TOP MAGENTA
         canvas_in.create_line(self.Dtx, self.Dty-self.HMO+self.TJP2*self.HMO, self.Etx , self.Ety-self.HMO+self.TJP2*self.HMO, fill=cd.rglr_magnta, width ='8',arrow=tk.LAST)
         canvas_in.create_rectangle(
-            (self.Etx-self.MO)+self.TSJ*self.MO, self.Ety-self.TH, 
-            (self.Etx-2*(self.EO-self.MO/2))+self.TSJ*(2*(self.EO-self.MO/2)), self.Ety+self.TH, 
+            (self.Etx-self.MO)+self.TSJ*self.MO,                                self.Ety-self.TH, 
+            (self.Etx-2*(self.EO-self.MO/2))+self.TSJ*(2*(self.EO-self.MO/2)),  self.Ety+self.TH, 
             outline='red', width = '3')
 
         ## TOP-ALT
         canvas_in.create_line(self.Ftx, self.Fty-self.HMO+self.TJP2*self.HMO, self.Gtx , self.Gty-self.HMO+self.TJP2*self.HMO, fill=cd.pale_magnta, width ='5',arrow=tk.LAST)
         canvas_in.create_rectangle(
-            (self.Gtx-self.MO)+self.TSJ*self.MO,                        self.Gty-self.TH, 
-            (self.Gtx-2*(self.EO-self.MO/2))+self.TSJ*(2*(self.EO-self.MO/2)),    self.Gty+self.TH, 
+            (self.Gtx-self.MO)+self.TSJ*self.MO,                                self.Gty-self.TH, 
+            (self.Gtx-2*(self.EO-self.MO/2))+self.TSJ*(2*(self.EO-self.MO/2)),  self.Gty+self.TH, 
             outline=cd.pale_red, width = '2')
 
         ## BOT MAGENTA
@@ -300,8 +302,8 @@ class EQ_GUI:
         ## BOT-ALT
         canvas_in.create_line(self.Fbx, self.Fby-self.HMO+self.BJP2*self.HMO, self.Gbx , self.Gby-self.HMO+self.BJP2*self.HMO, fill=cd.pale_magnta, width ='5',arrow=tk.LAST)
         canvas_in.create_rectangle(
-            (self.Gbx-self.MO)+self.BSJ*self.MO, self.Gby-self.TH, 
-            (self.Gbx-2*(self.EO-self.MO/2))+self.BSJ*(2*(self.EO-self.MO/2)), self.Gby+self.TH, 
+            (self.Gbx-self.MO)+self.BSJ*self.MO,                                self.Gby-self.TH, 
+            (self.Gbx-2*(self.EO-self.MO/2))+self.BSJ*(2*(self.EO-self.MO/2)),  self.Gby+self.TH, 
             outline=cd.pale_red, width = '2')
         # 3. Label or draw if P1 decides to swithc signals
         # (Dotted rectangles) and (highlight rectangles)
@@ -323,16 +325,17 @@ class EQ_GUI:
             canvas_in.create_rectangle(
             parent_in.cen_x-self.EO*2, parent_in.bB-self.MO, 
             parent_in.cen_x+self.EO*2, parent_in.bB+self.TO, 
-            outline='orange', width = '3')
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB, text="Seperating",fill=cd.success_green, font=('Arial 15 bold'))
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium",fill=cd.success_green, font=('Arial 15 bold'))
+            outline = cd.success_green, width = '3')
+            canvas_in.create_text(parent_in.cen_x, parent_in.bB,         text="Seperating"     ,fill = cd.success_green, font=('Arial 15 bold'))
+            canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium"    ,fill = cd.success_green, font=('Arial 15 bold'))
         else:
             canvas_in.create_rectangle(
             parent_in.cen_x-self.EO*2, parent_in.bB-self.MO, 
             parent_in.cen_x+self.EO*2, parent_in.bB+self.TO, 
-            outline='orange', width = '3')
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB, text="Not Seperating",fill=cd.fail_red, font=('Arial 15 bold'))
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium",fill=cd.fail_red, font=('Arial 15 bold'))
+            outline = cd.fail_red, width = '3')
+            canvas_in.create_text(parent_in.cen_x, parent_in.bB,         text="Not Seperating" ,fill = cd.fail_red, font=('Arial 15 bold'))
+            canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium"    ,fill = cd.fail_red, font=('Arial 15 bold'))
 
     def draw_pool_logic(self, parent_in, root_in, canvas_in, matrix_in):
         self.write_eq_payoff(parent_in, canvas_in, matrix_in)
+        self.draw_sig_arrows(canvas_in)
