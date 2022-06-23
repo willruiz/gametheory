@@ -10,8 +10,11 @@ dark_red      = "#db3052"
 rglr_gold     = "#b8a200"
 lite_gray     = "#545454"
 dark_gray     = "#bebebe"
+rglr_cyan     = "#0ec9bd"
 success_green = "#0cc984"  
 fail_red      = "#ed264e"
+
+text_font     = "Arial 15 bold"
 
 import csig_gui     as cg
 import csig_btn     as cb

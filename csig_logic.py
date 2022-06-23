@@ -64,7 +64,7 @@ def pooling_eq(self, matrix_in, top_signal, bot_signal):
     eq_setup(self, matrix_in, top_signal, bot_signal)
 
     # Step 2: Find Bayesian payoffs - start with saving nature entries [DONE]
-    p = self.nature_mat[0][0]
+    p  = self.nature_mat[0][0]
     pn = self.nature_mat[0][1]
     p2_pool1_top = matrix_in[self.top_branch][self.action1_p2][self.index_p2]
     p2_pool1_bot = matrix_in[self.bot_branch][self.action1_p2][self.index_p2]
@@ -112,8 +112,10 @@ def pooling_eq(self, matrix_in, top_signal, bot_signal):
         print(p2_alt2_top)
         print(p2_alt2_bot)
         q = symbols('q')
-        exprA = q*p2_alt1_top + (1-q)*p2_alt1_bot
-        exprB = q*p2_alt2_top + (1-q)*p2_alt2_bot
+        exprA = q*p2_alt1_top + p2_alt1_bot - q*p2_alt1_bot
+        exprB = q*p2_alt2_top + p2_alt2_bot - q*p2_alt2_bot
+        print(exprA)
+        print(exprB)
         raw_sol = solve(Eq(exprA, exprB),q)
         self.solution = -1.0
         if(bool(raw_sol)):
@@ -134,7 +136,6 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
     4. Player 1 then analyses P2's choice and the decides 
     if he has a higher payoff if he switches his signal
     """
-    # (Case A) 
     # Top
     # 1. Nature chooses Strong > matrix[0 or 1]
     # 2. Player 1 chooses Reveal > matrix[1] ~[0+1]
@@ -167,19 +168,8 @@ def seperating_eq(self, matrix_in, top_signal, bot_signal):
     bot_branch_val = matrix_in[self.bot_branch][self.p2_bot_choice][self.index_p1]
     bot_alt_val = matrix_in[self.bot_alt][self.p2_top_choice][self.index_p1]
 
-
-
     self.p1_top_switch = top_branch_val < top_alt_val
     self.p1_bot_switch = bot_branch_val < bot_alt_val
-
-    print("self.p2_top_choice: ",self.p2_top_choice)
-    print(matrix_in[self.top_branch][self.action1_p2][self.index_p2])
-    print(matrix_in[self.top_branch][self.action2_p2][self.index_p2])
-    print("self.p2_bot_choice: ",self.p2_bot_choice)
-    print(matrix_in[self.bot_branch][self.action1_p2][self.index_p2])
-    print(matrix_in[self.bot_branch][self.action2_p2][self.index_p2])
-    print("self.p1_top_switch: ", self.p1_top_switch)
-    print("self.p1_bot_switch: ", self.p1_bot_switch)
     draw_eq_base(self, matrix_in, SEPR_INDEX)
 
 class EQ_GUI:
@@ -264,6 +254,11 @@ class EQ_GUI:
 
     
     def write_eq_payoff(self, parent_in, canvas_in, matrix_in):
+        canvas_in.create_text(parent_in.cen_x+parent_in.entry_offset, (parent_in.cen_y+parent_in.top_mid)/2,
+            text=str(parent_in.nature_mat[0][0]), fill=cd.rglr_cyan, font=(cd.text_font))
+        canvas_in.create_text(parent_in.cen_x+parent_in.entry_offset, (parent_in.cen_y+parent_in.bot_mid)/2,
+            text=str(parent_in.nature_mat[0][1]), fill=cd.rglr_cyan, font=(cd.text_font))
+
         for i in range(4): # Corners
             # i = 0,1 -> Top
             # i = 2,3 -> Bot
@@ -284,7 +279,7 @@ class EQ_GUI:
                     x_offset = parent_in.left_leg-self.EO
                 else:
                     x_offset = parent_in.right_leg+self.EO
-                canvas_in.create_text(x_offset, y_offset, text=',', fill="black", font=('Arial 15 bold'))
+                canvas_in.create_text(x_offset, y_offset, text=',', fill="black", font=(cd.text_font))
                 
                 for k in range(2): # tuple
                     xtext = x_offset -self.MO + 2*k*self.MO
@@ -295,9 +290,9 @@ class EQ_GUI:
                       or (bool_top and j == parent_in.p2_bot_choice and parent_in.top_sig_alt == i)
                       or (bool_bot and j == parent_in.p2_top_choice and parent_in.bot_sig_alt == i-2)
                     )):
-                        canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill=cd.dark_red, font=('Arial 15 bold'))
+                        canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill=cd.dark_red, font=(cd.text_font))
                     else:
-                        canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill="black", font=('Arial 15 bold'))
+                        canvas_in.create_text(xtext, y_offset, text=str(matrix_in[i][j][k]), fill="black", font=(cd.text_font))
     def draw_sig_arrows(self, canvas_in):
         canvas_in.create_line(self.Atx-self.MO, self.Aty-self.MO, self.Btx-self.MO, self.Bty+self.MO, fill="lime green", width ='3')
         canvas_in.create_line(self.Btx-self.MO, self.Bty+self.MO, self.Ctx+self.MO, self.Cty+self.MO, fill="lime green", width ='3',arrow=tk.LAST)
@@ -371,34 +366,36 @@ class EQ_GUI:
         if(parent_in.p1_top_switch):
             canvas_in.create_line(self.SA_tx, self.Sty, self.SB_tx, self.Sty, fill=cd.rglr_gold, width ='5',arrow=tk.LAST, arrowshape=(14,15,8))
         else:
-            canvas_in.create_text(self.SA_tx + 2*self.sigT_offset, self.Sty, text="No Deviation",fill=cd.rglr_gold, font=('Arial 15 bold'))
+            canvas_in.create_text(self.SA_tx + 2*self.sigT_offset, self.Sty, text="No Deviation",fill=cd.rglr_gold, font=(cd.text_font))
         if(parent_in.p1_bot_switch):
             canvas_in.create_line(self.SA_bx, self.Sby, self.SB_bx, self.Sby, fill=cd.rglr_gold, width ='5',arrow=tk.LAST, arrowshape=(14,15,8))
         else:
-            canvas_in.create_text(self.SA_bx + 2*self.sigB_offset, self.Sby, text="No Deviation",fill=cd.rglr_gold, font=('Arial 15 bold'))
+            canvas_in.create_text(self.SA_bx + 2*self.sigB_offset, self.Sby, text="No Deviation",fill=cd.rglr_gold, font=(cd.text_font))
+    def output_eq_result(self, parent_in, canvas_in, type_ind):
+        text_type = ""
+        fill_type = ""
+        if(type_ind == SEPR_INDEX):
+            text_type = "Seperating"
+        else: #POOL_INDEX
+            text_type = "Pooling"
+        if(not parent_in.p1_top_switch and  not parent_in.p1_bot_switch):
+            fill_type = cd.success_green
+        else:
+            text_type = "Not " + text_type
+            fill_type = cd.fail_red
+        canvas_in.create_rectangle(
+            parent_in.cen_x-self.EO*2, parent_in.bB-self.MO, 
+            parent_in.cen_x+self.EO*2, parent_in.bB+self.TO, 
+            outline = fill_type, width = '3')
+        canvas_in.create_text(parent_in.cen_x, parent_in.bB,         text=text_type         ,fill = fill_type, font=(cd.text_font))
+        canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium"     ,fill = fill_type, font=(cd.text_font))
 
     def draw_sepr_logic(self, parent_in, root_in, canvas_in, matrix_in):
         self.write_eq_payoff(parent_in, canvas_in, matrix_in)
-        # 1. Draw branch re-sets (solid curved arrows)- signals
-        self.draw_sig_arrows(canvas_in)
-        # 2. Draw P2 payoffs given signal choices 
-        self.draw_SEPp2choice(canvas_in)
-        self.check_deviation(parent_in, canvas_in)
-        ## Write out text to indicate if this is a successful seperating equlibrium and store in self class
-        if(not parent_in.p1_top_switch and  not parent_in.p1_bot_switch):
-            canvas_in.create_rectangle(
-            parent_in.cen_x-self.EO*2, parent_in.bB-self.MO, 
-            parent_in.cen_x+self.EO*2, parent_in.bB+self.TO, 
-            outline = cd.success_green, width = '3')
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB,         text="Seperating"     ,fill = cd.success_green, font=('Arial 15 bold'))
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium"    ,fill = cd.success_green, font=('Arial 15 bold'))
-        else:
-            canvas_in.create_rectangle(
-            parent_in.cen_x-self.EO*2, parent_in.bB-self.MO, 
-            parent_in.cen_x+self.EO*2, parent_in.bB+self.TO, 
-            outline = cd.fail_red, width = '3')
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB,         text="Not Seperating" ,fill = cd.fail_red, font=('Arial 15 bold'))
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium"    ,fill = cd.fail_red, font=('Arial 15 bold'))
+        self.draw_sig_arrows(canvas_in)                 # 1. Draw branch ignals
+        self.draw_SEPp2choice(canvas_in)                # 2. Draw P2 payoffs given signal choices 
+        self.check_deviation(parent_in, canvas_in)      # 3. Check for deviation
+        self.output_eq_result(parent_in, canvas_in, SEPR_INDEX)  # 4. Output result
 
     def draw_pool_logic(self, parent_in, root_in, canvas_in, matrix_in):
         self.write_eq_payoff(parent_in, canvas_in, matrix_in)
@@ -406,17 +403,11 @@ class EQ_GUI:
         self.pool_adjust_vars(parent_in)
         self.draw_POOLp2choice(canvas_in)
         self.check_deviation(parent_in, canvas_in)
+        self.output_eq_result(parent_in, canvas_in, POOL_INDEX)
         if(not parent_in.p1_top_switch and  not parent_in.p1_bot_switch):
             canvas_in.create_rectangle(
-            parent_in.cen_x-self.EO*2, parent_in.bB-self.MO, 
-            parent_in.cen_x+self.EO*2, parent_in.bB+self.TO, 
-            outline = cd.success_green, width = '3')
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB,         text="Pooling"     ,fill = cd.success_green, font=('Arial 15 bold'))
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium"    ,fill = cd.success_green, font=('Arial 15 bold'))
-        else:
-            canvas_in.create_rectangle(
-            parent_in.cen_x-self.EO*2, parent_in.bB-self.MO, 
-            parent_in.cen_x+self.EO*2, parent_in.bB+self.TO, 
-            outline = cd.fail_red, width = '3')
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB,         text="Not Pooling" ,fill = cd.fail_red, font=('Arial 15 bold'))
-            canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium"    ,fill = cd.fail_red, font=('Arial 15 bold'))
+                (parent_in.cen_x*2+parent_in.right_mid)/3+self.EO*0.8, parent_in.bB-self.MO, 
+                (parent_in.cen_x+parent_in.right_mid*2)/3+self.EO*1.5, parent_in.bB+self.TO, 
+                outline = "orange", width = '3')
+            canvas_in.create_text( ((parent_in.cen_x+parent_in.right_mid)/2+self.EO), parent_in.bB+self.MO/2, 
+                text="~P = "+str(parent_in.solution),fill = "orange", font=(cd.text_font))

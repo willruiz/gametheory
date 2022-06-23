@@ -12,6 +12,7 @@ WEK_HID = 0
 WEK_REV = 1
 
 def draw_labels(self, root_in, canvas_in):
+        canvas_in.create_text(self.cen_x+self.entry_offset, (self.cen_y), text='Nature', fill="dark blue", font=('Arial 15 bold'))
         canvas_in.create_text(self.cen_x-self.entry_offset, (self.cen_y+self.top_mid)/2, text='Strong', fill="blue", font=('Arial 15 bold'))
         canvas_in.create_text(self.cen_x-self.entry_offset, (self.cen_y+self.bot_mid)/2, text='Weak', fill="blue", font=('Arial 15 bold'))
         canvas_in.create_text((self.cen_x + self.left_mid)/2, self.top_mid-self.mini_offset, text='Hide', fill="black", font=('Arial 15 bold'))
