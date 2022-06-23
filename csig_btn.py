@@ -26,6 +26,7 @@ def transfer_entries_to_saved(self):
     cn.get_nature_entries_into_Natrix(self, self.nature_mat)
     np.save(self.saved_file, self.matrix)
     np.save(self.nature_file, self.nature_mat)
+    print(self.nature_mat)
     print("SAVED")
 
 def submit(self):

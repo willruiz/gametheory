@@ -134,6 +134,8 @@ def create_entry_boxes(self, root_in, canvas_in):
         canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.top_mid)/2, window=entryN0)
         entryN1 = tk.Entry (root_in, textvariable=self.nature_entry[1], width = self.nature_boxsize)
         canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.bot_mid)/2, window=entryN1)
+        nature_prev_mat = np.load(self.nature_prev)
+        cn.fill_nature_entry_from_Natrix(self, nature_prev_mat)
 
         for i in range(4): # Corners
             for j in range(2): # up / down
