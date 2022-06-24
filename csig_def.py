@@ -21,6 +21,7 @@ success_green = "#0cc984"
 fail_red      = "#ed264e"
 
 text_font     = "Arial 15 bold"
+small_font    = "Arial 12 bold"
 
 import csig_gui     as cg
 import csig_btn     as cb

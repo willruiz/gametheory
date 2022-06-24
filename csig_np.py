@@ -47,7 +47,7 @@ def get_nature_entries_into_Natrix(self, matrix_in):
             input = float(str_input)
         matrix_in[0][i] = input
     checksum = np.sum(matrix_in)
-    print("checksum:",checksum)
+    #print("checksum:",checksum)
     if checksum != 1.0:
         print("Nature probabilities must equal 1.0")
         assert(False)

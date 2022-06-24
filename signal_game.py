@@ -88,6 +88,8 @@ class SGE:
         self.index_p2 = 1
         self.action1_p2 = 0
         self.action2_p2 = 1
+        self.SEPR_INDEX = 0
+        self.POOL_INDEX = 1
 
 
 

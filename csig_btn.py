@@ -55,7 +55,7 @@ def reset(self):
 def quit_game(self, root_in):
     cn.get_entries_into_matrix(self, self.matrix)
     cn.get_nature_entries_into_Natrix(self, self.nature_mat)
-    print(self.matrix)
+    #print(self.matrix)
     np.save(self.prev_file, self.matrix)
     np.save(self.nature_prev, self.nature_mat)
     print("EXIT")
