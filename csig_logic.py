@@ -410,15 +410,3 @@ class EQ_GUI:
             self.write_pool_prob(parent_in, canvas_in)
 
 
-        canvas_in.create_text( ((parent_in.left+parent_in.left_leg*2)/3)-self.MO*0.2 + 2*(parent_in.cf_full_leg+self.TO*2-0.2*self.MO)*parent_in.top_signal, parent_in.cen_y-self.EO/4, 
-                text=str(parent_in.p2_pool1), fill = "orange", font=(cd.text_font))
-        canvas_in.create_text( ((parent_in.left+parent_in.left_leg*2)/3)-self.MO*0.2 + 2*(parent_in.cf_full_leg+self.TO*2-0.2*self.MO)*parent_in.top_signal, parent_in.cen_y+self.EO/4, 
-                text=str(parent_in.p2_pool2), fill = "orange", font=(cd.text_font))
-
-        if(not parent_in.p1_top_switch and  not parent_in.p1_bot_switch):
-            canvas_in.create_rectangle(
-                (parent_in.cen_x*2+parent_in.right_mid)/3+self.EO*0.8, parent_in.bB-self.MO, 
-                (parent_in.cen_x+parent_in.right_mid*2)/3+self.EO*1.5, parent_in.bB+self.TO, 
-                outline = "orange", width = '3')
-            canvas_in.create_text( ((parent_in.cen_x+parent_in.right_mid)/2+self.EO), parent_in.bB+self.MO/2, 
-                text="~P = "+str(parent_in.solution),fill = "orange", font=(cd.text_font))
