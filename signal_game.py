@@ -90,6 +90,7 @@ class SGE:
         self.action2_p2 = 1
 
 
+
 def main():
     parent = SGE()
     cg.create_spider_grid(parent, parent.root, parent.canvas)
