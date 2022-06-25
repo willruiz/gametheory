@@ -81,7 +81,6 @@ def pooling_eq(parent_in, matrix_in, top_signal, bot_signal):
     p1_alt_top  = matrix_in[parent_in.top_alt][parent_in.p2_pool_action][parent_in.index_p1]
     p1_alt_bot  = matrix_in[parent_in.bot_alt][parent_in.p2_pool_action][parent_in.index_p1]
 
-    #print(matrix_in)
     parent_in.p1_top_switch = (p1_alt_top > p1_pool_top)
     parent_in.p1_bot_switch = (p1_alt_bot > p1_pool_bot)
     parent_in.p1_pool_deviation = parent_in.p1_top_switch or parent_in.p1_bot_switch
@@ -300,7 +299,7 @@ class EQ_GUI:
 
         # 2. Draw P2 payoffs given signal choices 
         ## TOP MAGENTA
-        canvas_in.create_line(self.Dtx, self.Dty-self.HMO+self.TJP2*self.HMO, self.Etx , self.Ety-self.HMO+self.TJP2*self.HMO, fill=cd.rglr_magnta, width ='8',arrow=tk.LAST, arrowshape=(14,15,8))
+        canvas_in.create_line(self.Dtx, self.Dty-self.HMO+self.TJP2*self.HMO, self.Etx , self.Ety-self.HMO+self.TJP2*self.HMO, fill=cd.reg_magnta, width ='8',arrow=tk.LAST, arrowshape=(14,15,8))
         canvas_in.create_rectangle(
             (self.Etx-self.MO)+self.TSJ*self.MO,                               self.Ety-self.TH, 
             (self.Etx-2*(self.EO-self.MO/2))+self.TSJ*(2*(self.EO-self.MO/2)), self.Ety+self.TH, 
@@ -314,7 +313,7 @@ class EQ_GUI:
             outline='blue', width = '2')
 
         ## BOT MAGENTA
-        canvas_in.create_line(self.Dbx, self.Dby-self.HMO+self.BJP2*self.HMO, self.Ebx , self.Eby-self.HMO+self.BJP2*self.HMO, fill=cd.rglr_magnta, width ='8',arrow=tk.LAST, arrowshape=(14,15,8))
+        canvas_in.create_line(self.Dbx, self.Dby-self.HMO+self.BJP2*self.HMO, self.Ebx , self.Eby-self.HMO+self.BJP2*self.HMO, fill=cd.reg_magnta, width ='8',arrow=tk.LAST, arrowshape=(14,15,8))
         canvas_in.create_rectangle(
             (self.Ebx-self.MO)+self.BSJ*self.MO,                               self.Eby-self.TH, 
             (self.Ebx-2*(self.EO-self.MO/2))+self.BSJ*(2*(self.EO-self.MO/2)), self.Eby+self.TH, 
@@ -356,18 +355,36 @@ class EQ_GUI:
         canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium"     ,fill = fill_type, font=(cd.text_font))
 
     def write_pool_prob(self, parent_in, canvas_in): 
+        pool_text_x  = ((parent_in.left+parent_in.left_leg*2)/3)-self.EO*0.5 + 2*(parent_in.cf_full_leg+self.TO*2-0.4*self.MO)*parent_in.top_signal
+        pool_text_xb = ((parent_in.left+parent_in.left_leg*2)/3)+self.EO*0.4 + 2*(parent_in.cf_full_leg+self.TO*2-0.1*self.MO)*parent_in.top_signal
+        top_pool_text_y  = parent_in.cen_y-self.EO*0.5
+        top_pool_text_yb = parent_in.cen_y-self.MO*0.1
+        bot_pool_text_y  = parent_in.cen_y+self.MO*0.1
+        bot_pool_text_yb = parent_in.cen_y+self.EO*0.5
+
+        if (parent_in.p2_pool1 >= parent_in.p2_pool2):
+            canvas_in.create_rectangle(pool_text_x, top_pool_text_y, pool_text_xb, top_pool_text_yb, outline = cd.lite_red, width = '2')
+            canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4, parent_in.cen_y+self.MO, 
+                                  parent_in.left_leg-self.MO, parent_in.cen_y-self.MO, 
+                                  fill=cd.lite_magnta, width ='7',arrow=tk.LAST)
+        else:
+            canvas_in.create_rectangle(pool_text_x, bot_pool_text_y, pool_text_xb, bot_pool_text_yb, outline = cd.lite_red, width = '2')
+            canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4, parent_in.cen_y-self.MO, 
+                                  parent_in.left_leg-self.MO, parent_in.cen_y+self.MO, 
+                                  fill=cd.lite_magnta, width ='7',arrow=tk.LAST)
+
         canvas_in.create_text( ((parent_in.left+parent_in.left_leg*2)/3)-self.MO*0.2 + 2*(parent_in.cf_full_leg+self.TO*2-0.2*self.MO)*parent_in.top_signal, parent_in.cen_y-self.EO/4, 
-            text=str(parent_in.p2_pool1), fill = "orange", font=(cd.text_font))
+            text=str(parent_in.p2_pool1), fill = cd.lite_purple, font=(cd.text_font))
         canvas_in.create_text( ((parent_in.left+parent_in.left_leg*2)/3)-self.MO*0.2 + 2*(parent_in.cf_full_leg+self.TO*2-0.2*self.MO)*parent_in.top_signal, parent_in.cen_y+self.EO/4, 
-            text=str(parent_in.p2_pool2), fill = "orange", font=(cd.text_font))
+            text=str(parent_in.p2_pool2), fill = cd.lite_purple, font=(cd.text_font))
 
         if(not parent_in.p1_top_switch and  not parent_in.p1_bot_switch):
             canvas_in.create_rectangle(
                 (parent_in.cen_x*2+parent_in.right_mid)/3+self.EO*0.8, parent_in.bB-self.MO, 
-                (parent_in.cen_x+parent_in.right_mid*2)/3+self.EO*1.5, parent_in.bB+self.TO, 
+                (parent_in.cen_x+parent_in.right_mid*2)/3+self.EO*1.6, parent_in.bB+self.TO, 
                 outline = "orange", width = '3')
-            canvas_in.create_text( ((parent_in.cen_x+parent_in.right_mid)/2+self.EO), parent_in.bB+self.MO/2, 
-                text="~P = "+str(parent_in.solution),fill = "orange", font=(cd.text_font))
+            canvas_in.create_text( ((parent_in.cen_x+parent_in.right_mid)/2+self.EO*1.2), parent_in.bB+self.MO/2, 
+                text="~P = "+str(parent_in.solution),fill = "orange", font=(cd.small_font))
 
     def draw_logic_sequence(self, parent_in, canvas_in, matrix_in, type_in):
         if (type_in == parent_in.POOL_INDEX):
