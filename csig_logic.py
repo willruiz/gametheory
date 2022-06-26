@@ -45,6 +45,7 @@ def eq_setup(parent_in, matrix_in, top_signal, bot_signal):
     parent_in.p2_bot_alt = -1
     parent_in.p1_top_switch = False
     parent_in.p1_bot_switch = False
+    parent_in.eq_success    = False
 
 def pooling_eq(parent_in, matrix_in, top_signal, bot_signal):
     """
@@ -144,6 +145,7 @@ def seperating_eq(parent_in, matrix_in, top_signal, bot_signal):
     parent_in.p1_top_switch = top_branch_val < top_alt_val
     parent_in.p1_bot_switch = bot_branch_val < bot_alt_val
     draw_eq_base(parent_in, matrix_in, parent_in.SEPR_INDEX)
+    #print(parent_in.p2_top_choice)
 
 class EQ_GUI:
     def __init__(self, parent_in):
@@ -343,8 +345,10 @@ class EQ_GUI:
         else: #self.POOL_INDEX
             text_type = "Pooling"
         if(not parent_in.p1_top_switch and  not parent_in.p1_bot_switch):
+            parent_in.eq_success = True
             fill_type = cd.success_green
         else:
+            parent_in.eq_success = False
             text_type = "Not " + text_type
             fill_type = cd.fail_red
         canvas_in.create_rectangle(
@@ -364,13 +368,13 @@ class EQ_GUI:
 
         if (parent_in.p2_pool1 >= parent_in.p2_pool2):
             canvas_in.create_rectangle(pool_text_x, top_pool_text_y, pool_text_xb, top_pool_text_yb, outline = cd.lite_red, width = '2')
-            canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4, parent_in.cen_y+self.MO, 
-                                  parent_in.left_leg-self.MO, parent_in.cen_y-self.MO, 
-                                  fill=cd.lite_magnta, width ='7',arrow=tk.LAST)
+            canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4+self.MO + (2*(parent_in.cf_full_leg)-self.TO*2.6) *parent_in.top_signal, parent_in.cen_y+self.MO*1.5, 
+                                   parent_in.left_leg-self.MO +                         (2*(parent_in.cf_full_leg)+self.TO*1.25) *parent_in.top_signal,   parent_in.cen_y-self.MO*0.75, 
+                                   fill=cd.lite_magnta, width ='7',arrow=tk.LAST)
         else:
             canvas_in.create_rectangle(pool_text_x, bot_pool_text_y, pool_text_xb, bot_pool_text_yb, outline = cd.lite_red, width = '2')
-            canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4, parent_in.cen_y-self.MO, 
-                                  parent_in.left_leg-self.MO, parent_in.cen_y+self.MO, 
+            canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4+self.MO + (2*(parent_in.cf_full_leg)-self.TO*2.5) *parent_in.top_signal,  parent_in.cen_y-self.MO*2, 
+                                   parent_in.left_leg-self.MO                         + (2*(parent_in.cf_full_leg)+self.TO*1.25) *parent_in.top_signal, parent_in.cen_y+self.MO*0.5, 
                                   fill=cd.lite_magnta, width ='7',arrow=tk.LAST)
 
         canvas_in.create_text( ((parent_in.left+parent_in.left_leg*2)/3)-self.MO*0.2 + 2*(parent_in.cf_full_leg+self.TO*2-0.2*self.MO)*parent_in.top_signal, parent_in.cen_y-self.EO/4, 

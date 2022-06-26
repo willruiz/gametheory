@@ -9,10 +9,6 @@ import csig_logic   as cl
 import csig_def     as cd
 import csig_def     as cd
 
-STR_HID = 0
-STR_REV = 1
-WEK_HID = 0
-WEK_REV = 1
 
 class SGE:
     def __init__(self):
@@ -90,7 +86,25 @@ class SGE:
         self.action2_p2 = 1
         self.SEPR_INDEX = 0
         self.POOL_INDEX = 1
+        self.STR_HID = 0
+        self.STR_REV = 1
+        self.WEK_HID = 0
+        self.WEK_REV = 1
 
+        # parent_in.top_signal = top_signal
+        # parent_in.bot_signal = bot_signal
+        
+        # parent_in.top_branch = top_signal + parent_in.top_index_offset
+        # parent_in.bot_branch = bot_signal + parent_in.bot_index_offset     
+        # parent_in.top_alt = parent_in.top_sig_alt + parent_in.top_index_offset
+        # parent_in.bot_alt = parent_in.bot_sig_alt + parent_in.bot_index_offset
+        # parent_in.p2_top_choice = -1
+        # parent_in.p2_top_alt = -1
+        # parent_in.p2_bot_choice = -1
+        # parent_in.p2_bot_alt = -1
+        # parent_in.p1_top_switch = False
+        # parent_in.p1_bot_switch = False
+        # parent_in.eq_success    = False        
 
 
 def main():
