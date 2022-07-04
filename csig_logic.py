@@ -388,7 +388,7 @@ class EQ_GUI:
                 (parent_in.cen_x+parent_in.right_mid*2)/3+self.EO*1.6, parent_in.bB+self.TO, 
                 outline = "orange", width = '3')
             canvas_in.create_text( ((parent_in.cen_x+parent_in.right_mid)/2+self.EO*1.2), parent_in.bB+self.MO/2, 
-                text="~P = "+str(parent_in.solution),fill = "orange", font=(cd.small_font))
+                text="Q = "+str(parent_in.solution),fill = "orange", font=(cd.small_font))
 
     def draw_logic_sequence(self, parent_in, canvas_in, matrix_in, type_in):
         if (type_in == parent_in.POOL_INDEX):
