@@ -216,6 +216,7 @@ class EQ_GUI:
     def pool_adjust_vars(self, parent_in):
         self.TAJ = parent_in.top_sig_alt*2    # Top sig alt jump
         self.BAJ = parent_in.bot_sig_alt*2    # Bot sig alt jump
+        self.PAAP2 = parent_in.p2_pool_act_alt * 2
 
         self.Ftx = parent_in.left_mid + (self.TAJ*parent_in.cf_horz_mid) # done
         self.Fty = self.Dty # done
@@ -238,7 +239,7 @@ class EQ_GUI:
         # self.Sby = (parent_in.bot_mid + parent_in.bB)/2
 
     
-    def write_eq_payoff(self, parent_in, canvas_in, matrix_in):
+    def write_eq_payoff(self, parent_in, canvas_in, matrix_in, type_in):
         canvas_in.create_text(parent_in.cen_x+parent_in.entry_offset, (parent_in.cen_y+parent_in.top_mid)/2,
             text=str(parent_in.nature_mat[0][0]), fill=cd.rglr_cyan, font=(cd.text_font))
         canvas_in.create_text(parent_in.cen_x+parent_in.entry_offset, (parent_in.cen_y+parent_in.bot_mid)/2,
@@ -269,11 +270,18 @@ class EQ_GUI:
                 for k in range(2): # tuple
                     xtext = x_offset -self.MO + 2*k*self.MO
                     pay_fill = ""
-                    if(k == 0 and 
+                    if(k == 0 and type_in == parent_in.SEPR_INDEX and
                         ((bool_top and j == parent_in.p2_top_choice and parent_in.top_signal  == i - parent_in.top_index_offset) 
                       or (bool_top and j == parent_in.p2_bot_choice and parent_in.top_sig_alt == i - parent_in.top_index_offset)
                       or (bool_bot and j == parent_in.p2_bot_choice and parent_in.bot_signal  == i - parent_in.bot_index_offset)
                       or (bool_bot and j == parent_in.p2_top_choice and parent_in.bot_sig_alt == i - parent_in.bot_index_offset)
+                    )):
+                        pay_fill = cd.dark_red
+                    elif(k == 0 and type_in == parent_in.POOL_INDEX and
+                        ((bool_top and j == parent_in.p2_top_choice and parent_in.top_signal  == i - parent_in.top_index_offset) 
+                      or (bool_top and j == parent_in.p2_pool_act_alt and parent_in.top_sig_alt == i - parent_in.top_index_offset)
+                      or (bool_bot and j == parent_in.p2_bot_choice and parent_in.bot_signal  == i - parent_in.bot_index_offset)
+                      or (bool_bot and j == parent_in.p2_pool_act_alt and parent_in.bot_sig_alt == i - parent_in.bot_index_offset)
                     )):
                         pay_fill = cd.dark_red
                     elif(k == 1 and
@@ -305,9 +313,13 @@ class EQ_GUI:
         if (type_in == parent_in.SEPR_INDEX):
             p2c_offset_top = self.TSJ
             p2c_offset_bot = self.BSJ 
+            p2c_offset_alt_top = self.TJP2
+            p2c_offset_alt_bot = self.BJP2
         else:
             p2c_offset_top = self.TAJ
             p2c_offset_bot = self.BAJ 
+            p2c_offset_alt_top = self.PAAP2
+            p2c_offset_alt_bot = self.PAAP2 
 
         # 2. Draw P2 payoffs given signal choices 
         ## TOP MAGENTA
@@ -318,7 +330,7 @@ class EQ_GUI:
             outline='red', width = '3')
 
         # ## TOP-ALT
-        canvas_in.create_line(self.Ftx, self.Fty-self.HMO+self.TJP2*self.HMO, self.Gtx , self.Gty-self.HMO+self.TJP2*self.HMO, fill=cd.pale_blue, width ='5',arrow=tk.LAST)
+        canvas_in.create_line(self.Ftx, self.Fty-self.HMO+p2c_offset_alt_top*self.HMO, self.Gtx , self.Gty-self.HMO+p2c_offset_alt_top*self.HMO, fill=cd.pale_blue, width ='5',arrow=tk.LAST)
         canvas_in.create_rectangle(
             (self.Gtx-self.MO)+ p2c_offset_top*self.MO,                              self.Gty-self.TH, 
             (self.Gtx-2*(self.EO-self.MO/2))+p2c_offset_top*(2*(self.EO-self.MO/2)), self.Gty+self.TH, 
@@ -332,7 +344,7 @@ class EQ_GUI:
             outline='red', width = '3')
 
         # ## BOT-ALT
-        canvas_in.create_line(self.Fbx, self.Fby-self.HMO+self.BJP2*self.HMO, self.Gbx , self.Gby-self.HMO+self.BJP2*self.HMO, fill=cd.pale_blue, width ='5',arrow=tk.LAST)
+        canvas_in.create_line(self.Fbx, self.Fby-self.HMO+p2c_offset_alt_bot*self.HMO, self.Gbx , self.Gby-self.HMO+p2c_offset_alt_bot*self.HMO, fill=cd.pale_blue, width ='5',arrow=tk.LAST)
         canvas_in.create_rectangle(
             (self.Gbx-self.MO)+p2c_offset_bot*self.MO,                               self.Gby-self.TH, 
             (self.Gbx-2*(self.EO-self.MO/2))+p2c_offset_bot*(2*(self.EO-self.MO/2)), self.Gby+self.TH, 
@@ -422,7 +434,7 @@ class EQ_GUI:
     def draw_logic_sequence(self, parent_in, canvas_in, matrix_in, type_in):
         if (type_in == parent_in.POOL_INDEX):
             self.pool_adjust_vars(parent_in)
-        self.write_eq_payoff(parent_in, canvas_in, matrix_in)
+        self.write_eq_payoff(parent_in, canvas_in, matrix_in, type_in)
         self.draw_sig_arrows(canvas_in)                 # 1. Draw branch ignals
         self.draw_p2choice(parent_in, canvas_in, type_in)                # 2. Draw P2 payoffs given signal choices 
         self.check_deviation(parent_in, canvas_in)      # 3. Check for deviation
