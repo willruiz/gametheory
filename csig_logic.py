@@ -69,7 +69,6 @@ def pooling_eq(parent_in, matrix_in, top_signal, bot_signal):
     parent_in.p2_pool1 = (p2_pool1_top*p) + (p2_pool1_bot*pn)
     parent_in.p2_pool2 = (p2_pool2_top*p) + (p2_pool2_bot*pn)
     
-    parent_in.p2_pool_action = -1
     parent_in.p2_pool_action = 0 if (parent_in.p2_pool1 >= parent_in.p2_pool2) else 1
     parent_in.p2_top_choice = parent_in.p2_pool_action
     parent_in.p2_bot_choice = parent_in.p2_pool_action
@@ -79,10 +78,21 @@ def pooling_eq(parent_in, matrix_in, top_signal, bot_signal):
     # Steo 3: Check to see if p1 will deviate
     p1_pool_top = matrix_in[parent_in.top_branch][parent_in.p2_pool_action][parent_in.index_p1]
     p1_pool_bot = matrix_in[parent_in.bot_branch][parent_in.p2_pool_action][parent_in.index_p1]
-    p1_alt_top  = matrix_in[parent_in.top_alt][parent_in.p2_pool_action][parent_in.index_p1]
-    p1_alt_bot  = matrix_in[parent_in.bot_alt][parent_in.p2_pool_action][parent_in.index_p1]
+    
 
-    parent_in.p1_top_switch = (p1_alt_top > p1_pool_top)
+    p2_pool1_alt_top = matrix_in[parent_in.top_alt][parent_in.action1_p2][parent_in.index_p2]
+    p2_pool1_alt_bot = matrix_in[parent_in.bot_alt][parent_in.action1_p2][parent_in.index_p2]
+    p2_pool2_alt_top = matrix_in[parent_in.top_alt][parent_in.action2_p2][parent_in.index_p2]
+    p2_pool2_alt_bot = matrix_in[parent_in.bot_alt][parent_in.action2_p2][parent_in.index_p2]
+    parent_in.p2_pool1_alt = (p2_pool1_alt_top*p) + (p2_pool1_alt_bot*pn)
+    parent_in.p2_pool2_alt = (p2_pool2_alt_top*p) + (p2_pool2_alt_bot*pn)
+
+    parent_in.p2_pool_act_alt = 0 if (parent_in.p2_pool1_alt >= parent_in.p2_pool2_alt) else 1
+
+    p1_alt_top  = matrix_in[parent_in.top_alt][parent_in.p2_pool_act_alt][parent_in.index_p1]
+    p1_alt_bot  = matrix_in[parent_in.bot_alt][parent_in.p2_pool_act_alt][parent_in.index_p1]
+
+    parent_in.p1_top_switch = (p1_alt_top > p1_pool_top) 
     parent_in.p1_bot_switch = (p1_alt_bot > p1_pool_bot)
     parent_in.p1_pool_deviation = parent_in.p1_top_switch or parent_in.p1_bot_switch
     # Step 4: If no deviation, find probability q
@@ -93,8 +103,8 @@ def pooling_eq(parent_in, matrix_in, top_signal, bot_signal):
         p2_alt2_top  = matrix_in[parent_in.top_alt][parent_in.action2_p2][parent_in.index_p2]
         p2_alt2_bot  = matrix_in[parent_in.bot_alt][parent_in.action2_p2][parent_in.index_p2]
         q = symbols('q')
-        exprA = q*p2_alt1_top + p2_alt1_bot - q*p2_alt1_bot
-        exprB = q*p2_alt2_top + p2_alt2_bot - q*p2_alt2_bot
+        exprA = q*p2_alt1_top + (1-q)*p2_alt1_bot
+        exprB = q*p2_alt2_top + (1-q)*p2_alt2_bot
         print(exprA)
         print(exprB)
         raw_sol = solve(Eq(exprA, exprB),q)
@@ -210,22 +220,22 @@ class EQ_GUI:
         self.Ftx = parent_in.left_mid + (self.TAJ*parent_in.cf_horz_mid) # done
         self.Fty = self.Dty # done
         self.Gtx = self.Ftx -parent_in.cf_branch_leg +(self.TAJ*parent_in.cf_branch_leg) # Magenta Leg point
-        self.Gty = self.Ety 
+        self.Gty = self.Dty -parent_in.offset_leg + (parent_in.p2_pool_act_alt*(2*parent_in.offset_leg))
 
         self.Fbx = parent_in.left_mid + (self.BAJ*parent_in.cf_horz_mid) # done
         self.Fby = self.Dby # done
         self.Gbx = self.Ftx -parent_in.cf_branch_leg +(self.BAJ*parent_in.cf_branch_leg) # Magenta Leg point
-        self.Gby = self.Eby
+        self.Gby = self.Fby -parent_in.offset_leg + (parent_in.p2_pool_act_alt*(2*parent_in.offset_leg))
 
         self.sigT_offset = 2*self.MO - parent_in.top_signal*4*self.MO
         self.SA_tx = parent_in.left_mid + self.MO + (parent_in.top_signal*((2*parent_in.cf_horz_mid)-(2*self.MO)))
         self.SB_tx = parent_in.left_mid + self.MO + (parent_in.top_sig_alt*((2*parent_in.cf_horz_mid)-(2*self.MO)))
         self.Sty = (parent_in.top_mid + parent_in.tA)/2
         
-        self.sigB_offset = 2*self.MO - parent_in.bot_signal*4*self.MO
-        self.SA_bx = parent_in.left_mid + self.MO + (parent_in.bot_signal*((2*parent_in.cf_horz_mid)-(2*self.MO)))
-        self.SB_bx = parent_in.left_mid + self.MO + (parent_in.bot_sig_alt*((2*parent_in.cf_horz_mid)-(2*self.MO)))
-        self.Sby = (parent_in.bot_mid + parent_in.bB)/2
+        # self.sigB_offset = 2*self.MO - parent_in.bot_signal*4*self.MO
+        # self.SA_bx = parent_in.left_mid + self.MO + (parent_in.bot_signal*((2*parent_in.cf_horz_mid)-(2*self.MO)))
+        # self.SB_bx = parent_in.left_mid + self.MO + (parent_in.bot_sig_alt*((2*parent_in.cf_horz_mid)-(2*self.MO)))
+        # self.Sby = (parent_in.bot_mid + parent_in.bB)/2
 
     
     def write_eq_payoff(self, parent_in, canvas_in, matrix_in):
@@ -358,8 +368,8 @@ class EQ_GUI:
         canvas_in.create_text(parent_in.cen_x, parent_in.bB,         text=text_type         ,fill = fill_type, font=(cd.text_font))
         canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium"     ,fill = fill_type, font=(cd.text_font))
 
-    def write_pool_prob(self, parent_in, canvas_in): 
-        pool_text_x  = ((parent_in.left+parent_in.left_leg*2)/3)-self.EO*0.5 + 2*(parent_in.cf_full_leg+self.TO*2-0.4*self.MO)*parent_in.top_signal
+    def write_pool_prob(self, parent_in, canvas_in):                                                           # signal == top_signal == bot_signal
+        pool_text_x  = ((parent_in.left+parent_in.left_leg*2)/3)-self.EO*0.5 + 2*(parent_in.cf_full_leg+self.TO*2-0.4*self.MO)*parent_in.top_signal 
         pool_text_xb = ((parent_in.left+parent_in.left_leg*2)/3)+self.EO*0.4 + 2*(parent_in.cf_full_leg+self.TO*2-0.1*self.MO)*parent_in.top_signal
         top_pool_text_y  = parent_in.cen_y-self.EO*0.5
         top_pool_text_yb = parent_in.cen_y-self.MO*0.1
@@ -368,21 +378,40 @@ class EQ_GUI:
 
         if (parent_in.p2_pool1 >= parent_in.p2_pool2):
             canvas_in.create_rectangle(pool_text_x, top_pool_text_y, pool_text_xb, top_pool_text_yb, outline = cd.lite_red, width = '2')
-            canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4+self.MO + (2*(parent_in.cf_full_leg)-self.TO*2.6) *parent_in.top_signal, parent_in.cen_y+self.MO*1.5, 
-                                   parent_in.left_leg-self.MO +                         (2*(parent_in.cf_full_leg)+self.TO*1.25) *parent_in.top_signal,   parent_in.cen_y-self.MO*0.75, 
+            canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4+self.MO + (2*(parent_in.cf_full_leg)-self.TO*2.6) *parent_in.top_signal,  parent_in.cen_y+self.MO*1.5, 
+                                   parent_in.left_leg-self.MO +                         (2*(parent_in.cf_full_leg)+self.TO*1.25) *parent_in.top_signal, parent_in.cen_y-self.MO*0.75, 
                                    fill=cd.lite_magnta, width ='7',arrow=tk.LAST)
         else:
             canvas_in.create_rectangle(pool_text_x, bot_pool_text_y, pool_text_xb, bot_pool_text_yb, outline = cd.lite_red, width = '2')
             canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4+self.MO + (2*(parent_in.cf_full_leg)-self.TO*2.5) *parent_in.top_signal,  parent_in.cen_y-self.MO*2, 
                                    parent_in.left_leg-self.MO                         + (2*(parent_in.cf_full_leg)+self.TO*1.25) *parent_in.top_signal, parent_in.cen_y+self.MO*0.5, 
                                   fill=cd.lite_magnta, width ='7',arrow=tk.LAST)
-
+        
         canvas_in.create_text( ((parent_in.left+parent_in.left_leg*2)/3)-self.MO*0.2 + 2*(parent_in.cf_full_leg+self.TO*2-0.2*self.MO)*parent_in.top_signal, parent_in.cen_y-self.EO/4, 
-            text=str(parent_in.p2_pool1), fill = cd.lite_purple, font=(cd.text_font))
+            text=str(round(parent_in.p2_pool1,1)), fill = cd.lite_purple, font=(cd.text_font))
         canvas_in.create_text( ((parent_in.left+parent_in.left_leg*2)/3)-self.MO*0.2 + 2*(parent_in.cf_full_leg+self.TO*2-0.2*self.MO)*parent_in.top_signal, parent_in.cen_y+self.EO/4, 
-            text=str(parent_in.p2_pool2), fill = cd.lite_purple, font=(cd.text_font))
+            text=str(round(parent_in.p2_pool2,1)), fill = cd.lite_purple, font=(cd.text_font))
 
-        if(not parent_in.p1_top_switch and  not parent_in.p1_bot_switch):
+        pool_text_x_alt  = ((parent_in.left+parent_in.left_leg*2)/3)-self.EO*0.5 + 2*(parent_in.cf_full_leg+self.TO*2-0.4*self.MO)*parent_in.top_alt
+        pool_text_xb_alt = ((parent_in.left+parent_in.left_leg*2)/3)+self.EO*0.4 + 2*(parent_in.cf_full_leg+self.TO*2-0.1*self.MO)*parent_in.top_alt
+
+        if (parent_in.p2_pool1_alt >= parent_in.p2_pool2_alt):
+            canvas_in.create_rectangle(pool_text_x_alt, top_pool_text_y, pool_text_xb_alt, top_pool_text_yb, outline = cd.lite_blue, width = '2')
+            canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4+self.MO + (2*(parent_in.cf_full_leg)-self.TO*2.6)  *parent_in.top_alt, parent_in.cen_y+self.MO*1.5, 
+                                   parent_in.left_leg-self.MO +                         (2*(parent_in.cf_full_leg)+self.TO*1.25) *parent_in.top_alt, parent_in.cen_y-self.MO*0.75, 
+                                   fill=cd.pale_blue, width ='7',arrow=tk.LAST)
+        else:
+            canvas_in.create_rectangle(pool_text_x_alt, bot_pool_text_y, pool_text_xb_alt, bot_pool_text_yb, outline = cd.lite_blue, width = '2')
+            canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4+self.MO + (2*(parent_in.cf_full_leg)-self.TO*2.5)  *parent_in.top_alt, parent_in.cen_y-self.MO*2, 
+                                   parent_in.left_leg-self.MO                         + (2*(parent_in.cf_full_leg)+self.TO*1.25) *parent_in.top_alt, parent_in.cen_y+self.MO*0.5, 
+                                  fill=cd.pale_blue, width ='7',arrow=tk.LAST)
+        
+        canvas_in.create_text( ((parent_in.left+parent_in.left_leg*2)/3)-self.MO*0.2 + 2*(parent_in.cf_full_leg+self.TO*2-0.2*self.MO)*parent_in.top_alt, parent_in.cen_y-self.EO/4, 
+            text=str(round(parent_in.p2_pool1_alt,1)), fill = cd.lite_purple, font=(cd.text_font))
+        canvas_in.create_text( ((parent_in.left+parent_in.left_leg*2)/3)-self.MO*0.2 + 2*(parent_in.cf_full_leg+self.TO*2-0.2*self.MO)*parent_in.top_alt, parent_in.cen_y+self.EO/4, 
+            text=str(round(parent_in.p2_pool2_alt,1)), fill = cd.lite_purple, font=(cd.text_font))
+
+        if((not parent_in.p1_top_switch) and (not parent_in.p1_bot_switch)):
             canvas_in.create_rectangle(
                 (parent_in.cen_x*2+parent_in.right_mid)/3+self.EO*0.8, parent_in.bB-self.MO, 
                 (parent_in.cen_x+parent_in.right_mid*2)/3+self.EO*1.6, parent_in.bB+self.TO, 

@@ -25,7 +25,6 @@ def mainGUItest(parent_in):
     cg.create_entry_boxes(parent_in, parent_in.root, parent_in.canvas)
     cg.gen_entry_buttons(parent_in, parent_in.root, parent_in.canvas)
     cg.draw_labels(parent_in, parent_in.root, parent_in.canvas)
-    
     parent_in.root.mainloop()
 
 def testA_sep(parent_in):
