@@ -94,7 +94,8 @@ def pooling_eq(parent_in, matrix_in, top_signal, bot_signal):
 
     parent_in.p1_top_switch = (p1_alt_top > p1_pool_top) 
     parent_in.p1_bot_switch = (p1_alt_bot > p1_pool_bot)
-    parent_in.p1_pool_deviation = parent_in.p1_top_switch or parent_in.p1_bot_switch
+    parent_in.p1_pool_deviation = parent_in.p1_top_switch or parent_in.p1_bot_switch 
+    
     # Step 4: If no deviation, find probability q
     
     if (not parent_in.p1_pool_deviation):
@@ -166,6 +167,7 @@ class EQ_GUI:
         self.TO  = parent_in.text_offset
         self.TH  = parent_in.text_height
 
+        # GREEN SIGNAL
         self.Atx = parent_in.cen_x + (parent_in.top_signal*2*self.MO)
         self.Aty = parent_in.cen_y # Green branch center point
         self.Btx = parent_in.cen_x + (parent_in.top_signal*2*self.MO)
@@ -179,6 +181,7 @@ class EQ_GUI:
         self.Cbx = parent_in.left_mid + (parent_in.bot_signal*((2*parent_in.cf_horz_mid)-(2*self.MO)))
         self.Cby = parent_in.bot_mid
 
+        # MAIN-RED
         self.TSJ = parent_in.top_signal*2     # Top signal jump
         self.TJP2 = parent_in.p2_top_choice*2   # P2 Top Jump
         self.Dtx = parent_in.left_mid + (self.TSJ*parent_in.cf_horz_mid) # Magenta same with self.Ctx without MO
@@ -193,7 +196,8 @@ class EQ_GUI:
         self.Ebx = self.Dbx -parent_in.cf_branch_leg +(self.BSJ*parent_in.cf_branch_leg)
         self.Eby = self.Dby -parent_in.offset_leg + (parent_in.p2_bot_choice*(2*parent_in.offset_leg))
 
-        self.Ftx = self.Dtx          # ALT-MAGENTA
+        # ALT-BLUE
+        self.Ftx = self.Dtx          
         self.Fty = parent_in.bot_mid # want Bot
         self.Gtx = self.Etx
         self.Gty = self.Fty -parent_in.offset_leg + (parent_in.p2_top_choice*(2*parent_in.offset_leg))
@@ -203,6 +207,7 @@ class EQ_GUI:
         self.Gbx = self.Ebx
         self.Gby = self.Fby -parent_in.offset_leg + (parent_in.p2_bot_choice*(2*parent_in.offset_leg))
 
+        # DEVIATION-GOLD
         self.sigT_offset = 2*self.MO - parent_in.top_signal*4*self.MO
         self.SA_tx = parent_in.left_mid + self.MO + (parent_in.top_signal*((2*parent_in.cf_horz_mid)-(2*self.MO)))
         self.SB_tx = parent_in.left_mid + self.MO + (parent_in.top_sig_alt*((2*parent_in.cf_horz_mid)-(2*self.MO)))

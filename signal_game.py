@@ -51,10 +51,11 @@ class SGE:
         self.bB = self.bot_mid+self.offset_leg
 
         ## Offsets
-        self.entry_offset = self.width * 0.05
-        self.text_offset  = self.width * 0.03
-        self.mini_offset  = self.width * 0.016
-        self.text_height = self.height * 0.04
+        self.entry_offset = self.width  * 0.05
+        self.text_offset  = self.width  * 0.03
+        self.mini_offset  = self.width  * 0.016
+        self.text_height  = self.height * 0.04
+        self.file_boxsize   = 12
         self.nature_boxsize = 6
         self.payoff_boxsize = 3
 
@@ -69,11 +70,11 @@ class SGE:
 
         # Save files
         self.saved_file = "saved_matrix_sg.npy"
-        self.saved_dim = "saved_dim_sg.npy"
-        self.prev_file = "prev_matrix_sg.npy" 
-        self.prev_dim = "prev_dim_sg.npy"
         self.nature_file = "nature_sg.npy"
+        self.prev_file = "prev_matrix_sg.npy" 
         self.nature_prev = "nature_prev_sg.npy"
+        #self.saved_dim = "saved_dim_sg.npy"
+        #self.prev_dim = "prev_dim_sg.npy"
         self.matrix_import = np.zeros((4,2), dtype='i,i')
         self.matrix_import_bool = False
 
@@ -90,6 +91,9 @@ class SGE:
         self.STR_REV = 1
         self.WEK_HID = 0
         self.WEK_REV = 1
+        
+        self.save_str_str = ""
+        self.load_str_str = ""
 
         # parent_in.top_signal = top_signal
         # parent_in.bot_signal = bot_signal
@@ -105,7 +109,6 @@ class SGE:
         # parent_in.p1_top_switch = False
         # parent_in.p1_bot_switch = False
         # parent_in.eq_success    = False        
-
 
 def main():
     parent = SGE()

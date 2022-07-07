@@ -100,7 +100,7 @@ def label_grid(self, root_in, canvas_in):
     canvas_in.create_line(self.left, self.tB,      self.right, self.tB,      fill=cd.dark_gray, width ='1')
     canvas_in.create_line(self.left, self.bA,      self.right, self.bA,      fill=cd.dark_gray, width ='1')
     canvas_in.create_line(self.left, self.bB,      self.right, self.bB,      fill=cd.dark_gray, width ='1')
-
+    
     canvas_in.create_text(self.left+self.text_offset, self.cen_y,   text='CEN_Y',   fill=cd.lite_gray, font=('Arial 12'))
     canvas_in.create_text(self.left+self.text_offset, self.top_mid, text='TOP_MID', fill=cd.lite_gray, font=('Arial 12'))
     canvas_in.create_text(self.left+self.text_offset, self.bot_mid, text='BOT_MID', fill=cd.lite_gray, font=('Arial 12'))
@@ -132,8 +132,8 @@ def create_entry_boxes(self, root_in, canvas_in):
     for i in range(2):
         self.nature_entry.append(tk.StringVar())
     entryN0 = tk.Entry (root_in, textvariable=self.nature_entry[0], width = self.nature_boxsize)
-    canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.top_mid)/2, window=entryN0)
     entryN1 = tk.Entry (root_in, textvariable=self.nature_entry[1], width = self.nature_boxsize)
+    canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.top_mid)/2, window=entryN0)
     canvas_in.create_window(self.cen_x + self.entry_offset, (self.cen_y+self.bot_mid)/2, window=entryN1)
     nature_prev_mat = np.load(self.nature_prev)
     cn.fill_nature_entry_from_Natrix(self, nature_prev_mat)
@@ -151,37 +151,50 @@ def create_entry_boxes(self, root_in, canvas_in):
             else:
                 y_offset = self.bB
             if (i % 2 == 0):
-                x_offset = self.left_leg-self.entry_offset
+                x_offset = self.left_leg  - self.entry_offset
             else:
-                x_offset = self.right_leg+self.entry_offset
+                x_offset = self.right_leg + self.entry_offset
             canvas_in.create_text(x_offset, y_offset, text=',', fill="black", font=(cd.text_font))
             
             for k in range(2): # tuple
                 entryLeg = tk.Entry (root_in, textvariable=self.entry_list[i][j][k], width=self.payoff_boxsize)
                 if (k == 0):
-                    canvas_in.create_window(x_offset -self.mini_offset, y_offset, window=entryLeg)
+                    canvas_in.create_window(x_offset - self.mini_offset, y_offset, window=entryLeg)
                 else:
-                    canvas_in.create_window(x_offset +self.mini_offset, y_offset, window=entryLeg)
+                    canvas_in.create_window(x_offset + self.mini_offset, y_offset, window=entryLeg)
+
+    self.save_as_str = tk.StringVar()
+    self.load_as_str = tk.StringVar()
+    entry_save_as = tk.Entry (root_in, textvariable= self.save_as_str, width = self.file_boxsize)
+    entry_load_as = tk.Entry (root_in, textvariable= self.load_as_str, width = self.file_boxsize)
+    canvas_in.create_window(self.cen_x-380, self.bot+40, window=entry_save_as)
+    canvas_in.create_window(self.cen_x-380, self.bot+80, window=entry_load_as)
+    
+
 
 def gen_entry_buttons(self, root, canvas):
 
-    SEPR_btn_A  = tk.Button(root,text = 'SEPR A', bg = "red",        fg = "white", command = lambda: cl.seperating_eq(self, self.matrix, STR_REV, WEK_HID))
-    SEPR_btn_B  = tk.Button(root,text = 'SEPR B', bg = "blue",       fg = "white", command = lambda: cl.seperating_eq(self, self.matrix, STR_HID, WEK_REV))
-    POOL_btn_A  = tk.Button(root,text = 'POOL A', bg = cd.mute_red,  fg = "white", command = lambda: cl.pooling_eq(self, self.matrix, STR_REV, WEK_REV))
-    POOL_btn_B  = tk.Button(root,text = 'POOL B', bg = cd.mute_blue, fg = "white", command = lambda: cl.pooling_eq(self, self.matrix, STR_HID, WEK_HID))
-    reset_btn   = tk.Button(root,text = 'Reset',  bg = cd.lite_teal, fg = "black", command = lambda: cb.reset(self))
-    saved_btn   = tk.Button(root,text = 'Load',   bg = cd.lite_teal, fg = "black", command = lambda: cb.enter_saved(self))
-    sub_btn     = tk.Button(root,text = 'Submit',                                  command = lambda: cb.submit(self))
-    prv2pst_btn = tk.Button(root,text = 'Save',                                    command = lambda: cb.transfer_entries_to_saved(self))
-    quit_btn    = tk.Button(root, text= "Exit",   width = 16, height = 3, bg = cd.lite_ornge, command = lambda: cb.quit_game(self, self.root))
+    SEPR_btn_A  = tk.Button(root,text = 'SEPR A',  bg = "red",        fg = "white", command = lambda: cl.seperating_eq(self, self.matrix, STR_REV, WEK_HID))
+    SEPR_btn_B  = tk.Button(root,text = 'SEPR B',  bg = "blue",       fg = "white", command = lambda: cl.seperating_eq(self, self.matrix, STR_HID, WEK_REV))
+    POOL_btn_A  = tk.Button(root,text = 'POOL A',  bg = cd.mute_red,  fg = "white", command = lambda: cl.pooling_eq(self, self.matrix, STR_REV, WEK_REV))
+    POOL_btn_B  = tk.Button(root,text = 'POOL B',  bg = cd.mute_blue, fg = "white", command = lambda: cl.pooling_eq(self, self.matrix, STR_HID, WEK_HID))
+    print_btn   = tk.Button(root,text = 'Print',                                    command = lambda: cb.submit(self))
+    reset_btn   = tk.Button(root,text = 'Reset',   bg = cd.sea_green, fg = "black", command = lambda: cb.reset(self))
+    save_btn    = tk.Button(root,text = 'Save',                                     command = lambda: cb.transfer_entries_to_saved(self, self.saved_file))
+    load_btn    = tk.Button(root,text = 'Load',    bg = cd.sea_green, fg = "black", command = lambda: cb.enter_saved(self))
+    save_as_btn = tk.Button(root,text = 'Save As', bg = cd.lite_teal,               command = lambda: cb.save_as(self))
+    load_as_btn = tk.Button(root,text = 'Load As', bg = cd.lite_teal, fg = "black", command = lambda: cb.enter_saved(self))
+    quit_btn    = tk.Button(root, text= "Exit",    width = 36, height = 3, bg = cd.lite_ornge, command = lambda: cb.quit_game(self, self.root))
     
-    canvas.create_window(self.cen_x-60,  self.bot+40, window=SEPR_btn_A)
-    canvas.create_window(self.cen_x-60,  self.bot+80, window=SEPR_btn_B)
-    canvas.create_window(self.cen_x+60,  self.bot+40, window=POOL_btn_A)
-    canvas.create_window(self.cen_x+60,  self.bot+80, window=POOL_btn_B)
-    canvas.create_window(self.cen_x-320, self.bot+40, window=sub_btn)
-    canvas.create_window(self.cen_x-320, self.bot+70, window=reset_btn)
-    canvas.create_window(self.cen_x-240, self.bot+40, window=prv2pst_btn)
-    canvas.create_window(self.cen_x-240, self.bot+70, window=saved_btn)
-    canvas.create_window(self.cen_x+300, self.bot+60, window=quit_btn)
+    canvas.create_window(self.cen_x-50,  self.bot+40, window=SEPR_btn_A)
+    canvas.create_window(self.cen_x-50,  self.bot+80, window=SEPR_btn_B)
+    canvas.create_window(self.cen_x+50,  self.bot+40, window=POOL_btn_A)
+    canvas.create_window(self.cen_x+50,  self.bot+80, window=POOL_btn_B)
+    canvas.create_window(self.cen_x-250, self.bot+40, window=print_btn)
+    canvas.create_window(self.cen_x-250, self.bot+80, window=reset_btn)
+    canvas.create_window(self.cen_x-180, self.bot+40, window=save_btn)
+    canvas.create_window(self.cen_x-180, self.bot+80, window=load_btn)
+    canvas.create_window(self.cen_x-480, self.bot+40, window=save_as_btn)
+    canvas.create_window(self.cen_x-480, self.bot+80, window=load_as_btn)
+    canvas.create_window(self.cen_x+360, self.bot+60, window=quit_btn)
 

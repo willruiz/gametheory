@@ -56,6 +56,7 @@ def testA_sep(parent_in):
 
     print("TestA_sep: SUCCESS")
 
+
 def main():
     parent = sig.SGE()
     #mainGUItest(parent)
