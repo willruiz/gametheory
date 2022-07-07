@@ -173,8 +173,8 @@ def create_entry_boxes(self, root_in, canvas_in):
 def gen_entry_buttons(self, root, canvas):
     SEPR_btn_A  = tk.Button(root,text = 'SEPR A',  bg = "red",        fg = "white", command = lambda: cl.seperating_eq(self, self.matrix, STR_REV, WEK_HID))
     SEPR_btn_B  = tk.Button(root,text = 'SEPR B',  bg = "blue",       fg = "white", command = lambda: cl.seperating_eq(self, self.matrix, STR_HID, WEK_REV))
-    POOL_btn_A  = tk.Button(root,text = 'POOL A',  bg = cd.mute_red,  fg = "white", command = lambda: cl.pooling_eq(self, self.matrix, STR_REV, WEK_REV))
-    POOL_btn_B  = tk.Button(root,text = 'POOL B',  bg = cd.mute_blue, fg = "white", command = lambda: cl.pooling_eq(self, self.matrix, STR_HID, WEK_HID))
+    POOL_btn_A  = tk.Button(root,text = 'POOL A',  bg = cd.mute_red,  fg = "white", command = lambda: cl.pooling_eq (self, self.matrix, self.nature_mat, STR_REV, WEK_REV))
+    POOL_btn_B  = tk.Button(root,text = 'POOL B',  bg = cd.mute_blue, fg = "white", command = lambda: cl.pooling_eq (self, self.matrix, self.nature_mat, STR_HID, WEK_HID))
     print_btn   = tk.Button(root,text = 'Print',                                    command = lambda: cb.submit(self)) # cannot name function cb.print()
     reset_btn   = tk.Button(root,text = 'Reset',   bg = cd.sea_green, fg = "black", command = lambda: cb.reset(self))  # keyword conflict
     save_btn    = tk.Button(root,text = 'Save',                                     command = lambda: cb.save_entry(self, self.saved_file, False))

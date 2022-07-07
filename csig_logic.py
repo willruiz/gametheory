@@ -47,7 +47,7 @@ def eq_setup(parent_in, matrix_in, top_signal, bot_signal):
     parent_in.p1_bot_switch = False
     parent_in.eq_success    = False
 
-def pooling_eq(parent_in, matrix_in, top_signal, bot_signal):
+def pooling_eq(parent_in, matrix_in, nature_in, top_signal, bot_signal):
     """
         1. Choose case - (need input p and q (signal probablilties determined by nature))
         2. Find Bayesian payoffs U_p2 of each action of player 2 (F or R) (Fight or Retreat)
@@ -60,8 +60,8 @@ def pooling_eq(parent_in, matrix_in, top_signal, bot_signal):
     eq_setup(parent_in, matrix_in, top_signal, bot_signal)
 
     # Step 2: Find Bayesian payoffs - start with saving nature entries [DONE]
-    p  = parent_in.nature_mat[0][0]
-    pn = parent_in.nature_mat[0][1]
+    p  = nature_in[0][0]
+    pn = nature_in[0][1]
     p2_pool1_top = matrix_in[parent_in.top_branch][parent_in.action1_p2][parent_in.index_p2]
     p2_pool1_bot = matrix_in[parent_in.bot_branch][parent_in.action1_p2][parent_in.index_p2]
     p2_pool2_top = matrix_in[parent_in.top_branch][parent_in.action2_p2][parent_in.index_p2]
@@ -69,11 +69,10 @@ def pooling_eq(parent_in, matrix_in, top_signal, bot_signal):
     parent_in.p2_pool1 = (p2_pool1_top*p) + (p2_pool1_bot*pn)
     parent_in.p2_pool2 = (p2_pool2_top*p) + (p2_pool2_bot*pn)
     
-    print("p2_pool1:", parent_in.p2_pool1)
-    print("p2_pool2:", parent_in.p2_pool2)
+    # print("p2_pool1:", parent_in.p2_pool1)
+    # print("p2_pool2:", parent_in.p2_pool2)
 
     parent_in.p2_pool_action = 0 if (parent_in.p2_pool1 >= parent_in.p2_pool2) else 1
-    print(parent_in.p2_pool_action)
     parent_in.p2_top_choice = parent_in.p2_pool_action
     print("p2_top_choice:", parent_in.p2_top_choice)
     parent_in.p2_bot_choice = parent_in.p2_pool_action
