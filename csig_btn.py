@@ -2,37 +2,54 @@ from tkinter import *
 import tkinter as tk
 import numpy as np
 import csig_np as cn
+import os
 
-def enter_saved(self): # LOAD BUTTON
+def load_entry(self, load_str, as_flag): # LOAD BUTTON
+    entry  = ""
+    nature = ""
+    if (as_flag):
+        if(os.path.exists("./{}/{}_mx.npy".format(self.matrix_folder, load_str))):
+            entry  = np.load("./{}/{}_mx.npy".format(self.matrix_folder, load_str))
+            nature = np.load("./{}/{}_nt.npy".format(self.matrix_folder, load_str))
+        else:
+            print("Load As file not found")
+            return None
+    else:
         entry = np.load(self.saved_file)
-        if (entry.shape == (4,2)):
-            self.matrix = entry
-            cn.fill_entries_from_matrix(self, entry)
-            print("MATRIX LOADED")
-        else:
-            print("Saved dimensions is not a signal game - Cannot load")
         nature = np.load(self.nature_file)
-        if (nature.shape == (1,2)):
-            self.nature_mat = nature
-            #print("checkC:",nature)
-            cn.fill_nature_entry_from_Natrix(self, nature)
-            print("NATURE LOADED")
-        else:
-            print("Saved nature is not compatible - Cannot load")
 
-def save_as(self): # SAVE AS BUTTON
-    save_str_entry = self.save_as_str.get()
-    transfer_entries_to_saved(self, save_str_entry, True)
+    if (entry.shape == (4,2)):
+        self.matrix = entry
+        cn.fill_entries_from_matrix(self, entry)
+        print("MATRIX LOADED")
+    else:
+        print("Saved dimensions is not a signal game - Cannot load")
+        return None
     
+    if (nature.shape == (1,2)):
+        self.nature_mat = nature
+        #print("checkC:",nature)
+        cn.fill_nature_entry_from_Natrix(self, nature)
+        print("NATURE LOADED")
+    else:
+        print("Saved nature is not compatible - Cannot load")
+        return None
 
-def transfer_entries_to_saved(self, save_str, as_flag): # SAVE BUTTON
+def load_as(self):
+    load_str_entry = self.load_as_str.get()
+    if (load_str_entry.isspace() or not load_str_entry):
+        print("Load As invalid file string")
+    else:
+        load_entry(self, load_str_entry, True)
+
+def save_entry(self, save_str, as_flag): # SAVE BUTTON
     cn.get_entries_into_matrix(self, self.matrix)
     cn.get_nature_entries_into_Natrix(self, self.nature_mat)
     save_matrix_npy = ""
     save_nature_npy = "" 
     if (as_flag):
-        save_matrix_npy = "./SGE_matrix_saves/{}_mx.npy".format(save_str)
-        save_nature_npy = "./SGE_matrix_saves/{}_nt.npy".format(save_str)
+        save_matrix_npy = "./{}/{}_mx.npy".format(self.matrix_folder, save_str)
+        save_nature_npy = "./{}/{}_nt.npy".format(self.matrix_folder, save_str)
     else:
         save_matrix_npy = self.saved_file
         save_nature_npy = self.nature_file
@@ -43,6 +60,13 @@ def transfer_entries_to_saved(self, save_str, as_flag): # SAVE BUTTON
         print("SAVE AS")
     else:
         print("SAVED")
+
+def save_as(self): # SAVE AS BUTTON
+    save_str_entry = self.save_as_str.get()
+    if (save_str_entry.isspace() or not save_str_entry):
+        print("Save As invalid file string")
+    else:
+        save_entry(self, save_str_entry, True)
 
 def submit(self):
     cn.get_entries_into_matrix(self, self.matrix)

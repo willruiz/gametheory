@@ -9,8 +9,9 @@ def isfloat(num):
     except ValueError:
         return False
 
-def import_matrix(self, matrix_in): # FOR CUSTOM MATRIX INPUT FOR TEST SUITE
+def import_matrix(self, matrix_in, nature_in): # FOR CUSTOM MATRIX INPUT FOR TEST SUITE
         self.matrix_import = matrix_in
+        self.nature_import = nature_in
         self.matrix_import_bool = True
 
 def get_entries_into_matrix(self, matrix_in):
@@ -56,3 +57,8 @@ def get_nature_entries_into_Natrix(self, matrix_in):
 def fill_nature_entry_from_Natrix(self, matrix_in): # 1x2 matrix
     for i, i_entry in enumerate(self.nature_entry):
         i_entry.set(str(matrix_in[0][i]))
+
+def fill_nature_half(matrix_in):
+    assert(matrix_in.shape == (1,2))
+    for i, i_entry in enumerate(matrix_in[0]):
+        matrix_in[0][i] = 0.5

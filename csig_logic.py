@@ -69,8 +69,13 @@ def pooling_eq(parent_in, matrix_in, top_signal, bot_signal):
     parent_in.p2_pool1 = (p2_pool1_top*p) + (p2_pool1_bot*pn)
     parent_in.p2_pool2 = (p2_pool2_top*p) + (p2_pool2_bot*pn)
     
+    print("p2_pool1:", parent_in.p2_pool1)
+    print("p2_pool2:", parent_in.p2_pool2)
+
     parent_in.p2_pool_action = 0 if (parent_in.p2_pool1 >= parent_in.p2_pool2) else 1
+    print(parent_in.p2_pool_action)
     parent_in.p2_top_choice = parent_in.p2_pool_action
+    print("p2_top_choice:", parent_in.p2_top_choice)
     parent_in.p2_bot_choice = parent_in.p2_pool_action
     parent_in.p2_top_alt = 0 if (parent_in.p2_pool_action == 1) else 1
     parent_in.p2_bot_alt = parent_in.p2_top_alt
@@ -109,9 +114,11 @@ def pooling_eq(parent_in, matrix_in, top_signal, bot_signal):
         print(exprA)
         print(exprB)
         raw_sol = solve(Eq(exprA, exprB),q)
-        parent_in.solution = -1.0
+        parent_in.solution = 0.0
+        parent_in.solution_flag = False
         if(bool(raw_sol)):
             parent_in.solution = round(float(raw_sol[0]),3) 
+            parent_in.solution_flag = True
         else:
             print("[Undefined alternate probability solution]")
         print(parent_in.solution)
