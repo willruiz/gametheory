@@ -10,6 +10,8 @@ import numpy as np
 import sys
 from sympy import symbols, Eq, solve
 
+
+
 def draw_eq_base(parent_in,  matrix_in, eq_type):
     subroot = tk.Tk()
     subcan = Canvas(subroot, bg='white')
@@ -33,8 +35,9 @@ def eq_setup(parent_in, matrix_in, top_signal, bot_signal):
     
     parent_in.top_branch = top_signal + parent_in.top_index_offset
     parent_in.bot_branch = bot_signal + parent_in.bot_index_offset
-    print("top_branch:", parent_in.top_branch)
-    print("bot_branch:", parent_in.bot_branch)        
+    if parent_in.debug_on:
+        print("top_branch:", parent_in.top_branch)
+        print("bot_branch:", parent_in.bot_branch)        
     parent_in.top_alt = parent_in.top_sig_alt + parent_in.top_index_offset
     parent_in.bot_alt = parent_in.bot_sig_alt + parent_in.bot_index_offset
     cn.get_entries_into_matrix(parent_in, matrix_in)
@@ -69,15 +72,17 @@ def pooling_eq(parent_in, matrix_in, nature_in, top_signal, bot_signal):
     parent_in.p2_pool1 = (p2_pool1_top*p) + (p2_pool1_bot*pn)
     parent_in.p2_pool2 = (p2_pool2_top*p) + (p2_pool2_bot*pn)
     
-    # print("p2_pool1:", parent_in.p2_pool1)
-    # print("p2_pool2:", parent_in.p2_pool2)
 
     parent_in.p2_pool_action = 0 if (parent_in.p2_pool1 >= parent_in.p2_pool2) else 1
     parent_in.p2_top_choice = parent_in.p2_pool_action
-    print("p2_top_choice:", parent_in.p2_top_choice)
     parent_in.p2_bot_choice = parent_in.p2_pool_action
     parent_in.p2_top_alt = 0 if (parent_in.p2_pool_action == 1) else 1
     parent_in.p2_bot_alt = parent_in.p2_top_alt
+
+    if parent_in.debug_on:
+        print("p2_pool1:", parent_in.p2_pool1)
+        print("p2_pool2:", parent_in.p2_pool2)
+        print("p2_pool_action:", parent_in.p2_pool_action)
     
     # Steo 3: Check to see if p1 will deviate
     p1_pool_top = matrix_in[parent_in.top_branch][parent_in.p2_pool_action][parent_in.index_p1]
@@ -110,8 +115,8 @@ def pooling_eq(parent_in, matrix_in, nature_in, top_signal, bot_signal):
         q = symbols('q')
         exprA = q*p2_alt1_top + (1-q)*p2_alt1_bot
         exprB = q*p2_alt2_top + (1-q)*p2_alt2_bot
-        print(exprA)
-        print(exprB)
+
+        
         raw_sol = solve(Eq(exprA, exprB),q)
         parent_in.solution = 0.0
         parent_in.solution_flag = False
@@ -119,8 +124,12 @@ def pooling_eq(parent_in, matrix_in, nature_in, top_signal, bot_signal):
             parent_in.solution = round(float(raw_sol[0]),3) 
             parent_in.solution_flag = True
         else:
-            print("[Undefined alternate probability solution]")
-        print(parent_in.solution)
+            if (parent_in.msg_on):
+                print("[Undefined alternate probability solution]")
+        if parent_in.debug_on:
+            print(exprA)
+            print(exprB)
+            print(parent_in.solution)
 
     draw_eq_base(parent_in, matrix_in, parent_in.POOL_INDEX)
 
@@ -162,7 +171,7 @@ def seperating_eq(parent_in, matrix_in, top_signal, bot_signal):
     parent_in.p1_top_switch = top_branch_val < top_alt_val
     parent_in.p1_bot_switch = bot_branch_val < bot_alt_val
     draw_eq_base(parent_in, matrix_in, parent_in.SEPR_INDEX)
-    #print(parent_in.p2_top_choice)
+
 
 class EQ_GUI:
     def __init__(self, parent_in):

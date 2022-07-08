@@ -4,4 +4,5 @@ import sys
 from sympy import *
 from sympy import symbols, Eq, solve
 
-test = np.load("poo.npy")
+rt = np.zeros((2,2,2), dtype='i,i')
+print(rt)

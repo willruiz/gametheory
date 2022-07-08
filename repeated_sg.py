@@ -7,7 +7,7 @@ import csig_gui     as cg
 import csig_btn     as cb
 import csig_logic   as cl
 import csig_def     as cd
-import csig_np     as cn
+import csig_np      as cn
 import signal_game  as sig
 
 

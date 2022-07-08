@@ -1,3 +1,5 @@
+import csig_unittests as cu
+
 ## Hex color strings
 mute_red      = "#f75757"
 mute_blue     = "#665af2"
@@ -29,6 +31,12 @@ fail_red      = "#ed264e"
 
 text_font     = "Arial 15 bold"
 small_font    = "Arial 12 bold"
+grid_font     = "Arial 12"
+
+tests = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
+
+test_functor_list = [cu.testA, cu.testB, cu.testC, 
+        cu.testD, cu.testE, cu.testF, cu.testG]
 
 import csig_gui     as cg
 import csig_btn     as cb

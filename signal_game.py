@@ -75,7 +75,8 @@ class SGE:
         self.nature_prev = "nature_prev_sg.npy"
         #self.saved_dim = "saved_dim_sg.npy"
         #self.prev_dim = "prev_dim_sg.npy"
-        self.matrix_folder = "SGE_matrix_saves"
+        self.matrix_folder = "user_saves"
+        self.test_folder = "test_saves"
         self.matrix_import = np.zeros((4,2), dtype='i,i')
         self.nature_import = np.zeros((1,2))
         self.matrix_import_bool = False
@@ -93,6 +94,9 @@ class SGE:
         self.STR_REV = 1
         self.WEK_HID = 0
         self.WEK_REV = 1
+
+        self.debug_on = True
+        self.msg_on   = True
         
         self.save_str_str = ""
         self.load_str_str = ""

@@ -86,11 +86,11 @@ def label_grid(self, root_in, canvas_in):
     canvas_in.create_line(self.right_mid, self.top, self.right_mid, self.bot, fill=cd.dark_gray, width ='1')
     canvas_in.create_line(self.right_leg, self.top, self.right_leg, self.bot, fill=cd.dark_gray, width ='1')
 
-    canvas_in.create_text(self.cen_x,     self.top+self.mini_offset, text='CEN_X', fill=cd.lite_gray, font=('Arial 12'))
-    canvas_in.create_text(self.left_mid,  self.top+self.mini_offset, text='LEFT_MID', fill=cd.lite_gray, font=('Arial 12'))
-    canvas_in.create_text(self.left_leg,  self.top+self.mini_offset, text='LEFT_LEG', fill=cd.lite_gray, font=('Arial 12'))
-    canvas_in.create_text(self.right_mid, self.top+self.mini_offset, text='RIGHT_MID', fill=cd.lite_gray, font=('Arial 12'))
-    canvas_in.create_text(self.right_leg, self.top+self.mini_offset, text='RIGHT_LEG', fill=cd.lite_gray, font=('Arial 12'))
+    canvas_in.create_text(self.cen_x,     self.top+self.mini_offset, text='CEN_X', fill=cd.lite_gray, font=(cd.grid_font))
+    canvas_in.create_text(self.left_mid,  self.top+self.mini_offset, text='LEFT_MID', fill=cd.lite_gray, font=(cd.grid_font))
+    canvas_in.create_text(self.left_leg,  self.top+self.mini_offset, text='LEFT_LEG', fill=cd.lite_gray, font=(cd.grid_font))
+    canvas_in.create_text(self.right_mid, self.top+self.mini_offset, text='RIGHT_MID', fill=cd.lite_gray, font=(cd.grid_font))
+    canvas_in.create_text(self.right_leg, self.top+self.mini_offset, text='RIGHT_LEG', fill=cd.lite_gray, font=(cd.grid_font))
 
     # Left Labels
     canvas_in.create_line(self.left, self.cen_y,   self.right, self.cen_y,   fill=cd.dark_gray, width ='1')
@@ -101,13 +101,13 @@ def label_grid(self, root_in, canvas_in):
     canvas_in.create_line(self.left, self.bA,      self.right, self.bA,      fill=cd.dark_gray, width ='1')
     canvas_in.create_line(self.left, self.bB,      self.right, self.bB,      fill=cd.dark_gray, width ='1')
     
-    canvas_in.create_text(self.left+self.text_offset, self.cen_y,   text='CEN_Y',   fill=cd.lite_gray, font=('Arial 12'))
-    canvas_in.create_text(self.left+self.text_offset, self.top_mid, text='TOP_MID', fill=cd.lite_gray, font=('Arial 12'))
-    canvas_in.create_text(self.left+self.text_offset, self.bot_mid, text='BOT_MID', fill=cd.lite_gray, font=('Arial 12'))
-    canvas_in.create_text(self.left+self.text_offset, self.tA,      text='tA',      fill=cd.lite_gray, font=('Arial 12'))
-    canvas_in.create_text(self.left+self.text_offset, self.tB,      text='tB',      fill=cd.lite_gray, font=('Arial 12'))
-    canvas_in.create_text(self.left+self.text_offset, self.bA,      text='bA',      fill=cd.lite_gray, font=('Arial 12'))
-    canvas_in.create_text(self.left+self.text_offset, self.bB,      text='bB',      fill=cd.lite_gray, font=('Arial 12'))
+    canvas_in.create_text(self.left+self.text_offset, self.cen_y,   text='CEN_Y',   fill=cd.lite_gray, font=(cd.grid_font))
+    canvas_in.create_text(self.left+self.text_offset, self.top_mid, text='TOP_MID', fill=cd.lite_gray, font=(cd.grid_font))
+    canvas_in.create_text(self.left+self.text_offset, self.bot_mid, text='BOT_MID', fill=cd.lite_gray, font=(cd.grid_font))
+    canvas_in.create_text(self.left+self.text_offset, self.tA,      text='tA',      fill=cd.lite_gray, font=(cd.grid_font))
+    canvas_in.create_text(self.left+self.text_offset, self.tB,      text='tB',      fill=cd.lite_gray, font=(cd.grid_font))
+    canvas_in.create_text(self.left+self.text_offset, self.bA,      text='bA',      fill=cd.lite_gray, font=(cd.grid_font))
+    canvas_in.create_text(self.left+self.text_offset, self.bB,      text='bB',      fill=cd.lite_gray, font=(cd.grid_font))
 
 def create_entry_boxes(self, root_in, canvas_in):
     # Player entry_list [4][2][2]
