@@ -156,7 +156,10 @@ def seperating_eq(parent_in, matrix_in, top_signal, bot_signal):
     p2_sepr2_bot = matrix_in[parent_in.bot_branch][parent_in.action2_p2][parent_in.index_p2]
 
     parent_in.p2_top_choice = 0 if (p2_sepr1_top >= p2_sepr2_top) else 1
-    parent_in.p2_top_alt = 1 if (parent_in.p2_top_choice == 0) else 1
+    parent_in.p2_top_alt = 1 if (parent_in.p2_top_choice == 0) else 1 ### ~BUG HERE~!!!
+
+    print("parent_in.p2_top_choice:",parent_in.p2_top_choice)
+    print("parent_in.p2_top_alt:",parent_in.p2_top_alt)
 
     parent_in.p2_bot_choice = 0 if (p2_sepr1_bot >= p2_sepr2_bot) else 1
     parent_in.p2_bot_alt = 1 if (parent_in.p2_bot_choice == 0) else 1

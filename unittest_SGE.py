@@ -12,10 +12,20 @@ import csig_unittests as cu
 import signal_game  as sig
 import os
 
+gui_debug = False
+try:
+    if(sys.argv[1] == "t"):
+        gui_debug = True
+except:
+    gui_debug = False
+
+
 def main():
     parent = sig.SGE()
-
-    latest_testchar = "B"
+    if(gui_debug):
+        run_gui(parent, 'A')
+        return 0
+    latest_testchar = "A"
     latest_index = cd.tests.index(latest_testchar)
     spliced_tests = cd.tests[0:latest_index+1]
     test_matrix_arr = []
@@ -36,21 +46,11 @@ def main():
     load_test_matricies(parent, spliced_tests, test_matrix_arr, test_nature_arr)
     run_tests(parent, test_matrix_arr, test_nature_arr, latest_index)
 
-def run_gui(parent_in):
+def run_gui(parent_in, test_name):
     cg.create_spider_grid(parent_in, parent_in.root, parent_in.canvas)
     cg.label_grid(parent_in, parent_in.root, parent_in.canvas)
     test_matrix = np.zeros((4,2), dtype='i,i')
-    incr = 0
-    for i, i_entry in enumerate(test_matrix):
-        for j, j_entry in enumerate(i_entry):
-            for k, k_entry in enumerate(j_entry): # iterate through tuple
-                test_matrix[i][j][k] = incr
-                incr = incr + 1
-    test_matrix = test_matrix[::-1]
-    test_matrix_nature = np.zeros((1,2))
-    cn.fill_nature_half(test_matrix_nature)
-
-    cn.import_matrix(parent_in, test_matrix, test_matrix_nature)
+    cd.testGEN_functor_list[ord(test_name) - ord('A')](parent_in, test_name, test_matrix)
     cg.create_entry_boxes(parent_in, parent_in.root, parent_in.canvas)
     cg.gen_entry_buttons(parent_in, parent_in.root, parent_in.canvas)
     cg.draw_labels(parent_in, parent_in.root, parent_in.canvas)

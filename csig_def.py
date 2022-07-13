@@ -37,6 +37,8 @@ tests = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
 
 test_functor_list = [cu.testA, cu.testB, cu.testC, 
         cu.testD, cu.testE, cu.testF, cu.testG]
+testGEN_functor_list = [cu.testA_gen, cu.testB_gen, cu.testC_gen, 
+        cu.testD_gen, cu.testE_gen, cu.testF_gen, cu.testG_gen]
 
 import csig_gui     as cg
 import csig_btn     as cb
