@@ -17,7 +17,7 @@ def import_matrix(self, matrix_in, nature_in): # FOR CUSTOM MATRIX INPUT FOR TES
     self.matrix_import_bool = True
 
 def get_entries_into_matrix(self, matrix_in):
-    assert(matrix_in.shape == (4,2))
+    assert(matrix_in.shape == (4,2) or matrix_in.shape == (4,2,2))
     for i, i_entry in enumerate(self.entry_list):
         for j, j_entry in enumerate(i_entry):
             for k, k_entry in enumerate(j_entry): # iterate through tuple
@@ -30,7 +30,7 @@ def get_entries_into_matrix(self, matrix_in):
                 matrix_in[i][j][k] = input
 
 def fill_entries_from_matrix(self, matrix_in):
-    assert(matrix_in.shape == (4,2))
+    assert(matrix_in.shape == (4,2) or matrix_in.shape == (4,2,2))
     for i, i_entry in enumerate(self.entry_list):
         for j, j_entry in enumerate(i_entry):
             for k, k_entry in enumerate(j_entry): # iterate through tuple

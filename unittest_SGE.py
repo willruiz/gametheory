@@ -12,7 +12,8 @@ import csig_unittests as cu
 import signal_game  as sig
 import os
 
-gui_debug = False
+gui_debug = True
+matrix_show = False
 try:
     if(sys.argv[1] == "t"):
         gui_debug = True
@@ -23,9 +24,9 @@ except:
 def main():
     parent = sig.SGE()
     if(gui_debug):
-        run_gui(parent, 'A')
+        run_gui(parent, 'D')
         return 0
-    latest_testchar = "A"
+    latest_testchar = "D"
     latest_index = cd.tests.index(latest_testchar)
     spliced_tests = cd.tests[0:latest_index+1]
     test_matrix_arr = []
@@ -63,15 +64,16 @@ def load_test_matricies(parent_in, tests_in, test_matrix_arr_in, test_nature_arr
 
 def update_test_incr(incr_in, test_matrix_arr_in, test_nature_arr_in):
     incr_in = incr_in + 1
-    curr_matrix_in = test_matrix_arr_in[incr_in]
-    curr_nature_in = test_nature_arr_in[incr_in]
-    return incr_in, curr_matrix_in, curr_nature_in
+    rr_matrix_in = test_matrix_arr_in[incr_in]
+    rr_nature_in = test_nature_arr_in[incr_in]
+    return incr_in, rr_matrix_in, rr_nature_in
 
 def run_tests(parent_in, test_matrix_arr_in, test_nature_arr_in, latest_index_in):
     incr = -1
     for i in range(latest_index_in+1):
-        incr, curr_matrix, curr_nature = update_test_incr(incr, test_matrix_arr_in, test_nature_arr_in)
-        cd.test_functor_list[i](parent_in, curr_matrix, curr_nature)
+        incr, rr_matrix, rr_nature = update_test_incr(incr, test_matrix_arr_in, test_nature_arr_in)
+        if(matrix_show):print(rr_matrix)
+        cu.test_functor_list[i](parent_in, rr_matrix, rr_nature)
 
 if __name__ == '__main__':
     main()
