@@ -26,8 +26,8 @@ def main():
     if(gui_debug):
         run_gui(parent, 'D')
         return 0
-    latest_testchar = "D"
-    latest_index = cd.tests.index(latest_testchar)
+
+    latest_index = cd.tests.index(cu.latest_testchar)
     spliced_tests = cd.tests[0:latest_index+1]
     test_matrix_arr = []
     test_nature_arr = []

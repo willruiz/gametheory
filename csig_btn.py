@@ -3,6 +3,8 @@ import tkinter as tk
 import numpy as np
 import csig_np as cn
 import os
+import random
+import math
 
 def load_entry(self, load_str, as_flag): # LOAD BUTTON
     entry  = ""
@@ -72,7 +74,9 @@ def submit(self):
     cn.get_entries_into_matrix(self, self.matrix)
     cn.get_nature_entries_into_Natrix(self, self.nature_mat)
     print(self.matrix)
-    print("PRINT")
+    print("PRINT Matrix")
+    print(self.nature_mat)
+    print("PRINT Nature")
     np.save(self.prev_file, self.matrix)
     np.save(self.nature_prev, self.nature_mat)
 
@@ -84,12 +88,29 @@ def reset(self):
                 self.matrix[i][j][k] = 0
     for i, i_entry in enumerate(self.nature_entry):
         i_entry.set("")
-    # self.nature_mat[0][0] = 0.5
-    # self.nature_mat[0][1] = 0.5
+    self.nature_mat[0][0] = 0.5
+    self.nature_mat[0][1] = 0.5
 
     print("RESET")
     np.save(self.prev_file, self.matrix)
     np.save(self.nature_prev, self.nature_mat)
+
+def random_gen(self):
+    for i, i_entry in enumerate(self.entry_list):
+        for j, j_entry in enumerate(i_entry):
+            for k, k_entry in enumerate(j_entry): # iterate through tuple
+                rgen = math.floor(random.random()*100)
+                k_entry.set(str(rgen))
+                self.matrix[i][j][k] = rgen
+    rgenB = round(random.random(),2)
+    rgenBm = round((1-rgenB),2)
+    self.nature_mat[0][0] = rgenB
+    self.nature_mat[0][1] = rgenBm
+    for i, i_entry in enumerate(self.nature_entry):
+        if i == 0:
+            i_entry.set(str(rgenB))
+        else:
+            i_entry.set(str(rgenBm))
 
 def quit_game(self, root_in):
     cn.get_entries_into_matrix(self, self.matrix)

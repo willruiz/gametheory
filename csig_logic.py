@@ -115,7 +115,6 @@ def pooling_eq(parent_in, matrix_in, nature_in, top_signal, bot_signal):
         q = symbols('q')
         exprA = q*p2_alt1_top + (1-q)*p2_alt1_bot
         exprB = q*p2_alt2_top + (1-q)*p2_alt2_bot
-
         
         raw_sol = solve(Eq(exprA, exprB),q)
         parent_in.solution = 0.0
