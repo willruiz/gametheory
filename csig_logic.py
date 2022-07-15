@@ -69,7 +69,6 @@ def pooling_eq(parent_in, matrix_in, nature_in, top_signal, bot_signal):
     p2_pool2_bot = matrix_in[parent_in.bot_branch][parent_in.action2_p2][parent_in.index_p2]
     parent_in.p2_pool1 = (p2_pool1_top*p) + (p2_pool1_bot*pn)
     parent_in.p2_pool2 = (p2_pool2_top*p) + (p2_pool2_bot*pn)
-    
 
     parent_in.p2_pool_action = 0 if (parent_in.p2_pool1 >= parent_in.p2_pool2) else 1
     parent_in.p2_top_choice = parent_in.p2_pool_action

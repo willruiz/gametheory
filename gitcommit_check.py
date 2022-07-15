@@ -6,7 +6,7 @@ import sys
 
 class SGE:
     def __init__(self):
-        self.width = 1500
+        self.width = 1500 
         self.height = 1000
         self.root = tk.Tk()
         self.canvas = Canvas(self.root, bg='white')

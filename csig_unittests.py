@@ -9,6 +9,7 @@ import signal_game  as sig
 
 latest_testchar = "F"
 
+# Increment
 def testA_gen(parent_in, test_name, test_matrix, test_matrix_nature):
     
     incr = 0
@@ -18,10 +19,9 @@ def testA_gen(parent_in, test_name, test_matrix, test_matrix_nature):
                 test_matrix[i][j][k] = incr
                 incr = incr + 1
     cn.fill_nature_half(test_matrix_nature)
-    cn.import_matrix(parent_in, test_matrix, test_matrix_nature)
-    cn.save_test_matrix(parent_in, test_name)
     return test_matrix, test_matrix_nature
 
+# Semi-decrement
 def testB_gen(parent_in, test_name, test_matrix, test_matrix_nature):
     incr = 0
     for i, i_entry in enumerate(test_matrix):
@@ -31,10 +31,9 @@ def testB_gen(parent_in, test_name, test_matrix, test_matrix_nature):
                 incr = incr + 1
     test_matrix = test_matrix[::-1]
     cn.fill_nature_half(test_matrix_nature)
-    cn.import_matrix(parent_in, test_matrix, test_matrix_nature)
-    cn.save_test_matrix(parent_in, test_name)
     return test_matrix, test_matrix_nature
 
+# Full-decrement
 def testC_gen(parent_in, test_name, test_matrix, test_matrix_nature):
     incr = 16
     for i, i_entry in enumerate(test_matrix):
@@ -43,27 +42,11 @@ def testC_gen(parent_in, test_name, test_matrix, test_matrix_nature):
                 test_matrix[i][j][k] = incr
                 incr = incr - 1
     cn.fill_nature_half(test_matrix_nature)
-    cn.import_matrix(parent_in, test_matrix, test_matrix_nature)
-    cn.save_test_matrix(parent_in, test_name)
-    return test_matrix, test_matrix_nature
-
-def testC_gen(parent_in, test_name, test_matrix, test_matrix_nature):
-    incr = 16
-    for i, i_entry in enumerate(test_matrix):
-        for j, j_entry in enumerate(i_entry):
-            for k, k_entry in enumerate(j_entry):
-                test_matrix[i][j][k] = incr
-                incr = incr - 1
-    cn.fill_nature_half(test_matrix_nature)
-    cn.import_matrix(parent_in, test_matrix, test_matrix_nature)
-    cn.save_test_matrix(parent_in, test_name)
     return test_matrix, test_matrix_nature
     
 # All zeros
 def testD_gen(parent_in, test_name, test_matrix, test_matrix_nature):
     cn.fill_nature_half(test_matrix_nature)
-    cn.import_matrix(parent_in, test_matrix, test_matrix_nature)
-    cn.save_test_matrix(parent_in, test_name)
     return test_matrix, test_matrix_nature
 
 # Pooling SEPR_A
@@ -75,8 +58,6 @@ def testE_gen(parent_in, test_name, test_matrix, test_matrix_nature):
         [( 8,  5),( 9,  4)]
         ])
     cn.fill_nature_half(test_matrix_nature)
-    cn.import_matrix(parent_in, test_matrix, test_matrix_nature)
-    cn.save_test_matrix(parent_in, test_name)
     return test_matrix, test_matrix_nature
 
 def testF_gen(parent_in, test_name, test_matrix, test_matrix_nature):    
@@ -89,10 +70,18 @@ def testF_gen(parent_in, test_name, test_matrix, test_matrix_nature):
     test_matrix_nature = np.array([
         [0.84, 0.16]
         ])
-    # return test_matrix, test_matrix_nature
     return test_matrix, test_matrix_nature
 
 def testG_gen(parent_in, test_name, test_matrix, test_matrix_nature):
+    test_matrix = np.array([
+        [(45, 46), (91, 72)],
+        [(49, 26), (25, 21)],
+        [(76, 81), (81, 65)],
+        [(10, 29), (10, 89)],
+        ])
+    test_matrix_nature = np.array([
+        [0.03, 0.97]
+        ])
     return test_matrix, test_matrix_nature
 
 def testH_gen(parent_in, test_name, test_matrix, test_matrix_nature):
@@ -129,8 +118,7 @@ def testA(parent_in, test_matrix, test_nature):
     print("[TestA-sepr]: PASS")
 
     cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_REV, parent_in.WEK_REV)
-    assert(parent_in.p2_top_choice   == 1)
-    assert(parent_in.p2_bot_choice   == 1)
+    assert(parent_in.p2_pool_action   == 1)
     assert(parent_in.p2_pool_act_alt == 1)
     assert(parent_in.p1_top_switch == False)
     assert(parent_in.p1_bot_switch == False)  
@@ -138,8 +126,7 @@ def testA(parent_in, test_matrix, test_nature):
     assert(parent_in.solution_flag == False)
 
     cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_HID, parent_in.WEK_HID)
-    assert(parent_in.p2_top_choice   == 1)
-    assert(parent_in.p2_bot_choice   == 1)
+    assert(parent_in.p2_pool_action   == 1)
     assert(parent_in.p2_pool_act_alt == 1)
     assert(parent_in.p1_top_switch == True)
     assert(parent_in.p1_bot_switch == True)  
@@ -147,6 +134,7 @@ def testA(parent_in, test_matrix, test_nature):
 
     print("[TestA-pool]: PASS")
 
+# Semi decrement
 def testB(parent_in, test_matrix, test_nature):
     cl.seperating_eq(parent_in, test_matrix, parent_in.STR_REV, parent_in.WEK_HID)
     assert(parent_in.p2_top_choice == 1)
@@ -165,16 +153,14 @@ def testB(parent_in, test_matrix, test_nature):
     print("[TestB-sepr]: PASS")
 
     cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_REV, parent_in.WEK_REV)
-    assert(parent_in.p2_top_choice   == 1)
-    assert(parent_in.p2_bot_choice   == 1)
+    assert(parent_in.p2_pool_action   == 1)
     assert(parent_in.p2_pool_act_alt == 1)
     assert(parent_in.p1_top_switch == True)
     assert(parent_in.p1_bot_switch == True)  
     assert(parent_in.eq_success    == False)
 
     cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_HID, parent_in.WEK_HID)
-    assert(parent_in.p2_top_choice   == 1)
-    assert(parent_in.p2_bot_choice   == 1)
+    assert(parent_in.p2_pool_action   == 1)
     assert(parent_in.p2_pool_act_alt == 1)
     assert(parent_in.p1_top_switch == False)
     assert(parent_in.p1_bot_switch == False)  
@@ -183,6 +169,7 @@ def testB(parent_in, test_matrix, test_nature):
 
     print("[TestB-pool]: PASS")
 
+# Full decrement
 def testC(parent_in, test_matrix, test_nature):
     cl.seperating_eq(parent_in, test_matrix, parent_in.STR_REV, parent_in.WEK_HID)
     assert(parent_in.p2_top_choice == 0)
@@ -201,16 +188,14 @@ def testC(parent_in, test_matrix, test_nature):
     print("[TestC-sepr]: PASS")
 
     cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_REV, parent_in.WEK_REV)
-    assert(parent_in.p2_top_choice   == 0)
-    assert(parent_in.p2_bot_choice   == 0)
+    assert(parent_in.p2_pool_action  == 0)
     assert(parent_in.p2_pool_act_alt == 0)
     assert(parent_in.p1_top_switch == True)
     assert(parent_in.p1_bot_switch == True)  
     assert(parent_in.eq_success    == False)
 
     cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_HID, parent_in.WEK_HID)
-    assert(parent_in.p2_top_choice   == 0)
-    assert(parent_in.p2_bot_choice   == 0)
+    assert(parent_in.p2_pool_action  == 0)
     assert(parent_in.p2_pool_act_alt == 0)
     assert(parent_in.p1_top_switch == False)
     assert(parent_in.p1_bot_switch == False)  
@@ -218,6 +203,7 @@ def testC(parent_in, test_matrix, test_nature):
     assert(parent_in.solution_flag == False)
 
     print("[TestC-pool]: PASS")
+
 
 def testD(parent_in, test_matrix, test_nature):
     cl.seperating_eq(parent_in, test_matrix, parent_in.STR_REV, parent_in.WEK_HID)
@@ -237,8 +223,7 @@ def testD(parent_in, test_matrix, test_nature):
     print("[TestD-sepr]: PASS")
 
     cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_REV, parent_in.WEK_REV)
-    assert(parent_in.p2_top_choice   == 0)
-    assert(parent_in.p2_bot_choice   == 0)
+    assert(parent_in.p2_pool_action  == 0)
     assert(parent_in.p2_pool_act_alt == 0)
     assert(parent_in.p1_top_switch == False)
     assert(parent_in.p1_bot_switch == False)  
@@ -246,8 +231,7 @@ def testD(parent_in, test_matrix, test_nature):
     assert(parent_in.solution_flag == False)
 
     cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_HID, parent_in.WEK_HID)
-    assert(parent_in.p2_top_choice   == 0)
-    assert(parent_in.p2_bot_choice   == 0)
+    assert(parent_in.p2_pool_action  == 0)
     assert(parent_in.p2_pool_act_alt == 0)
     assert(parent_in.p1_top_switch == False)
     assert(parent_in.p1_bot_switch == False)  
@@ -274,16 +258,14 @@ def testE(parent_in, test_matrix, test_nature):
     print("[TestE-sepr]: PASS")
 
     cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_REV, parent_in.WEK_REV)
-    assert(parent_in.p2_top_choice   == 0)
-    assert(parent_in.p2_bot_choice   == 0)
+    assert(parent_in.p2_pool_action  == 0)
     assert(parent_in.p2_pool_act_alt == 1)
     assert(parent_in.p1_top_switch == True)
     assert(parent_in.p1_bot_switch == True)  
     assert(parent_in.eq_success    == False)
 
     cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_HID, parent_in.WEK_HID)
-    assert(parent_in.p2_top_choice   == 1)
-    assert(parent_in.p2_bot_choice   == 1)
+    assert(parent_in.p2_pool_action  == 1)
     assert(parent_in.p2_pool_act_alt == 0)
     assert(parent_in.p1_top_switch == False)
     assert(parent_in.p1_bot_switch == False)  
@@ -310,26 +292,54 @@ def testF(parent_in, test_matrix, test_nature):
     print("[TestF-sepr]: PASS")
 
     cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_REV, parent_in.WEK_REV)
-    assert(parent_in.p2_top_choice   == 0)
-    assert(parent_in.p2_bot_choice   == 0)
+    assert(parent_in.p2_pool_action  == 0)
     assert(parent_in.p2_pool_act_alt == 0)
     assert(parent_in.p1_top_switch == False)
     assert(parent_in.p1_bot_switch == False)  
     assert(parent_in.eq_success    == True)
 
     cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_HID, parent_in.WEK_HID)
-    assert(parent_in.p2_top_choice   == 0)
-    assert(parent_in.p2_bot_choice   == 0)
+    assert(parent_in.p2_pool_action  == 0)
     assert(parent_in.p2_pool_act_alt == 0)
     assert(parent_in.p1_top_switch == True)
-    assert(parent_in.p1_bot_switch == True)  
+    assert(parent_in.p1_bot_switch == True)
     assert(parent_in.eq_success    == False)
 
     print("[TestF-pool]: PASS")
 
 
 def testG(parent_in, test_matrix, test_nature):
-    pass
+    cl.seperating_eq(parent_in, test_matrix, parent_in.STR_REV, parent_in.WEK_HID)
+    assert(parent_in.p2_top_choice == 0)
+    assert(parent_in.p2_bot_choice == 0)
+    assert(parent_in.p1_top_switch == False)
+    assert(parent_in.p1_bot_switch == False)  
+    assert(parent_in.eq_success    == True)
+
+    cl.seperating_eq(parent_in, test_matrix, parent_in.STR_HID, parent_in.WEK_REV)
+    assert(parent_in.p2_top_choice == 1)
+    assert(parent_in.p2_bot_choice == 1)
+    assert(parent_in.p1_top_switch == False)
+    assert(parent_in.p1_bot_switch == True)  
+    assert(parent_in.eq_success    == False)
+
+    print("[TestG-sepr]: PASS")
+
+    cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_REV, parent_in.WEK_REV)
+    assert(parent_in.p2_pool_action  == 1)
+    assert(parent_in.p2_pool_act_alt == 0)
+    assert(parent_in.p1_top_switch == False)
+    assert(parent_in.p1_bot_switch == False)  
+    assert(parent_in.eq_success    == True)
+
+    cl.pooling_eq(parent_in, test_matrix, test_nature, parent_in.STR_HID, parent_in.WEK_HID)
+    assert(parent_in.p2_pool_action  == 0)
+    assert(parent_in.p2_pool_act_alt == 0)
+    assert(parent_in.p1_top_switch == True)
+    assert(parent_in.p1_bot_switch == True)
+    assert(parent_in.eq_success    == False)
+
+    print("[TestG-pool]: PASS")
 
 def testH(parent_in, test_matrix, test_nature):
     pass
