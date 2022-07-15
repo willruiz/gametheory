@@ -10,8 +10,6 @@ import numpy as np
 import sys
 from sympy import symbols, Eq, solve
 
-
-
 def draw_eq_base(parent_in,  matrix_in, eq_type):
     subroot = tk.Tk()
     subcan = Canvas(subroot, bg='white')
@@ -399,8 +397,8 @@ class EQ_GUI:
             parent_in.cen_x-self.EO*2, parent_in.bB-self.MO, 
             parent_in.cen_x+self.EO*2, parent_in.bB+self.TO, 
             outline = fill_type, width = '3')
-        canvas_in.create_text(parent_in.cen_x, parent_in.bB,         text=text_type         ,fill = fill_type, font=(cd.text_font))
-        canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium"     ,fill = fill_type, font=(cd.text_font))
+        canvas_in.create_text(parent_in.cen_x, parent_in.bB,         text=text_type     ,fill = fill_type, font=(cd.text_font))
+        canvas_in.create_text(parent_in.cen_x, parent_in.bB+self.MO, text="Equilibrium" ,fill = fill_type, font=(cd.text_font))
 
     def write_pool_prob(self, parent_in, canvas_in):                                                           # signal == top_signal == bot_signal
         pool_text_x  = ((parent_in.left+parent_in.left_leg*2)/3)-self.EO*0.5 + 2*(parent_in.cf_full_leg+self.TO*2-0.4*self.MO)*parent_in.top_signal 
