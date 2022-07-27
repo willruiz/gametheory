@@ -1,6 +1,6 @@
 ## Hex color strings
-mute_red      = "#f75757"
-mute_blue     = "#665af2"
+mute_red      = "#FFCCCB"
+mute_blue     = "#ADD8E6"
 sea_green     = "#77fc98"
 reg_teal      = "#00d4d4"
 lite_teal     = "#84cfcf"

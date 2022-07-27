@@ -6,22 +6,23 @@ import sys
 import crep_gui as cg
 import crep_def as cd
 import crep_btn as cb
+import crep_np  as cn
 
 class RNFM:
     def __init__(self, rows, cols):
-        self.rows = rows
-        self.cols = cols
+        self.rows   = rows
+        self.cols   = cols
         self.width  = cols*250+200
         self.height = rows*250+200
-        self.left = self.width * 0.2
-        self.right = self.width * 0.8
-        self.top = self.height * 0.2
-        self.bot = self.height * 0.8
+        self.left   = self.width * 0.2
+        self.right  = self.width * 0.8
+        self.top    = self.height * 0.2
+        self.bot    = self.height * 0.8
         self.true_height = rows*250+250
 
-        self.unit_width = (self.right-self.left)/cols
+        self.unit_width  = (self.right-self.left)/cols
         self.unit_height = (self.bot-self.top)/rows
-        self.cenv = self.width * 0.5
+        self.cenv = self.width  * 0.5
         self.cenh = self.height * 0.5
         self.root = tk.Tk()
         self.offset = 20
@@ -29,9 +30,9 @@ class RNFM:
         self.entry_list = []
         self.matrix = np.zeros((self.rows,self.cols), dtype='i,i')
         self.saved_file = "saved_matrix.npy"
-        self.saved_dim = "saved_dim.npy"
-        self.prev_file = "prev_matrix.npy" 
-        self.prev_dim = "prev_dim.npy"
+        self.saved_dim  = "saved_dim.npy"
+        self.prev_file  = "prev_matrix.npy" 
+        self.prev_dim   = "prev_dim.npy"
         self.matrix_import = np.zeros((1,1), dtype='i,i')
         self.matrix_import_bool = False
 
@@ -55,10 +56,10 @@ class RNFM:
                 coord_y = initH_offset+(self.unit_height*(i))
                 if (p1_br[i][j]):
                     canvas.create_rectangle(coord_x-self.offset-10, coord_y-10, 
-                        coord_x-self.offset+15, coord_y+10, fill='#FFCCCB')
+                        coord_x-self.offset+15, coord_y+10, fill= cd.mute_red)
                 if (p2_br[i][j]):
                     canvas.create_rectangle(coord_x+self.offset-10, coord_y-10, 
-                        coord_x+self.offset+15, coord_y+10, fill='#ADD8E6')
+                        coord_x+self.offset+15, coord_y+10, fill= cd.mute_blue)
                 canvas.create_text(coord_x-self.offset, coord_y, 
                     text=self.matrix[i][j][0], fill="black", font=(cd.payoff_font))
                 canvas.create_text(coord_x, coord_y, 
@@ -135,7 +136,7 @@ class RNFM:
 
 def main():
     parent = RNFM(2, 2)
-    parent.init_np()
+    cn.init_np(parent)
     cg.create_matrix_grid(parent, parent.root, parent.canvas)
     cg.create_entry_boxes(parent, parent.canvas)
     cg.gen_entry_buttons(parent, parent.root, parent.canvas)

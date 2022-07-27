@@ -3,6 +3,7 @@ import tkinter as tk
 import numpy as np
 import crep_btn as cb
 import crep_def as cd
+import crep_np  as cn
 
 def create_matrix_grid(parent_in, root_in, canvas_in):
         root_in.geometry(str(parent_in.width) + "x" + str(parent_in.true_height))
@@ -37,11 +38,11 @@ def create_entry_boxes(parent_in, canvas):
         except:
             prev_mat = np.zeros((parent_in.rows,parent_in.cols), dtype='i,i')
         if ((prev_mat.shape[0] == parent_in.rows) and (prev_mat.shape[1] == parent_in.cols)):
-            parent_in.fill_entries_from_matrix(prev_mat)
+            cn.fill_entries_from_matrix(parent_in, prev_mat)
         else:
             print("Prev is not loaded")
     else:
-        parent_in.fill_entries_from_matrix(parent_in.matrix_import)
+        cn.fill_entries_from_matrix(parent_in, parent_in.matrix_import)
         
 
     initH_offset = parent_in.top + parent_in.unit_height/2

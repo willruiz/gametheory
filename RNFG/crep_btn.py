@@ -5,6 +5,7 @@ import numpy as np
 import sys
 import crep_gui as cg
 import crep_def as cd
+import crep_np  as cn
 
 def submit(parent_in):
     for i, i_entry in enumerate(parent_in.entry_list):
@@ -40,7 +41,7 @@ def quit_game(parent_in):
     parent_in.root.destroy()
 
 def save_entries(parent_in):
-    parent_in.get_entries_into_matrix()
+    cn.get_entries_into_matrix(parent_in)
     np.save(parent_in.saved_file, parent_in.matrix)
     print("SAVE")
 
@@ -49,7 +50,7 @@ def load_entries(parent_in):
     entry = np.load(parent_in.saved_file)
     if ((entry.shape[0] == parent_in.rows) and (entry.shape[1] == parent_in.cols)):
         parent_in.matrix = entry
-        parent_in.fill_entries_from_matrix(entry)
+        cn.fill_entries_from_matrix(parent_in, entry)
         print("LOAD")
     else:
         print("Saved dimensions do not match - Cannot load")
