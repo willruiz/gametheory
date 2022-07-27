@@ -187,16 +187,16 @@ def gen_entry_buttons(self, root, canvas):
     wi = self.width/120
     hi = self.height/90
 
-    canvas.create_window(self.cen_x-5*wi,  self.bot+4*hi, window=SEPR_btn_A)
-    canvas.create_window(self.cen_x-5*wi,  self.bot+8*hi, window=SEPR_btn_B)
-    canvas.create_window(self.cen_x+5*wi,  self.bot+4*hi, window=POOL_btn_A)
-    canvas.create_window(self.cen_x+5*wi,  self.bot+8*hi, window=POOL_btn_B)
-    canvas.create_window(self.cen_x-25*wi, self.bot+4*hi, window=print_btn)
-    canvas.create_window(self.cen_x-25*wi, self.bot+8*hi, window=reset_btn)
-    canvas.create_window(self.cen_x-18*wi, self.bot+4*hi, window=save_btn)
-    canvas.create_window(self.cen_x-18*wi, self.bot+8*hi, window=load_btn)
-    canvas.create_window(self.cen_x-48*wi, self.bot+4*hi, window=save_as_btn)
-    canvas.create_window(self.cen_x-48*wi, self.bot+8*hi, window=load_as_btn)
+    canvas.create_window(self.cen_x-5 *wi, self.bot+4*hi,   window=SEPR_btn_A)
+    canvas.create_window(self.cen_x-5 *wi, self.bot+8*hi,   window=SEPR_btn_B)
+    canvas.create_window(self.cen_x+5 *wi, self.bot+4*hi,   window=POOL_btn_A)
+    canvas.create_window(self.cen_x+5 *wi, self.bot+8*hi,   window=POOL_btn_B)
+    canvas.create_window(self.cen_x-25*wi, self.bot+4*hi,   window=print_btn)
+    canvas.create_window(self.cen_x-25*wi, self.bot+8*hi,   window=reset_btn)
+    canvas.create_window(self.cen_x-18*wi, self.bot+4*hi,   window=save_btn)
+    canvas.create_window(self.cen_x-18*wi, self.bot+8*hi,   window=load_btn)
+    canvas.create_window(self.cen_x-48*wi, self.bot+4*hi,   window=save_as_btn)
+    canvas.create_window(self.cen_x-48*wi, self.bot+8*hi,   window=load_as_btn)
     canvas.create_window(self.cen_x+52*wi, self.bot+6.1*hi, window=rnd_btn)
-    canvas.create_window(self.cen_x+30*wi, self.bot+6*hi, window=quit_btn)
+    canvas.create_window(self.cen_x+30*wi, self.bot+6*hi,   window=quit_btn)
 
