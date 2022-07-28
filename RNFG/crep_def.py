@@ -1,3 +1,5 @@
+import RNE_class as rn
+
 ## Hex color strings
 mute_red      = "#FFCCCB"
 mute_blue     = "#ADD8E6"
@@ -28,7 +30,9 @@ success_green = "#0cc984"
 fail_red      = "#ed264e"
 reg_salmon    = "#f7847c"
 
-payoff_font   = "TkFixedFont 15"
+entry_font   = "TkFixedFont 14"
+payoff_font  = "TkFixedFont 18"
+label_font     = "Arial 25 bold"
 
 
 tests = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]

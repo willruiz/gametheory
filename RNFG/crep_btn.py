@@ -1,11 +1,10 @@
 from tkinter import *
 import tkinter as tk
-import math
 import numpy as np
-import sys
 import crep_gui as cg
 import crep_def as cd
 import crep_np  as cn
+import crep_logic as cl
 
 def submit(parent_in):
     for i, i_entry in enumerate(parent_in.entry_list):
@@ -22,23 +21,8 @@ def submit(parent_in):
     print("SUBMIT")
     np.save(parent_in.prev_file, parent_in.matrix)
 
-    p1_br, p2_br = parent_in.find_basic_BR()
-    parent_in.gen_BR_grid(p1_br, p2_br)
-
-
-def reset(parent_in):
-    for i, i_entry in enumerate(parent_in.entry_list):
-        for j, j_entry in enumerate(i_entry):
-            for k, k_entry in enumerate(j_entry): # iterate through tuple
-                k_entry.set("")
-                parent_in.matrix[i][j][k] = 0
-    print("RESET")
-    np.save(parent_in.prev_file, parent_in.matrix)
-
-def quit_game(parent_in):
-    np.save(parent_in.prev_file, parent_in.matrix)
-    print("EXIT")
-    parent_in.root.destroy()
+    p1_br, p2_br = cl.find_basic_BR(parent_in)
+    cl.gen_BR_grid(parent_in, p1_br, p2_br)
 
 def save_entries(parent_in):
     cn.get_entries_into_matrix(parent_in)
@@ -54,3 +38,18 @@ def load_entries(parent_in):
         print("LOAD")
     else:
         print("Saved dimensions do not match - Cannot load")
+
+def reset(parent_in):
+    for i, i_entry in enumerate(parent_in.entry_list):
+        for j, j_entry in enumerate(i_entry):
+            for k, k_entry in enumerate(j_entry): # iterate through tuple
+                k_entry.set("")
+                parent_in.matrix[i][j][k] = 0
+    print("RESET")
+    np.save(parent_in.prev_file, parent_in.matrix)
+
+def quit_game(parent_in):
+    cn.get_entries_into_matrix(parent_in)
+    np.save(parent_in.prev_file, parent_in.matrix)
+    print("EXIT")
+    parent_in.root.destroy()
