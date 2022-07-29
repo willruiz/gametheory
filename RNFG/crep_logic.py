@@ -103,6 +103,14 @@ def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
 # def inifinite_series_sum(payoff, discount):
 #     return payoff/(1-discount)
 
+def find_folk_trigger(parent_in):
+    """
+    1. Nash equlibrium
+    2. Max deviation
+    3. Alternative Strictly better outcome for both players (cooperative eq)
+    """
+    pass
+
 def find_PD_grim_trigger(parent_in):
     # Assume PD game
     """

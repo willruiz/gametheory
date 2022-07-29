@@ -12,7 +12,7 @@ def nfg(parent_in):
     print("NORMAL FORM")
     np.save(parent_in.prev_file, parent_in.matrix)
     parent_in.p1_br, parent_in.p2_br = cl.find_basic_BR(parent_in)
-    cl.gen_BR_grid(parent_in, parent_in.p1_br, parent_in.p2_br)
+    cl.gen_BR_grid(parent_in, parent_in.p1_br, parent_in.p2_br, False)
 
 def rnfg(parent_in):
     cn.get_entries_into_matrix(parent_in)
