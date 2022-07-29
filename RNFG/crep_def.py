@@ -1,8 +1,10 @@
-import RNE_class as rn
+import repeated_game as rn
 
 ## Hex color strings
 mute_red      = "#FFCCCB"
 mute_blue     = "#ADD8E6"
+dim_red       = "#f75757"
+dim_blue      = "#665af2"
 sea_green     = "#77fc98"
 reg_teal      = "#00d4d4"
 lite_teal     = "#84cfcf"
@@ -32,7 +34,16 @@ reg_salmon    = "#f7847c"
 
 entry_font   = "TkFixedFont 14"
 payoff_font  = "TkFixedFont 18"
-label_font     = "Arial 25 bold"
+paybold_font = "TkFixedFont 18 bold"
+label_font   = "Arial 25 bold"
 
 
 tests = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
+
+
+# if (p1_br[i][j]):
+#     canvas_in.create_rectangle(coord_x-po-po/2, coord_y-10, 
+#         coord_x-int(po*0.75), coord_y+10, fill= cd.mute_red)
+# if (p2_br[i][j]):
+#     canvas_in.create_rectangle(coord_x+po-po/2, coord_y-10, 
+#         coord_x+int(po*0.75), coord_y+10, fill= cd.mute_blue)

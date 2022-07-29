@@ -39,7 +39,14 @@ class RNFM:
         self.prev_file  = "prev_matrix.npy" 
         self.prev_dim   = "prev_dim.npy"
         
-        self.offset = int(self.width/30)
+        self.offset   = int(self.width/30)
+        self.offset_h = int(self.width/30)
+
+        self.p1_br    = 0
+        self.p2_br    = 0
+
+        self.p1_index = 0
+        self.p2_index = 1
 
 def main():
     parent = RNFM(2, 2)

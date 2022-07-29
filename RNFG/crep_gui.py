@@ -51,27 +51,32 @@ def create_entry_boxes(parent_in, canvas):
     else:
         cn.fill_entries_from_matrix(parent_in, parent_in.matrix_import)
         
-
     initH_offset = parent_in.top  + parent_in.unit_height/2
     initW_offset = parent_in.left + parent_in.unit_width/2
     for i in range(parent_in.rows):
         for j in range(parent_in.cols):
             coord_x = initW_offset+(parent_in.unit_width*(j))
             coord_y = initH_offset+(parent_in.unit_height*(i))
-            entryA0 = tk.Entry (parent_in.root, textvariable=parent_in.entry_list[i][j][0], width= 3, font = cd.entry_font)
+            entryA0 = tk.Entry (parent_in.root, textvariable=parent_in.entry_list[i][j][parent_in.p1_index], width= 3, font = cd.entry_font)
             canvas.create_window(coord_x-parent_in.offset, coord_y, window=entryA0)
-            entryA1 = tk.Entry (parent_in.root, textvariable=parent_in.entry_list[i][j][1], width= 3, font = cd.entry_font)
+            entryA1 = tk.Entry (parent_in.root, textvariable=parent_in.entry_list[i][j][parent_in.p2_index], width= 3, font = cd.entry_font)
             canvas.create_window(coord_x+parent_in.offset, coord_y, window=entryA1)
 
 def gen_entry_buttons(parent_in, root, canvas_in):
-    sub_btn   = tk.Button(root, text = 'Submit', bg = cd.reg_salmon, command = lambda: cb.submit(parent_in))
-    load_btn  = tk.Button(root, text = 'Load'  , bg = cd.sea_green,  command = lambda: cb.load_entries(parent_in))
-    save_btn  = tk.Button(root, text = 'Save'  , bg = cd.sea_green,  command = lambda: cb.save_entries(parent_in))
-    reset_btn = tk.Button(root, text = 'Reset' , bg = cd.lite_teal,  command = lambda: cb.reset(parent_in))
-    quit_btn  = tk.Button(root, text = "Exit"  , bg = cd.lite_ornge, command = lambda: cb.quit_game(parent_in), width = int(parent_in.width/30), height = 2)
-    canvas_in.create_window(parent_in.cenv, parent_in.bot + 1 *(parent_in.height/20), window=sub_btn)
-    canvas_in.create_window(parent_in.cenv + int(parent_in.height/6), parent_in.bot+1 *(parent_in.height/20), window=save_btn)
-    canvas_in.create_window(parent_in.cenv + int(parent_in.height/6), parent_in.bot+2 *(parent_in.height/20), window=load_btn)
-    canvas_in.create_window(parent_in.cenv, parent_in.bot + 2 *int(parent_in.height/20),   window=reset_btn)
-    canvas_in.create_window(parent_in.cenv, parent_in.bot + 3.5 *int(parent_in.height/20), window=quit_btn)
+
+    reset_btn = tk.Button(root, text = 'Reset', bg = cd.sea_green,  command = lambda: cb.reset(parent_in))
+    load_btn  = tk.Button(root, text = 'Load' , bg = cd.sea_green,  command = lambda: cb.load_entries(parent_in))
+    print_btn = tk.Button(root, text = 'Print',                     command = lambda: cb.print_output(parent_in))
+    save_btn  = tk.Button(root, text = 'Save' ,                     command = lambda: cb.save_entries(parent_in))
+    nfg_btn   = tk.Button(root, text = ' NFG ', bg = cd.dim_red,  fg = "white", command = lambda: cb.nfg(parent_in))
+    rnfg_btn  = tk.Button(root, text = 'RNFG' , bg = cd.dim_blue, fg = "white", command = lambda: cb.rnfg(parent_in))
+    quit_btn  = tk.Button(root, text = "Exit" , bg = cd.lite_ornge, command = lambda: cb.quit_game(parent_in), width = 5*int(parent_in.width/60), height = 3)
+    
+    canvas_in.create_window(parent_in.cenv - int(parent_in.height/6), parent_in.bot + 1 *(parent_in.height/20), window=print_btn)
+    canvas_in.create_window(parent_in.cenv - int(parent_in.height/6), parent_in.bot + 2 *(parent_in.height/20), window=save_btn)
+    canvas_in.create_window(parent_in.cenv + int(parent_in.height/6), parent_in.bot + 1 *(parent_in.height/20), window=reset_btn)
+    canvas_in.create_window(parent_in.cenv + int(parent_in.height/6), parent_in.bot + 2 *(parent_in.height/20), window=load_btn)
+    canvas_in.create_window(parent_in.cenv, parent_in.bot + 1 *int(parent_in.height/20), window=nfg_btn)
+    canvas_in.create_window(parent_in.cenv, parent_in.bot + 2 *int(parent_in.height/20), window=rnfg_btn)
+    canvas_in.create_window(parent_in.cenv, parent_in.bot + 4 *int(parent_in.height/20), window=quit_btn)
     

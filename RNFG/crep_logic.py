@@ -6,26 +6,52 @@ import sys
 import crep_gui as cg
 import crep_def as cd
 import crep_np  as cn
+from sympy import symbols, Eq, solve
 
 def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
     initH_offset = parent_in.top+parent_in.unit_height/2
     initW_offset = parent_in.left+parent_in.unit_width/2
+    poh = parent_in.offset_h
+    digscA = 0
+    digscB = 0
     for i in range(parent_in.rows):
         for j in range(parent_in.cols):
+            p1_font = ""
+            p2_font = ""
             coord_x = initW_offset+(parent_in.unit_width*(j))
             coord_y = initH_offset+(parent_in.unit_height*(i))
             if (p1_br[i][j]):
-                canvas_in.create_rectangle(coord_x-parent_in.offset-10, coord_y-10, 
-                    coord_x-parent_in.offset+15, coord_y+10, fill= cd.mute_red)
+                if (parent_in.matrix[i][j][parent_in.p1_index] >= 100):
+                    digscA = 2
+                elif (parent_in.matrix[i][j][parent_in.p1_index] >= 10):
+                    digscA = 1
+
+                canvas_in.create_rectangle(
+                    coord_x-poh-poh*0.5-digscA*poh*0.55, coord_y-poh*0.6, 
+                    coord_x-poh+poh*0.5+digscA*poh*0.15, coord_y+poh*0.6, 
+                    fill= cd.mute_red)
+                p1_font = cd.paybold_font
+            else:
+                p1_font = cd.payoff_font
             if (p2_br[i][j]):
-                canvas_in.create_rectangle(coord_x+parent_in.offset-10, coord_y-10, 
-                    coord_x+parent_in.offset+15, coord_y+10, fill= cd.mute_blue)
-            canvas_in.create_text(coord_x-parent_in.offset, coord_y, 
-                text=parent_in.matrix[i][j][0], fill="black", font=(cd.payoff_font))
+                
+                if (parent_in.matrix[i][j][parent_in.p2_index] >= 100):
+                    digscB = 2
+                elif (parent_in.matrix[i][j][parent_in.p2_index] >= 10):
+                    digscB = 1
+                canvas_in.create_rectangle(
+                    coord_x+poh-poh*0.5-digscB*poh*0.15, coord_y-poh*0.6, 
+                    coord_x+poh+poh*0.5+digscB*poh*0.55, coord_y+poh*0.6, 
+                    fill= cd.mute_blue)
+                p2_font = cd.paybold_font
+            else:
+                p2_font = cd.payoff_font
+            canvas_in.create_text(coord_x-poh-digscB*poh*0.2, coord_y, 
+                text=parent_in.matrix[i][j][0], fill="black", font=p1_font)
             canvas_in.create_text(coord_x, coord_y, 
                 text=',', fill="black", font=(cd.payoff_font))
-            canvas_in.create_text(coord_x+parent_in.offset, coord_y, 
-                text=parent_in.matrix[i][j][1], fill="black", font=(cd.payoff_font))
+            canvas_in.create_text(coord_x+poh+digscB*poh*0.2, coord_y, 
+                text=parent_in.matrix[i][j][1], fill="black", font=p2_font)
 
 
 def find_basic_BR(parent_in): # return index coordinates of BRs
@@ -63,15 +89,53 @@ def find_basic_BR(parent_in): # return index coordinates of BRs
             match_p2[i,x] = bool_row[0][x]
     return match_p1, match_p2
 
-def gen_payoff_buttons(parent_in, root, canvas):
-    quit_btn = tk.Button(root, text="Exit", bg = cd.lite_ornge, command=root.destroy,  width = int(parent_in.width/30), height = 3)
-    canvas.create_window(parent_in.cenv, parent_in.bot+2 *(parent_in.height/20), window=quit_btn)
-
-def gen_BR_grid(parent_in, match_p1, match_p2):
+def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
     subroot = tk.Tk()
     subcan = Canvas(subroot, bg='white')
     cg.create_matrix_grid(parent_in, subroot, subcan)
     cg.gen_labels(parent_in, subcan)
     show_payoffs(parent_in, subcan, match_p1, match_p2)
+    if (rep_bool):
+        subcan.create_text(parent_in.cenh, parent_in.top-100, text = "delta: "+str(parent_in.delta_solution), font=(cd.label_font))
     gen_payoff_buttons(parent_in, subroot, subcan)
     subroot.mainloop()
+
+# def inifinite_series_sum(payoff, discount):
+#     return payoff/(1-discount)
+
+def find_PD_grim_trigger(parent_in):
+    # Assume PD game
+    """
+    1. Cooperative eq (C,C): [0,0]
+    2. One-time gain (D,C):  [1,0]
+    3. Defective eq (D,D):   [1,1]
+    """
+    c_p1 = 0
+    c_p2 = 0
+    d_p1 = 1
+    d_p2 = 1
+
+    ceq    = parent_in.matrix[c_p1][c_p2][parent_in.p1_index]
+    atck = parent_in.matrix[d_p1][c_p2][parent_in.p1_index]
+    deq    = parent_in.matrix[d_p1][d_p2][parent_in.p1_index]
+
+    delta = symbols('d')
+    exprC = ceq/(1-delta)
+    exprD = atck + (deq*delta)/(1-delta)
+    print(exprC)    
+    print(exprD)
+    parent_in.delta_solution = 0.0
+    parent_in.delta_exists = False
+    parent_in.delta_solution = solve(Eq(exprC, exprD), delta)
+    if(bool(parent_in.delta_solution)):
+        parent_in.delta_solution = round(float(parent_in.delta_solution[0]),2)
+        parent_in.delta_exists = True
+    else:
+        print("[Undefined delta solution]")
+       
+
+def gen_payoff_buttons(parent_in, root, canvas):
+    quit_btn = tk.Button(root, text="Exit", bg = cd.lite_ornge, command=root.destroy,  width = int(parent_in.width/30), height = 3)
+    canvas.create_window(parent_in.cenv, parent_in.bot+2 *(parent_in.height/20), window=quit_btn)
+
+

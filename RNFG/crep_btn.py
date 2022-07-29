@@ -6,23 +6,27 @@ import crep_def as cd
 import crep_np  as cn
 import crep_logic as cl
 
-def submit(parent_in):
-    for i, i_entry in enumerate(parent_in.entry_list):
-        for j, j_entry in enumerate(i_entry):
-            for k, k_entry in enumerate(j_entry): # iterate through tuple
-                str_input =k_entry.get()
-                input = 0
-                if (str_input == ''):
-                    input = 0
-                else:
-                    input = int(str_input)
-                parent_in.matrix[i][j][k] = input
+def nfg(parent_in):
+    cn.get_entries_into_matrix(parent_in)
                 #print(matrix)
-    print("SUBMIT")
+    print("NORMAL FORM")
     np.save(parent_in.prev_file, parent_in.matrix)
+    parent_in.p1_br, parent_in.p2_br = cl.find_basic_BR(parent_in)
+    cl.gen_BR_grid(parent_in, parent_in.p1_br, parent_in.p2_br)
 
-    p1_br, p2_br = cl.find_basic_BR(parent_in)
-    cl.gen_BR_grid(parent_in, p1_br, p2_br)
+def rnfg(parent_in):
+    cn.get_entries_into_matrix(parent_in)
+                #print(matrix)
+    print("REPEATED NORMAL FORM")
+    np.save(parent_in.prev_file, parent_in.matrix)
+    parent_in.p1_br, parent_in.p2_br = cl.find_basic_BR(parent_in)
+    cl.find_PD_grim_trigger(parent_in)
+    cl.gen_BR_grid(parent_in, parent_in.p1_br, parent_in.p2_br, True)
+
+def print_output(parent_in):
+    cn.get_entries_into_matrix(parent_in)
+    print("PRINT")
+    print(parent_in.matrix)
 
 def save_entries(parent_in):
     cn.get_entries_into_matrix(parent_in)
