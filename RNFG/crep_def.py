@@ -32,6 +32,7 @@ success_green = "#0cc984"
 fail_red      = "#ed264e"
 reg_salmon    = "#f7847c"
 
+delta_font   = "TkFixedFont 12"
 entry_font   = "TkFixedFont 14"
 payoff_font  = "TkFixedFont 18"
 paybold_font = "TkFixedFont 18 bold"

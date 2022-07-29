@@ -48,6 +48,9 @@ class RNFM:
         self.p1_index = 0
         self.p2_index = 1
 
+        self.delta_solution = 0.0
+        self.delta_exists = False
+
 def main():
     parent = RNFM(2, 2)
     cn.init_np(parent)

@@ -7,8 +7,8 @@ import crep_np  as cn
 
 def create_matrix_grid(parent_in, root_in, canvas_in):
         root_in.geometry(str(parent_in.width) + "x" + str(parent_in.true_height))
-        print("width: ", parent_in.width)
-        print("height: ", parent_in.height)
+        #print("width: ", parent_in.width)
+        #print("height: ", parent_in.height)
 
         canvas_in.create_line(parent_in.left,  parent_in.top, parent_in.right, parent_in.top, fill=cd.dark_blue, width ='5')
         canvas_in.create_line(parent_in.left,  parent_in.top, parent_in.left,  parent_in.bot, fill=cd.dark_red,  width ='5')

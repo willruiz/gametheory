@@ -9,8 +9,10 @@ import crep_np  as cn
 from sympy import symbols, Eq, solve
 
 def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
-    initH_offset = parent_in.top+parent_in.unit_height/2
-    initW_offset = parent_in.left+parent_in.unit_width/2
+    # super duper ineffienct nested for-looping, 
+    # use numpy functions later for optimization
+    parent_in.initH_offset = parent_in.top+parent_in.unit_height/2
+    parent_in.initW_offset = parent_in.left+parent_in.unit_width/2
     poh = parent_in.offset_h
     digscA = 0
     digscB = 0
@@ -18,8 +20,8 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
         for j in range(parent_in.cols):
             p1_font = ""
             p2_font = ""
-            coord_x = initW_offset+(parent_in.unit_width*(j))
-            coord_y = initH_offset+(parent_in.unit_height*(i))
+            coord_x = parent_in.initW_offset+(parent_in.unit_width*(j))
+            coord_y = parent_in.initH_offset+(parent_in.unit_height*(i))
             if (p1_br[i][j]):
                 if (parent_in.matrix[i][j][parent_in.p1_index] >= 100):
                     digscA = 2
@@ -46,13 +48,19 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
                 p2_font = cd.paybold_font
             else:
                 p2_font = cd.payoff_font
+
+            # Find NEs
+            if (p1_br[i][j] and p2_br[i][j]):
+                canvas_in.create_rectangle(
+                    coord_x-3.5*poh, coord_y-poh*1.5, 
+                    coord_x+3.5*poh, coord_y+poh*1.5, 
+                    outline= "yellow", width = 3)
             canvas_in.create_text(coord_x-poh-digscB*poh*0.2, coord_y, 
-                text=parent_in.matrix[i][j][0], fill="black", font=p1_font)
+                    text=parent_in.matrix[i][j][0], fill="black", font=p1_font)
             canvas_in.create_text(coord_x, coord_y, 
                 text=',', fill="black", font=(cd.payoff_font))
             canvas_in.create_text(coord_x+poh+digscB*poh*0.2, coord_y, 
                 text=parent_in.matrix[i][j][1], fill="black", font=p2_font)
-
 
 def find_basic_BR(parent_in): # return index coordinates of BRs
     # Player 1 (going down each column)
@@ -89,27 +97,103 @@ def find_basic_BR(parent_in): # return index coordinates of BRs
             match_p2[i,x] = bool_row[0][x]
     return match_p1, match_p2
 
-def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
-    subroot = tk.Tk()
-    subcan = Canvas(subroot, bg='white')
-    cg.create_matrix_grid(parent_in, subroot, subcan)
-    cg.gen_labels(parent_in, subcan)
-    show_payoffs(parent_in, subcan, match_p1, match_p2)
-    if (rep_bool):
-        subcan.create_text(parent_in.cenh, parent_in.top-100, text = "delta: "+str(parent_in.delta_solution), font=(cd.label_font))
-    gen_payoff_buttons(parent_in, subroot, subcan)
-    subroot.mainloop()
+def find_BRNE(parent_in): 
+    # super duper ineffienct nested for-looping, 
+    # use numpy functions later for optimization
+    max_index = [-1,-1]
+    p1_max_val   =  0
+    p2_max_val   =  0
+    for i, ie in enumerate(parent_in.matrix):
+        for j, je in enumerate(ie):
+            if (parent_in.p1_br[i][j] and parent_in.p2_br[i][j] and 
+                (je[parent_in.p1_index] > p1_max_val) and 
+                (je[parent_in.p2_index] > p2_max_val)):
+                p1_max_val = je[parent_in.p1_index]
+                p2_max_val = je[parent_in.p2_index]
+                max_index = (i,j) # CAUTION: (i == p1, j == p2)
+    parent_in.BRNE = max_index
+    print("BRNE:",parent_in.BRNE)
 
-# def inifinite_series_sum(payoff, discount):
-#     return payoff/(1-discount)
+# def draw_NEs(parent_in):
+#     ne_loc = np.where(parent_in.NEs == True)
+#     for i in ne_loc:
+#         print(i)
 
-def find_folk_trigger(parent_in):
+
+def find_folk_triggers(parent_in):
     """
     1. Nash equlibrium
     2. Max deviation
     3. Alternative Strictly better outcome for both players (cooperative eq)
     """
-    pass
+    """
+    Process:
+    1. Find BR Nash Eq
+    2. Find all outcomes with strictly better outcomes than the NE
+    3. Do a temporal discounting factor calculation for each Folk Eq
+    """
+    parent_in.folk_arr = []
+    parent_in.folk_indexes = []
+    br_x = parent_in.BRNE[parent_in.p1_index]
+    br_y = parent_in.BRNE[parent_in.p2_index]
+    p1_br_val = parent_in.matrix[br_x][br_y][parent_in.p1_index]
+    p2_br_val = parent_in.matrix[br_x][br_y][parent_in.p2_index]
+    for i, ie in enumerate(parent_in.matrix):
+        for j, je in enumerate(ie):
+            print("matrix1:", je[parent_in.p1_index])
+            print("matrix2:", je[parent_in.p2_index])
+            print("p1_br_val:", p1_br_val)
+            print("p2_br_val:", p2_br_val)
+            if (je[parent_in.p1_index] > p1_br_val and
+                je[parent_in.p2_index] > p2_br_val):
+                    p1_delta, p2_delta = find_discount_shift(parent_in, i, j)
+                    if (p1_delta and p2_delta):
+                        parent_in.folk_arr.append((p1_delta, p2_delta))
+                        parent_in.folk_indexes.append((i,j))
+                    else:
+                        print("Deltas do not exist for coordinates [{},{}]".format(str(i), str(j)))
+
+def find_discount_shift(parent_in, i_in, j_in):
+    c_p1 = i_in
+    c_p2 = j_in
+    d_p1 = parent_in.BRNE[parent_in.p1_index]
+    d_p2 = parent_in.BRNE[parent_in.p2_index]
+
+
+    c_eq_p1 = parent_in.matrix[c_p1][c_p2][parent_in.p1_index]
+    atck_p1 = parent_in.matrix[d_p1][c_p2][parent_in.p1_index]
+    d_eq_p1 = parent_in.matrix[d_p1][d_p2][parent_in.p1_index]
+
+    p1_delta = symbols('d1')
+    exprC1 = c_eq_p1/(1-p1_delta)
+    exprD1 = atck_p1 + (d_eq_p1*-p1_delta)/(1-p1_delta)
+    #print(exprC)    
+    #print(exprD)
+    
+    p1_delta_solution = solve(Eq(exprC1, exprD1), p1_delta)
+    if(bool(p1_delta_solution )):
+        p1_delta_solution = round(float(p1_delta_solution[0]),2)
+    else:
+        print("[Undefined p1 delta solution]")
+
+    c_eq_p2 = parent_in.matrix[c_p1][c_p2][parent_in.p2_index]
+    atck_p2 = parent_in.matrix[c_p1][d_p2][parent_in.p2_index]
+    d_eq_p2 = parent_in.matrix[d_p1][d_p2][parent_in.p2_index]
+
+    p2_delta = symbols('d2')
+    exprC2 = c_eq_p2/(1-p2_delta)
+    exprD2 = atck_p2 + (d_eq_p2*-p2_delta)/(1-p2_delta)
+    #print(exprC)    
+    #print(exprD)
+    
+    p2_delta_solution = solve(Eq(exprC2, exprD2), p2_delta)
+    if(bool(p2_delta_solution )):
+        p2_delta_solution = round(float(p2_delta_solution[0]),2)
+    else:
+        print("[Undefined p2 delta solution]")
+
+    return p1_delta_solution, p2_delta_solution
+
 
 def find_PD_grim_trigger(parent_in):
     # Assume PD game
@@ -123,24 +207,55 @@ def find_PD_grim_trigger(parent_in):
     d_p1 = 1
     d_p2 = 1
 
-    ceq    = parent_in.matrix[c_p1][c_p2][parent_in.p1_index]
+    ceq  = parent_in.matrix[c_p1][c_p2][parent_in.p1_index]
     atck = parent_in.matrix[d_p1][c_p2][parent_in.p1_index]
-    deq    = parent_in.matrix[d_p1][d_p2][parent_in.p1_index]
+    deq  = parent_in.matrix[d_p1][d_p2][parent_in.p1_index]
 
     delta = symbols('d')
     exprC = ceq/(1-delta)
     exprD = atck + (deq*delta)/(1-delta)
-    print(exprC)    
-    print(exprD)
-    parent_in.delta_solution = 0.0
-    parent_in.delta_exists = False
+    #print(exprC)    
+    #print(exprD)
+    
     parent_in.delta_solution = solve(Eq(exprC, exprD), delta)
     if(bool(parent_in.delta_solution)):
         parent_in.delta_solution = round(float(parent_in.delta_solution[0]),2)
         parent_in.delta_exists = True
     else:
         print("[Undefined delta solution]")
-       
+
+def draw_delta_label(parent_in, subcan_in, i_in, j_in, p1_delta, p2_delta):
+    coord_x1 = parent_in.initW_offset+(parent_in.unit_width*(j_in))
+    coord_x2 = parent_in.initW_offset+(parent_in.unit_width*(parent_in.BRNE[0]))
+    coord_y1 = parent_in.initH_offset+(parent_in.unit_height*(parent_in.BRNE[1]))
+    coord_y2 = parent_in.initH_offset+(parent_in.unit_height*(i_in))
+    # P1-delta
+    subcan_in.create_text(
+        coord_x1, coord_y1+parent_in.offset*1.5, 
+            text = "d1: "+str(p1_delta), fill="green", font=(cd.delta_font))
+    # P2-delta
+    subcan_in.create_text(
+        coord_x2, coord_y2+parent_in.offset*1.5, 
+            text = "d2: "+str(p2_delta), fill="green", font=(cd.delta_font))
+
+
+def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
+    subroot = tk.Tk()
+    subcan = Canvas(subroot, bg='white')
+    cg.create_matrix_grid(parent_in, subroot, subcan)
+    cg.gen_labels(parent_in, subcan)
+    show_payoffs(parent_in, subcan, match_p1, match_p2)
+    if (rep_bool):
+        for a, ae in enumerate(parent_in.folk_arr):
+            i = parent_in.folk_indexes[a][0]
+            j = parent_in.folk_indexes[a][1]
+            p1_delta = ae[0]
+            p2_delta = ae[1]
+            draw_delta_label(parent_in, subcan, i, j, p1_delta, p2_delta)
+
+        #subcan.create_text(parent_in.cenh, parent_in.top-100, text = "delta: "+str(parent_in.delta_solution), font=(cd.label_font))
+    gen_payoff_buttons(parent_in, subroot, subcan)
+    subroot.mainloop()
 
 def gen_payoff_buttons(parent_in, root, canvas):
     quit_btn = tk.Button(root, text="Exit", bg = cd.lite_ornge, command=root.destroy,  width = int(parent_in.width/30), height = 3)
