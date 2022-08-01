@@ -20,6 +20,7 @@ class RNFM:
         self.top    = self.height * 0.2
         self.bot    = self.height * 0.8
         self.true_height = rows*250+300
+        self.true_width  = cols*250+300
 
         self.unit_width  = (self.right-self.left)/cols
         self.unit_height = (self.bot-self.top)/rows
@@ -38,13 +39,14 @@ class RNFM:
         self.saved_dim  = "saved_dim.npy"
         self.prev_file  = "prev_matrix.npy" 
         self.prev_dim   = "prev_dim.npy"
+        self.save_folder  = "user_saves"
         
         self.offset   = int(self.width/30)
         self.offset_h = int(self.width/30)
         self.poh = self.offset_h
 
-        self.p1_br    = 0
-        self.p2_br    = 0
+        self.p1_br    = -1
+        self.p2_br    = -1
 
         self.p1_index = 0
         self.p2_index = 1
@@ -56,7 +58,13 @@ class RNFM:
         self.delta_exists = False
 
 def main():
-    parent = RNFM(2, 2)
+    if len(sys.argv) == 3:
+        rows = int(sys.argv[1])
+        cols = int(sys.argv[2])
+    else:
+        rows = 2
+        cols = 2
+    parent = RNFM(rows, cols)
     cn.init_np(parent)
     cg.create_matrix_grid(parent, parent.root, parent.canvas)
     cg.create_entry_boxes(parent, parent.canvas)

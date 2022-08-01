@@ -5,6 +5,7 @@ import crep_gui as cg
 import crep_def as cd
 import crep_np  as cn
 import crep_logic as cl
+import os
 
 def nfg(parent_in):
     cn.get_entries_into_matrix(parent_in)
@@ -29,20 +30,51 @@ def print_output(parent_in):
     print("PRINT")
     print(parent_in.matrix)
 
-def save_entries(parent_in):
+def save_entries(parent_in, save_str, as_flag):
     cn.get_entries_into_matrix(parent_in)
-    np.save(parent_in.saved_file, parent_in.matrix)
-    print("SAVE")
+    save_matrix_npy = ""
+    if as_flag:
+        save_matrix_npy = "./{}/{}_mx.npy".format(parent_in.save_folder, save_str)
+        print("SAVE AS")
+    else:
+        save_matrix_npy = parent_in.saved_file
+        print("SAVE")
+    np.save(save_matrix_npy, parent_in.matrix)
+    
+
+def save_as(parent_in): # SAVE AS BUTTON
+    save_str_entry = parent_in.save_as_str.get()
+    if (save_str_entry.isspace() or not save_str_entry):
+        print("Save As invalid file string")
+    else:
+        save_entries(parent_in, save_str_entry, True)
 
 
-def load_entries(parent_in):
+def load_entries(parent_in, load_str, as_flag):
     entry = np.load(parent_in.saved_file)
+    if (as_flag):
+        if(os.path.exists("./{}/{}_mx.npy".format(parent_in.save_folder, load_str))):
+            entry = np.load("./{}/{}_mx.npy".format(parent_in.save_folder, load_str))
+            print("LOAD AS")
+        else:
+            print("Load As file not found")
+    else:
+        entry = np.load(parent_in.saved_file)
+        print("LOAD")
+
     if ((entry.shape[0] == parent_in.rows) and (entry.shape[1] == parent_in.cols)):
         parent_in.matrix = entry
         cn.fill_entries_from_matrix(parent_in, entry)
-        print("LOAD")
+        
     else:
         print("Saved dimensions do not match - Cannot load")
+
+def load_as(parent_in):
+    load_str_entry = parent_in.load_as_str.get()
+    if (load_str_entry.isspace() or not load_str_entry):
+        print("Load As invalid file string")
+    else:
+        load_entries(parent_in, load_str_entry, True)
 
 def reset(parent_in):
     for i, i_entry in enumerate(parent_in.entry_list):

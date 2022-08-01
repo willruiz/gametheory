@@ -13,6 +13,8 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
     # use numpy functions later for optimization
     parent_in.initH_offset = parent_in.top+parent_in.unit_height/2
     parent_in.initW_offset = parent_in.left+parent_in.unit_width/2
+    print(parent_in.unit_height)
+    print(parent_in.unit_width)
     digscA = 0
     digscB = 0
     for i in range(parent_in.rows):
@@ -28,8 +30,10 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
                     digscA = 1
 
                 canvas_in.create_rectangle(
-                    coord_x-parent_in.poh-parent_in.poh*0.5-digscA*parent_in.poh*0.55, coord_y-parent_in.poh*0.6, 
-                    coord_x-parent_in.poh+parent_in.poh*0.5+digscA*parent_in.poh*0.15, coord_y+parent_in.poh*0.6, 
+                    coord_x-parent_in.poh-parent_in.poh*0.6-digscA*parent_in.poh*0.65 +(parent_in.rows-2)*parent_in.poh*0.2, 
+                    coord_y-parent_in.poh*0.6, 
+                    coord_x-parent_in.poh+parent_in.poh*0.65+digscA*parent_in.poh*0.0  -(parent_in.cols-2)*parent_in.poh*0.00, 
+                    coord_y+parent_in.poh*0.6, 
                     fill= cd.mute_red)
                 p1_font = cd.paybold_font
             else:
@@ -41,8 +45,8 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
                 elif (parent_in.matrix[i][j][parent_in.p2_index] >= 10):
                     digscB = 1
                 canvas_in.create_rectangle(
-                    coord_x+parent_in.poh-parent_in.poh*0.5-digscB*parent_in.poh*0.15, coord_y-parent_in.poh*0.6, 
-                    coord_x+parent_in.poh+parent_in.poh*0.5+digscB*parent_in.poh*0.55, coord_y+parent_in.poh*0.6, 
+                    coord_x+parent_in.poh-parent_in.poh*0.5-digscB*parent_in.poh*0.15 +(parent_in.rows-2)*parent_in.poh*0.0 , coord_y-parent_in.poh*0.6, 
+                    coord_x+parent_in.poh+parent_in.poh*0.5+digscB*parent_in.poh*0.55 -(parent_in.cols-2)*parent_in.poh*0.07, coord_y+parent_in.poh*0.6, 
                     fill= cd.mute_blue)
                 p2_font = cd.paybold_font
             else:
@@ -51,8 +55,8 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
             # Find NEs
             if (p1_br[i][j] and p2_br[i][j]):
                 canvas_in.create_rectangle(
-                    coord_x-3.5*parent_in.poh, coord_y-parent_in.poh*1.5, 
-                    coord_x+3.5*parent_in.poh, coord_y+parent_in.poh*1.5, 
+                    coord_x-3.5*parent_in.poh +(parent_in.rows-2)*parent_in.poh*0.8, coord_y-parent_in.poh*1.5, 
+                    coord_x+3.5*parent_in.poh -(parent_in.cols-2)*parent_in.poh*0.8, coord_y+parent_in.poh*1.5, 
                     outline= "yellow", width = 3)
             canvas_in.create_text(coord_x-parent_in.poh-digscB*parent_in.poh*0.2, coord_y, 
                     text=parent_in.matrix[i][j][0], fill="black", font=p1_font)

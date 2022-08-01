@@ -38,6 +38,8 @@ payoff_font  = "TkFixedFont 18"
 paybold_font = "TkFixedFont 18 bold"
 label_font   = "Arial 25 bold"
 
+file_boxsize = 12
+
 
 tests = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
 
