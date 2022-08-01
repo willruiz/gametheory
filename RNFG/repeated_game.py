@@ -19,7 +19,7 @@ class RNFM:
         self.right  = self.width * 0.8
         self.top    = self.height * 0.2
         self.bot    = self.height * 0.8
-        self.true_height = rows*250+250
+        self.true_height = rows*250+300
 
         self.unit_width  = (self.right-self.left)/cols
         self.unit_height = (self.bot-self.top)/rows
@@ -41,12 +41,16 @@ class RNFM:
         
         self.offset   = int(self.width/30)
         self.offset_h = int(self.width/30)
+        self.poh = self.offset_h
 
         self.p1_br    = 0
         self.p2_br    = 0
 
         self.p1_index = 0
         self.p2_index = 1
+
+        self.initH_offset = self.top  + self.unit_height/2
+        self.initW_offset = self.left + self.unit_width/2
 
         self.delta_solution = 0.0
         self.delta_exists = False
