@@ -13,17 +13,18 @@ class RNFM:
     def __init__(self, rows, cols):
         self.rows   = rows
         self.cols   = cols
-        self.width  = cols*250+200
-        self.height = rows*250+200
-        self.left   = self.width * 0.2
-        self.right  = self.width * 0.8
-        self.top    = self.height * 0.2
-        self.bot    = self.height * 0.8
-        self.true_height = rows*250+300
-        self.true_width  = cols*250+300
+        self.boxlen = 200
+        self.boxoff = 150
+        self.btnspace = 100
+        
+        self.width  = cols*self.boxlen+self.boxoff*2
+        self.height = rows*self.boxlen+self.boxoff*2
+        self.left   = self.boxoff
+        self.right  = self.width - self.boxoff
+        self.top    = self.boxoff
+        self.bot    = self.height - self.boxoff
+        self.true_height = self.height + self.btnspace
 
-        self.unit_width  = (self.right-self.left)/cols
-        self.unit_height = (self.bot-self.top)/rows
         self.cenv = self.width  * 0.5
         self.cenh = self.height * 0.5
     
@@ -36,9 +37,7 @@ class RNFM:
         self.matrix_import_bool = False
 
         self.saved_file = "saved_matrix.npy"
-        self.saved_dim  = "saved_dim.npy"
         self.prev_file  = "prev_matrix.npy" 
-        self.prev_dim   = "prev_dim.npy"
         self.save_folder  = "user_saves"
         
         self.offset   = int(self.width/30)
@@ -51,16 +50,19 @@ class RNFM:
         self.p1_index = 0
         self.p2_index = 1
 
-        self.initH_offset = self.top  + self.unit_height/2
-        self.initW_offset = self.left + self.unit_width/2
+        self.initH_offset = self.top  + self.boxlen/2
+        self.initW_offset = self.left + self.boxlen/2
 
         self.delta_solution = 0.0
         self.delta_exists = False
 
 def main():
-    if len(sys.argv) == 3:
+    if   len(sys.argv) == 3:
         rows = int(sys.argv[1])
         cols = int(sys.argv[2])
+    elif len(sys.argv) == 2:
+        rows = int(sys.argv[1])
+        cols = int(sys.argv[1])
     else:
         rows = 2
         cols = 2

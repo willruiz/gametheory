@@ -11,18 +11,18 @@ from sympy import symbols, Eq, solve
 def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
     # super duper ineffienct nested for-looping, 
     # use numpy functions later for optimization
-    parent_in.initH_offset = parent_in.top+parent_in.unit_height/2
-    parent_in.initW_offset = parent_in.left+parent_in.unit_width/2
-    print(parent_in.unit_height)
-    print(parent_in.unit_width)
+    parent_in.initH_offset = parent_in.top+parent_in.boxlen/2
+    parent_in.initW_offset = parent_in.left+parent_in.boxlen/2
+    print(parent_in.boxlen)
+    print(parent_in.boxlen)
     digscA = 0
     digscB = 0
     for i in range(parent_in.rows):
         for j in range(parent_in.cols):
             p1_font = ""
             p2_font = ""
-            coord_x = parent_in.initW_offset+(parent_in.unit_width*(j))
-            coord_y = parent_in.initH_offset+(parent_in.unit_height*(i))
+            coord_x = parent_in.initW_offset+(parent_in.boxlen*(j))
+            coord_y = parent_in.initH_offset+(parent_in.boxlen*(i))
             if (p1_br[i][j]):
                 if (parent_in.matrix[i][j][parent_in.p1_index] >= 100):
                     digscA = 2
@@ -185,8 +185,8 @@ def find_discount_shift(parent_in, i_in, j_in):
     return p1_delta_solution, p2_delta_solution
 
 def draw_alt_paretos(parent_in, canvas_in, i_in, j_in):
-    coord_x = parent_in.initW_offset+(parent_in.unit_width*(j_in))
-    coord_y = parent_in.initH_offset+(parent_in.unit_height*(i_in))
+    coord_x = parent_in.initW_offset+(parent_in.boxlen*(j_in))
+    coord_y = parent_in.initH_offset+(parent_in.boxlen*(i_in))
     canvas_in.create_rectangle(
         coord_x-3.5*parent_in.poh, coord_y-parent_in.poh*1.5, 
         coord_x+3.5*parent_in.poh, coord_y+parent_in.poh*1.5, 
@@ -222,10 +222,10 @@ def find_PD_grim_trigger(parent_in):
         print("[Undefined delta solution]")
 
 def draw_delta_label(parent_in, subcan_in, i_in, j_in, p1_delta, p2_delta):
-    coord_x1 = parent_in.initW_offset+(parent_in.unit_width*(j_in))
-    coord_x2 = parent_in.initW_offset+(parent_in.unit_width*(parent_in.BRNE[0]))
-    coord_y1 = parent_in.initH_offset+(parent_in.unit_height*(parent_in.BRNE[1]))
-    coord_y2 = parent_in.initH_offset+(parent_in.unit_height*(i_in))
+    coord_x1 = parent_in.initW_offset+(parent_in.boxlen  *(j_in))
+    coord_x2 = parent_in.initW_offset+(parent_in.boxlen  *(parent_in.BRNE[0]))
+    coord_y1 = parent_in.initH_offset+(parent_in.boxlen *(parent_in.BRNE[1]))
+    coord_y2 = parent_in.initH_offset+(parent_in.boxlen *(i_in))
     # P1-delta
     subcan_in.create_text(
         coord_x1, coord_y1+parent_in.offset*1.5, 
@@ -258,7 +258,7 @@ def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
     subroot.mainloop()
 
 def gen_payoff_buttons(parent_in, root, canvas):
-    quit_btn = tk.Button(root, text="Exit", bg = cd.lite_ornge, command=root.destroy,  width = 5*int(parent_in.unit_width/20), height = 5)
-    canvas.create_window(parent_in.cenv, parent_in.bot + 2 *(parent_in.unit_height/4), window=quit_btn)
+    quit_btn = tk.Button(root, text="Exit", bg = cd.lite_ornge, command=root.destroy,  width = 5*int(parent_in.boxlen/20), height = 5)
+    canvas.create_window(parent_in.cenv, parent_in.bot + 2 *(parent_in.boxlen/4), window=quit_btn)
 
 
