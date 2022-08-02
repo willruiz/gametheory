@@ -12,30 +12,30 @@ WEK_HID = 0
 WEK_REV = 1
 
 def draw_labels(self, root_in, canvas_in):
-    canvas_in.create_text(self.cen_x+self.entry_offset, (self.cen_y), text='Nature', fill="dark blue", font=(cd.text_font))
-    canvas_in.create_text(self.cen_x-self.entry_offset, (self.cen_y+self.top_mid)/2, text='Strong', fill="blue", font=(cd.text_font))
-    canvas_in.create_text(self.cen_x-self.entry_offset, (self.cen_y+self.bot_mid)/2, text='Weak', fill="blue", font=(cd.text_font))
-    canvas_in.create_text((self.cen_x + self.left_mid)/2, self.top_mid-self.mini_offset, text='Hide', fill="black", font=(cd.text_font))
+    canvas_in.create_text(self.cen_x+self.entry_offset, (self.cen_y),                text='Nature', fill="dark blue", font=(cd.text_font))
+    canvas_in.create_text(self.cen_x-self.entry_offset, (self.cen_y+self.top_mid)/2, text='Strong', fill="blue",      font=(cd.text_font))
+    canvas_in.create_text(self.cen_x-self.entry_offset, (self.cen_y+self.bot_mid)/2, text='Weak',   fill="blue",      font=(cd.text_font))
+    canvas_in.create_text((self.cen_x + self.left_mid)/2,  self.top_mid-self.mini_offset, text='Hide',   fill="black", font=(cd.text_font))
     canvas_in.create_text((self.cen_x + self.right_mid)/2, self.top_mid-self.mini_offset, text='Reveal', fill="black", font=(cd.text_font))
-    canvas_in.create_text((self.cen_x + self.left_mid)/2, self.bot_mid+self.mini_offset, text='Hide', fill="black", font=(cd.text_font))
+    canvas_in.create_text((self.cen_x + self.left_mid)/2,  self.bot_mid+self.mini_offset, text='Hide',   fill="black", font=(cd.text_font))
     canvas_in.create_text((self.cen_x + self.right_mid)/2, self.bot_mid+self.mini_offset, text='Reveal', fill="black", font=(cd.text_font))
 
-    canvas_in.create_text((self.left_leg+self.left_mid)/2, self.tA, text='Fight', fill='green', font=(cd.small_font))
-    canvas_in.create_text((self.left_leg+self.left_mid)/2, self.tB, text='Retreat', fill='green', font=(cd.small_font))
-    canvas_in.create_text((self.right_leg+self.right_mid)/2, self.tA, text='Fight', fill='green', font=(cd.small_font))
+    canvas_in.create_text((self.left_leg+self.left_mid)/2,   self.tA, text='Fight',   fill='green', font=(cd.small_font))
+    canvas_in.create_text((self.left_leg+self.left_mid)/2,   self.tB, text='Retreat', fill='green', font=(cd.small_font))
+    canvas_in.create_text((self.right_leg+self.right_mid)/2, self.tA, text='Fight',   fill='green', font=(cd.small_font))
     canvas_in.create_text((self.right_leg+self.right_mid)/2, self.tB, text='Retreat', fill='green', font=(cd.small_font))
     
-    canvas_in.create_text((self.left_leg+self.left_mid)/2, self.bA, text='Fight', fill='green', font=(cd.small_font))
-    canvas_in.create_text((self.left_leg+self.left_mid)/2, self.bB, text='Retreat', fill='green', font=(cd.small_font))
-    canvas_in.create_text((self.right_leg+self.right_mid)/2, self.bA, text='Fight', fill='green', font=(cd.small_font))
+    canvas_in.create_text((self.left_leg+self.left_mid)/2, self.bA, text='Fight', fill='green',     font=(cd.small_font))
+    canvas_in.create_text((self.left_leg+self.left_mid)/2, self.bB, text='Retreat', fill='green',   font=(cd.small_font))
+    canvas_in.create_text((self.right_leg+self.right_mid)/2, self.bA, text='Fight', fill='green',   font=(cd.small_font))
     canvas_in.create_text((self.right_leg+self.right_mid)/2, self.bB, text='Retreat', fill='green', font=(cd.small_font))
 
     canvas_in.create_text((self.cen_x), (self.tA+self.top_mid*2)/3, text='P1', fill='#960091', font=(cd.small_font))
     canvas_in.create_text((self.cen_x), (self.bB+self.bot_mid*2)/3, text='P1', fill='#960091', font=(cd.small_font))
 
-    canvas_in.create_text((self.left_mid), (self.tA+self.top_mid*2)/3, text='P2', fill='teal', font=(cd.small_font))
+    canvas_in.create_text((self.left_mid),  (self.tA+self.top_mid*2)/3, text='P2', fill='teal', font=(cd.small_font))
     canvas_in.create_text((self.right_mid), (self.tA+self.top_mid*2)/3, text='P2', fill='teal', font=(cd.small_font))
-    canvas_in.create_text((self.left_mid), (self.bB+self.bot_mid*2)/3, text='P2', fill='teal', font=(cd.small_font))
+    canvas_in.create_text((self.left_mid),  (self.bB+self.bot_mid*2)/3, text='P2', fill='teal', font=(cd.small_font))
     canvas_in.create_text((self.right_mid), (self.bB+self.bot_mid*2)/3, text='P2', fill='teal', font=(cd.small_font))
 
 def create_spider_grid(self, root_in, canvas_in):

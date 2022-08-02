@@ -411,12 +411,12 @@ class EQ_GUI:
             canvas_in.create_rectangle(pool_text_x, top_pool_text_y, pool_text_xb, top_pool_text_yb, outline = cd.lite_red, width = '2')
             canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4+self.MO + (2*(parent_in.cf_full_leg)-self.TO*2.6) *parent_in.top_signal,  parent_in.cen_y+self.MO*1.5, 
                                    parent_in.left_leg-self.MO +                         (2*(parent_in.cf_full_leg)+self.TO*1.25) *parent_in.top_signal, parent_in.cen_y-self.MO*0.75, 
-                                   fill=cd.lite_magnta, width ='7',arrow=tk.LAST)
+                                   fill=cd.lite_magnta, width ='7', arrow=tk.LAST)
         else:
             canvas_in.create_rectangle(pool_text_x, bot_pool_text_y, pool_text_xb, bot_pool_text_yb, outline = cd.lite_red, width = '2')
             canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4+self.MO + (2*(parent_in.cf_full_leg)-self.TO*2.5) *parent_in.top_signal,  parent_in.cen_y-self.MO*2, 
                                    parent_in.left_leg-self.MO                         + (2*(parent_in.cf_full_leg)+self.TO*1.25) *parent_in.top_signal, parent_in.cen_y+self.MO*0.5, 
-                                  fill=cd.lite_magnta, width ='7',arrow=tk.LAST)
+                                   fill=cd.lite_magnta, width ='7', arrow=tk.LAST)
         
         canvas_in.create_text( ((parent_in.left+parent_in.left_leg*2)/3)-self.MO*0.2 + 2*(parent_in.cf_full_leg+self.TO*2-0.2*self.MO)*parent_in.top_signal, parent_in.cen_y-self.EO/4, 
             text=str(round(parent_in.p2_pool1,1)), fill = cd.lite_purple, font=(cd.text_font))
@@ -430,12 +430,12 @@ class EQ_GUI:
             canvas_in.create_rectangle(pool_text_x_alt, top_pool_text_y, pool_text_xb_alt, top_pool_text_yb, outline = cd.lite_blue, width = '2')
             canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4+self.MO + (2*(parent_in.cf_full_leg)-self.TO*2.6)  *parent_in.top_alt, parent_in.cen_y+self.MO*1.5, 
                                    parent_in.left_leg-self.MO +                         (2*(parent_in.cf_full_leg)+self.TO*1.25) *parent_in.top_alt, parent_in.cen_y-self.MO*0.75, 
-                                   fill=cd.pale_blue, width ='7',arrow=tk.LAST)
+                                   fill=cd.pale_blue, width ='7', arrow=tk.LAST)
         else:
             canvas_in.create_rectangle(pool_text_x_alt, bot_pool_text_y, pool_text_xb_alt, bot_pool_text_yb, outline = cd.lite_blue, width = '2')
             canvas_in.create_line((parent_in.left_leg*3+parent_in.left_mid)/4+self.MO + (2*(parent_in.cf_full_leg)-self.TO*2.5)  *parent_in.top_alt, parent_in.cen_y-self.MO*2, 
                                    parent_in.left_leg-self.MO                         + (2*(parent_in.cf_full_leg)+self.TO*1.25) *parent_in.top_alt, parent_in.cen_y+self.MO*0.5, 
-                                  fill=cd.pale_blue, width ='7',arrow=tk.LAST)
+                                  fill=cd.pale_blue, width ='7', arrow=tk.LAST)
         
         canvas_in.create_text( ((parent_in.left+parent_in.left_leg*2)/3)-self.MO*0.2 + 2*(parent_in.cf_full_leg+self.TO*2-0.2*self.MO)*parent_in.top_alt, parent_in.cen_y-self.EO/4, 
             text=str(round(parent_in.p2_pool1_alt,1)), fill = cd.lite_purple, font=(cd.text_font))
@@ -448,7 +448,7 @@ class EQ_GUI:
                 (parent_in.cen_x+parent_in.right_mid*2)/3+self.EO*1.6, parent_in.bB+self.TO, 
                 outline = "orange", width = '3')
             canvas_in.create_text( ((parent_in.cen_x+parent_in.right_mid)/2+self.EO*1.2), parent_in.bB+self.MO/2, 
-                text="Q = "+str(parent_in.solution),fill = "orange", font=(cd.small_font))
+                text="Q = "+str(parent_in.solution), fill = "orange", font=(cd.small_font))
 
     def draw_logic_sequence(self, parent_in, canvas_in, matrix_in, type_in):
         if (type_in == parent_in.POOL_INDEX):

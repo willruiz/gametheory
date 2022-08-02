@@ -33,6 +33,8 @@ text_font     = "Arial 15 bold"
 small_font    = "Arial 12 bold"
 grid_font     = "Arial 12"
 
+file_boxsize   = 12
+
 tests = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
 
 
