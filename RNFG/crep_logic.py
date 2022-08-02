@@ -8,69 +8,7 @@ import crep_def as cd
 import crep_np  as cn
 from sympy import symbols, Eq, solve
 
-def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
-    # super duper ineffienct nested for-looping, 
-    # use numpy functions later for optimization
-    parent_in.initH_offset = parent_in.top+parent_in.boxlen/2
-    parent_in.initW_offset = parent_in.left+parent_in.boxlen/2
-    digscA = 0
-    digscB = 0
-    for i in range(parent_in.rows):
-        for j in range(parent_in.cols):
-            p1_font = ""
-            p2_font = ""
-            coord_x = parent_in.initW_offset+(parent_in.boxlen*(j))
-            coord_y = parent_in.initH_offset+(parent_in.boxlen*(i))
-            digscA = 0
-            digscB = 0
-            if (p1_br[i][j]):
-                if (parent_in.matrix[i][j][parent_in.p1_index] >= 100):
-                    digscA = 2
-                elif (parent_in.matrix[i][j][parent_in.p1_index] >= 10):
-                    digscA = 1
 
-            # Payoff highlighting - P1 RED
-                canvas_in.create_rectangle(
-                    coord_x-parent_in.poh-parent_in.poh*0.50-digscA*parent_in.poh*0.4 +(parent_in.rows-2)*parent_in.poh*0.00, 
-                    coord_y-parent_in.poh*0.6, 
-                    coord_x-parent_in.poh+parent_in.poh*0.5 +digscA*parent_in.poh*0.25 -(parent_in.cols-2)*parent_in.poh*0.05, 
-                    coord_y+parent_in.poh*0.6, 
-                    fill= cd.mute_red)
-                p1_font = cd.paybold_font
-            else:
-                p1_font = cd.payoff_font
-            if (p2_br[i][j]):
-                if (parent_in.matrix[i][j][parent_in.p2_index] >= 100):
-                    digscB = 2
-                elif (parent_in.matrix[i][j][parent_in.p2_index] >= 10):
-                    digscB = 1
-            # Payoff highlighting - P2 BLUE
-                canvas_in.create_rectangle(
-                    coord_x+parent_in.poh-parent_in.poh*0.5-digscB*parent_in.poh*0.15 +(parent_in.rows-2)*parent_in.poh*0.0 , coord_y-parent_in.poh*0.6, 
-                    coord_x+parent_in.poh+parent_in.poh*0.5+digscB*parent_in.poh*0.55 -(parent_in.cols-2)*parent_in.poh*0.05, coord_y+parent_in.poh*0.6, 
-                    fill= cd.mute_blue)
-                p2_font = cd.paybold_font
-            else:
-                p2_font = cd.payoff_font
-
-            # Find NEs
-            if (p1_br[i][j] and p2_br[i][j]):
-                tuple_check = (i,j)
-                br_color = ""
-                if parent_in.BRNE == tuple_check:
-                    br_color = cd.rich_yellow
-                else:
-                    br_color = cd.pale_yellow
-                canvas_in.create_rectangle(
-                    coord_x-3.5*parent_in.poh +(parent_in.rows-2)*parent_in.poh*0.8, coord_y-parent_in.poh*1.5, 
-                    coord_x+3.5*parent_in.poh -(parent_in.cols-2)*parent_in.poh*0.8, coord_y+parent_in.poh*1.5, 
-                    outline= br_color, width = 3)
-            canvas_in.create_text(coord_x-parent_in.poh-digscA*parent_in.poh*0.1, coord_y, 
-                    text=parent_in.matrix[i][j][0], fill="black", font=p1_font)
-            canvas_in.create_text(coord_x, coord_y, 
-                text=',', fill="black", font=(cd.payoff_font))
-            canvas_in.create_text(coord_x+parent_in.poh+digscB*parent_in.poh*0.2, coord_y, 
-                text=parent_in.matrix[i][j][1], fill="black", font=p2_font)
 
 def find_basic_BR(parent_in): # return index coordinates of BRs
     # Player 1 (going down each column)
@@ -165,6 +103,7 @@ def find_discount_shift(parent_in, i_in, j_in):
     atck_p1 = parent_in.matrix[d_p1][c_p2][parent_in.p1_index]
     d_eq_p1 = parent_in.matrix[d_p1][d_p2][parent_in.p1_index]
 
+    # Infinite summation formula
     p1_delta = symbols('d1')
     exprC1 = c_eq_p1/(1-p1_delta)
     exprD1 = atck_p1 + (d_eq_p1*p1_delta)/(1-p1_delta)
@@ -179,6 +118,7 @@ def find_discount_shift(parent_in, i_in, j_in):
     atck_p2 = parent_in.matrix[c_p1][d_p2][parent_in.p2_index]
     d_eq_p2 = parent_in.matrix[d_p1][d_p2][parent_in.p2_index]
 
+    # Infinite summation formula
     p2_delta = symbols('d2')
     exprC2 = c_eq_p2/(1-p2_delta)
     exprD2 = atck_p2 + (d_eq_p2*p2_delta)/(1-p2_delta)
@@ -190,6 +130,73 @@ def find_discount_shift(parent_in, i_in, j_in):
         print("[Undefined p2 delta solution]")
 
     return p1_delta_solution, p2_delta_solution
+
+
+### Logic GUI ###
+
+def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
+    # super duper ineffienct nested for-looping, 
+    # use numpy functions later for optimization
+    parent_in.initH_offset = parent_in.top+parent_in.boxlen/2
+    parent_in.initW_offset = parent_in.left+parent_in.boxlen/2
+    digscA = 0
+    digscB = 0
+    for i in range(parent_in.rows):
+        for j in range(parent_in.cols):
+            p1_font = ""
+            p2_font = ""
+            coord_x = parent_in.initW_offset+(parent_in.boxlen*(j))
+            coord_y = parent_in.initH_offset+(parent_in.boxlen*(i))
+            digscA = 0
+            digscB = 0
+            if (p1_br[i][j]):
+                if (parent_in.matrix[i][j][parent_in.p1_index] >= 100):
+                    digscA = 2
+                elif (parent_in.matrix[i][j][parent_in.p1_index] >= 10):
+                    digscA = 1
+
+            # Payoff highlighting - P1 RED
+                canvas_in.create_rectangle(
+                    coord_x-parent_in.poh-parent_in.poh*0.50-digscA*parent_in.poh*0.4 +(parent_in.rows-2)*parent_in.poh*0.00, 
+                    coord_y-parent_in.poh*0.6, 
+                    coord_x-parent_in.poh+parent_in.poh*0.5 +digscA*parent_in.poh*0.25 -(parent_in.cols-2)*parent_in.poh*0.05, 
+                    coord_y+parent_in.poh*0.6, 
+                    fill= cd.mute_red)
+                p1_font = cd.paybold_font
+            else:
+                p1_font = cd.payoff_font
+            if (p2_br[i][j]):
+                if (parent_in.matrix[i][j][parent_in.p2_index] >= 100):
+                    digscB = 2
+                elif (parent_in.matrix[i][j][parent_in.p2_index] >= 10):
+                    digscB = 1
+            # Payoff highlighting - P2 BLUE
+                canvas_in.create_rectangle(
+                    coord_x+parent_in.poh-parent_in.poh*0.5-digscB*parent_in.poh*0.15 +(parent_in.rows-2)*parent_in.poh*0.0 , coord_y-parent_in.poh*0.6, 
+                    coord_x+parent_in.poh+parent_in.poh*0.5+digscB*parent_in.poh*0.55 -(parent_in.cols-2)*parent_in.poh*0.05, coord_y+parent_in.poh*0.6, 
+                    fill= cd.mute_blue)
+                p2_font = cd.paybold_font
+            else:
+                p2_font = cd.payoff_font
+
+            # Find NEs
+            if (p1_br[i][j] and p2_br[i][j]):
+                tuple_check = (i,j)
+                br_color = ""
+                if parent_in.BRNE == tuple_check:
+                    br_color = cd.rich_yellow
+                else:
+                    br_color = cd.pale_yellow
+                canvas_in.create_rectangle(
+                    coord_x-3.5*parent_in.poh +(parent_in.rows-2)*parent_in.poh*0.8, coord_y-parent_in.poh*1.5, 
+                    coord_x+3.5*parent_in.poh -(parent_in.cols-2)*parent_in.poh*0.8, coord_y+parent_in.poh*1.5, 
+                    outline= br_color, width = 3)
+            canvas_in.create_text(coord_x-parent_in.poh-digscA*parent_in.poh*0.1, coord_y, 
+                    text=parent_in.matrix[i][j][0], fill="black", font=p1_font)
+            canvas_in.create_text(coord_x, coord_y, 
+                text=',', fill="black", font=(cd.payoff_font))
+            canvas_in.create_text(coord_x+parent_in.poh+digscB*parent_in.poh*0.2, coord_y, 
+                text=parent_in.matrix[i][j][1], fill="black", font=p2_font)
 
 def draw_alt_paretos(parent_in, canvas_in, i_in, j_in):
     coord_x = parent_in.initW_offset+(parent_in.boxlen*(j_in))
