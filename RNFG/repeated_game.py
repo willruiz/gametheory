@@ -15,6 +15,9 @@ class RNFM:
         self.cols   = cols
         self.boxlen = 200
         self.boxoff = 150
+        if (rows > 3):
+            self.boxlen = 180
+            self.boxoff = 120
         self.btnspace = 100
         
         self.width  = cols*self.boxlen+self.boxoff*2
@@ -50,8 +53,8 @@ class RNFM:
         self.square_bool = False
         self.square_dim = 2
         
-        self.offset   = int(self.width/30)
-        self.offset_h = int(self.width/30)
+        self.offset   = 23
+        self.offset_h = 23
         self.poh = self.offset_h
 
         self.p1_br    = -1

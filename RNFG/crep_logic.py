@@ -21,17 +21,19 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
             p2_font = ""
             coord_x = parent_in.initW_offset+(parent_in.boxlen*(j))
             coord_y = parent_in.initH_offset+(parent_in.boxlen*(i))
+            digscA = 0
+            digscB = 0
             if (p1_br[i][j]):
                 if (parent_in.matrix[i][j][parent_in.p1_index] >= 100):
                     digscA = 2
                 elif (parent_in.matrix[i][j][parent_in.p1_index] >= 10):
                     digscA = 1
 
-            # Payoff highlighting - RED
+            # Payoff highlighting - P1 RED
                 canvas_in.create_rectangle(
-                    coord_x-parent_in.poh-parent_in.poh*0.60-digscA*parent_in.poh*0.65 +(parent_in.rows-2)*parent_in.poh*0.20, 
+                    coord_x-parent_in.poh-parent_in.poh*0.50-digscA*parent_in.poh*0.4 +(parent_in.rows-2)*parent_in.poh*0.00, 
                     coord_y-parent_in.poh*0.6, 
-                    coord_x-parent_in.poh+parent_in.poh*0.65+digscA*parent_in.poh*0.00 -(parent_in.cols-2)*parent_in.poh*0.00, 
+                    coord_x-parent_in.poh+parent_in.poh*0.5 +digscA*parent_in.poh*0.25 -(parent_in.cols-2)*parent_in.poh*0.05, 
                     coord_y+parent_in.poh*0.6, 
                     fill= cd.mute_red)
                 p1_font = cd.paybold_font
@@ -42,10 +44,10 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
                     digscB = 2
                 elif (parent_in.matrix[i][j][parent_in.p2_index] >= 10):
                     digscB = 1
-            # Payoff highlighting - BLUE
+            # Payoff highlighting - P2 BLUE
                 canvas_in.create_rectangle(
                     coord_x+parent_in.poh-parent_in.poh*0.5-digscB*parent_in.poh*0.15 +(parent_in.rows-2)*parent_in.poh*0.0 , coord_y-parent_in.poh*0.6, 
-                    coord_x+parent_in.poh+parent_in.poh*0.5+digscB*parent_in.poh*0.55 -(parent_in.cols-2)*parent_in.poh*0.07, coord_y+parent_in.poh*0.6, 
+                    coord_x+parent_in.poh+parent_in.poh*0.5+digscB*parent_in.poh*0.55 -(parent_in.cols-2)*parent_in.poh*0.05, coord_y+parent_in.poh*0.6, 
                     fill= cd.mute_blue)
                 p2_font = cd.paybold_font
             else:
@@ -56,7 +58,6 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
                 tuple_check = (i,j)
                 br_color = ""
                 if parent_in.BRNE == tuple_check:
-                    print("check")
                     br_color = cd.rich_yellow
                 else:
                     br_color = cd.pale_yellow
@@ -64,7 +65,7 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
                     coord_x-3.5*parent_in.poh +(parent_in.rows-2)*parent_in.poh*0.8, coord_y-parent_in.poh*1.5, 
                     coord_x+3.5*parent_in.poh -(parent_in.cols-2)*parent_in.poh*0.8, coord_y+parent_in.poh*1.5, 
                     outline= br_color, width = 3)
-            canvas_in.create_text(coord_x-parent_in.poh-digscB*parent_in.poh*0.2, coord_y, 
+            canvas_in.create_text(coord_x-parent_in.poh-digscA*parent_in.poh*0.1, coord_y, 
                     text=parent_in.matrix[i][j][0], fill="black", font=p1_font)
             canvas_in.create_text(coord_x, coord_y, 
                 text=',', fill="black", font=(cd.payoff_font))
@@ -208,16 +209,17 @@ def draw_delta_label(parent_in, subcan_in, i_in, j_in, p1_delta, p2_delta):
         coord_x1, coord_y1+parent_in.offset*1.5, 
             text = "d1: "+str(p1_delta), fill="green", font=(cd.delta_font))
     # h-v
-    subcan_in.create_line(coord_x2, coord_y1, coord_x1, coord_y1, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
-    subcan_in.create_line(coord_x1, coord_y1, coord_x1, coord_y2, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
+    bl = parent_in.boxlen
+    subcan_in.create_line(coord_x2 -bl*0.3, coord_y1, coord_x1 +bl*0.3, coord_y1,   fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
+    subcan_in.create_line(coord_x1, coord_y1 -bl*0.25, coord_x1, coord_y2 +bl*0.25, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
     
     # P2-delta
     subcan_in.create_text(
         coord_x2, coord_y2+parent_in.offset*1.5, 
             text = "d2: "+str(p2_delta), fill="green", font=(cd.delta_font))
     # v-h
-    subcan_in.create_line(coord_x2, coord_y1, coord_x2, coord_y2, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
-    subcan_in.create_line(coord_x2, coord_y2, coord_x1, coord_y2, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
+    subcan_in.create_line(coord_x2, coord_y1 -bl*0.25, coord_x2, coord_y2 +bl*0.25, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
+    subcan_in.create_line(coord_x2 -bl*0.3, coord_y2, coord_x1 +bl*0.3, coord_y2,   fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
 
 def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
     subroot = tk.Tk()
@@ -232,6 +234,7 @@ def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
             j = parent_in.folk_indexes[a][1]
             p1_delta = ae[0]
             p2_delta = ae[1]
+            print()
             draw_alt_paretos(parent_in, subcan, i, j)
             draw_delta_label(parent_in, subcan, i, j, p1_delta, p2_delta)
             

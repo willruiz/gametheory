@@ -252,12 +252,6 @@ class EQ_GUI:
         self.SB_tx = parent_in.left_mid + self.MO + (parent_in.top_sig_alt*((2*parent_in.cf_horz_mid)-(2*self.MO)))
         self.Sty = (parent_in.top_mid + parent_in.tA)/2
         
-        # self.sigB_offset = 2*self.MO - parent_in.bot_signal*4*self.MO
-        # self.SA_bx = parent_in.left_mid + self.MO + (parent_in.bot_signal*((2*parent_in.cf_horz_mid)-(2*self.MO)))
-        # self.SB_bx = parent_in.left_mid + self.MO + (parent_in.bot_sig_alt*((2*parent_in.cf_horz_mid)-(2*self.MO)))
-        # self.Sby = (parent_in.bot_mid + parent_in.bB)/2
-
-    
     def write_eq_payoff(self, parent_in, canvas_in, matrix_in, type_in):
         canvas_in.create_text(parent_in.cen_x+parent_in.entry_offset, (parent_in.cen_y+parent_in.top_mid)/2,
             text=str(parent_in.nature_mat[0][0]), fill=cd.rglr_cyan, font=(cd.text_font))

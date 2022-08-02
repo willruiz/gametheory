@@ -25,10 +25,12 @@ def create_matrix_grid(parent_in, root_in, canvas_in):
 
 def gen_labels(parent_in, canvas_in):
     label_left = parent_in.left - int(parent_in.boxlen*0.4)
+    p1_cen     = parent_in.top + (parent_in.rows*parent_in.boxlen)/2
     label_top  = parent_in.top - int(parent_in.boxlen*0.35)
-    canvas_in.create_text(label_left, parent_in.cenv, 
+    p2_cen     = parent_in.left + (parent_in.cols*parent_in.boxlen)/2
+    canvas_in.create_text(label_left, p1_cen, 
                 text = "P1", fill="red", font=(cd.label_font))
-    canvas_in.create_text(parent_in.cenh, label_top, 
+    canvas_in.create_text(p2_cen, label_top, 
                 text = "P2", fill="blue", font=(cd.label_font))
     for i in range(parent_in.rows): # P1 indexes
         canvas_in.create_text(label_left + parent_in.boxlen*0.24, parent_in.initH_offset + i*parent_in.boxlen, 
