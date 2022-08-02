@@ -36,9 +36,16 @@ class RNFM:
         self.matrix_import = np.zeros((1,1), dtype='i,i')
         self.matrix_import_bool = False
 
-        self.saved_file = "saved_matrix.npy"
-        self.prev_file  = "prev_matrix.npy" 
+        self.fixed_folder = "fixed_saves"
         self.save_folder  = "user_saves"
+
+        self.saved_npy = "saved_matrix.npy"
+        self.saved_file = "{}/{}".format(self.fixed_folder, self.saved_npy)
+        self.prev_npy  = "prev_matrix.npy" 
+        self.prev_file = "{}/{}".format(self.fixed_folder, self.prev_npy)
+        
+        self.square_bool = False
+        self.square_dim = 2
         
         self.offset   = int(self.width/30)
         self.offset_h = int(self.width/30)
@@ -67,6 +74,9 @@ def main():
         rows = 2
         cols = 2
     parent = RNFM(rows, cols)
+    if (rows == cols):
+        parent.square_bool = True
+        parent.square_dim  = rows
     cn.init_np(parent)
     cg.create_matrix_grid(parent, parent.root, parent.canvas)
     cg.create_entry_boxes(parent, parent.canvas)
