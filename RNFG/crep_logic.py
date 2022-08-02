@@ -110,14 +110,14 @@ def find_basic_BR(parent_in): # return index coordinates of BRs
 def find_BRNE(parent_in): 
     # super duper ineffienct nested for-looping, 
     # use numpy functions later for optimization
-    max_index = [-1,-1]
+    max_index = (-1,-1)
     p1_max_val   =  0
     p2_max_val   =  0
     for i, ie in enumerate(parent_in.matrix):
         for j, je in enumerate(ie):
             if (parent_in.p1_br[i][j] and parent_in.p2_br[i][j] and 
-                (je[parent_in.p1_index] > p1_max_val) and 
-                (je[parent_in.p2_index] > p2_max_val)):
+                (je[parent_in.p1_index] >= p1_max_val) and 
+                (je[parent_in.p2_index] >= p2_max_val)):
                 p1_max_val = je[parent_in.p1_index]
                 p2_max_val = je[parent_in.p2_index]
                 max_index = (i,j) # CAUTION: (i == p1, j == p2)
@@ -201,8 +201,8 @@ def draw_alt_paretos(parent_in, canvas_in, i_in, j_in):
 
 def draw_delta_label(parent_in, subcan_in, i_in, j_in, p1_delta, p2_delta):
     coord_x1 = parent_in.initW_offset+(parent_in.boxlen  *(j_in))
-    coord_x2 = parent_in.initW_offset+(parent_in.boxlen  *(parent_in.BRNE[0]))
-    coord_y1 = parent_in.initH_offset+(parent_in.boxlen *(parent_in.BRNE[1]))
+    coord_x2 = parent_in.initW_offset+(parent_in.boxlen  *(parent_in.BRNE[1]))
+    coord_y1 = parent_in.initH_offset+(parent_in.boxlen * (parent_in.BRNE[0]))
     coord_y2 = parent_in.initH_offset+(parent_in.boxlen *(i_in))
     # P1-delta
     subcan_in.create_text(
@@ -230,11 +230,14 @@ def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
     
     if (rep_bool):
         for a, ae in enumerate(parent_in.folk_arr):
+            # detected folk coordinates [green box]
             i = parent_in.folk_indexes[a][0]
             j = parent_in.folk_indexes[a][1]
+            
+            # our BRNE coordinates [yellow box]
             p1_delta = ae[0]
             p2_delta = ae[1]
-            print()
+            print("({},{})".format(str(ae[0]), str(ae[1])))
             draw_alt_paretos(parent_in, subcan, i, j)
             draw_delta_label(parent_in, subcan, i, j, p1_delta, p2_delta)
             
