@@ -27,10 +27,11 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
                 elif (parent_in.matrix[i][j][parent_in.p1_index] >= 10):
                     digscA = 1
 
+            # Payoff highlighting - RED
                 canvas_in.create_rectangle(
-                    coord_x-parent_in.poh-parent_in.poh*0.6-digscA*parent_in.poh*0.65 +(parent_in.rows-2)*parent_in.poh*0.2, 
+                    coord_x-parent_in.poh-parent_in.poh*0.60-digscA*parent_in.poh*0.65 +(parent_in.rows-2)*parent_in.poh*0.20, 
                     coord_y-parent_in.poh*0.6, 
-                    coord_x-parent_in.poh+parent_in.poh*0.65+digscA*parent_in.poh*0.0  -(parent_in.cols-2)*parent_in.poh*0.00, 
+                    coord_x-parent_in.poh+parent_in.poh*0.65+digscA*parent_in.poh*0.00 -(parent_in.cols-2)*parent_in.poh*0.00, 
                     coord_y+parent_in.poh*0.6, 
                     fill= cd.mute_red)
                 p1_font = cd.paybold_font
@@ -41,6 +42,7 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
                     digscB = 2
                 elif (parent_in.matrix[i][j][parent_in.p2_index] >= 10):
                     digscB = 1
+            # Payoff highlighting - BLUE
                 canvas_in.create_rectangle(
                     coord_x+parent_in.poh-parent_in.poh*0.5-digscB*parent_in.poh*0.15 +(parent_in.rows-2)*parent_in.poh*0.0 , coord_y-parent_in.poh*0.6, 
                     coord_x+parent_in.poh+parent_in.poh*0.5+digscB*parent_in.poh*0.55 -(parent_in.cols-2)*parent_in.poh*0.07, coord_y+parent_in.poh*0.6, 
@@ -51,9 +53,10 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
 
             # Find NEs
             if (p1_br[i][j] and p2_br[i][j]):
-                tuple_check = (p1_br[i][j], p2_br[i][j])
+                tuple_check = (i,j)
                 br_color = ""
                 if parent_in.BRNE == tuple_check:
+                    print("check")
                     br_color = cd.rich_yellow
                 else:
                     br_color = cd.pale_yellow
@@ -195,35 +198,6 @@ def draw_alt_paretos(parent_in, canvas_in, i_in, j_in):
         coord_x+3.5*parent_in.poh -(parent_in.cols-2)*parent_in.poh*0.8, coord_y+parent_in.poh*1.5, 
         outline= "lime green", width = 2)
 
-def find_PD_grim_trigger(parent_in):
-    # Assume PD game
-    """
-    1. Cooperative eq (C,C): [0,0]
-    2. One-time gain (D,C):  [1,0]
-    3. Defective eq (D,D):   [1,1]
-    """
-    c_p1 = 0
-    c_p2 = 0
-    d_p1 = 1
-    d_p2 = 1
-
-    ceq  = parent_in.matrix[c_p1][c_p2][parent_in.p1_index]
-    atck = parent_in.matrix[d_p1][c_p2][parent_in.p1_index]
-    deq  = parent_in.matrix[d_p1][d_p2][parent_in.p1_index]
-
-    delta = symbols('d')
-    exprC = ceq/(1-delta)
-    exprD = atck + (deq*delta)/(1-delta)
-    #print(exprC)    
-    #print(exprD)
-    
-    parent_in.delta_solution = solve(Eq(exprC, exprD), delta)
-    if(bool(parent_in.delta_solution)):
-        parent_in.delta_solution = round(float(parent_in.delta_solution[0]),2)
-        parent_in.delta_exists = True
-    else:
-        print("[Undefined delta solution]")
-
 def draw_delta_label(parent_in, subcan_in, i_in, j_in, p1_delta, p2_delta):
     coord_x1 = parent_in.initW_offset+(parent_in.boxlen  *(j_in))
     coord_x2 = parent_in.initW_offset+(parent_in.boxlen  *(parent_in.BRNE[0]))
@@ -233,11 +207,17 @@ def draw_delta_label(parent_in, subcan_in, i_in, j_in, p1_delta, p2_delta):
     subcan_in.create_text(
         coord_x1, coord_y1+parent_in.offset*1.5, 
             text = "d1: "+str(p1_delta), fill="green", font=(cd.delta_font))
+    # h-v
+    subcan_in.create_line(coord_x2, coord_y1, coord_x1, coord_y1, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
+    subcan_in.create_line(coord_x1, coord_y1, coord_x1, coord_y2, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
+    
     # P2-delta
     subcan_in.create_text(
         coord_x2, coord_y2+parent_in.offset*1.5, 
             text = "d2: "+str(p2_delta), fill="green", font=(cd.delta_font))
-
+    # v-h
+    subcan_in.create_line(coord_x2, coord_y1, coord_x2, coord_y2, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
+    subcan_in.create_line(coord_x2, coord_y2, coord_x1, coord_y2, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
 
 def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
     subroot = tk.Tk()
@@ -261,7 +241,7 @@ def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
     subroot.mainloop()
 
 def gen_payoff_buttons(parent_in, root, canvas):
-    quit_btn = tk.Button(root, text="Exit", bg = cd.lite_ornge, command=root.destroy,  width = 5*int(parent_in.boxlen/20), height = 5)
-    canvas.create_window(parent_in.cenv, parent_in.bot + 2 *(parent_in.boxlen/4), window=quit_btn)
+    quit_btn = tk.Button(root, text="Exit", bg = cd.lite_ornge, command=root.destroy,  width = 6*int(parent_in.boxlen/20), height = 5)
+    canvas.create_window(parent_in.cenv, parent_in.bot + 1.5 *(parent_in.boxlen/4), window=quit_btn)
 
 
