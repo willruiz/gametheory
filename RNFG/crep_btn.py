@@ -6,6 +6,8 @@ import crep_def as cd
 import crep_np  as cn
 import crep_logic as cl
 import os
+import random
+import math
 
 def nfg(parent_in):
     cn.get_entries_into_matrix(parent_in)
@@ -87,6 +89,18 @@ def reset(parent_in):
 
 def quit_game(parent_in):
     cn.get_entries_into_matrix(parent_in)
-    np.save(parent_in.prev_file, parent_in.matrix)
+    if (parent_in.square_bool):
+        np.save(parent_in.dim_save[parent_in.square_dim], parent_in.matrix)
+    else:
+        np.save(parent_in.prev_file, parent_in.matrix)
     print("EXIT")
     parent_in.root.destroy()
+
+def rand_gen(parent_in):
+    for i, i_entry in enumerate(parent_in.entry_list):
+        for j, j_entry in enumerate(i_entry):
+            for k, k_entry in enumerate(j_entry):
+                rgen = math.floor(random.random()*100)
+                k_entry.set(str(rgen))
+                parent_in.matrix[i][j][k] = rgen
+                

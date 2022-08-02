@@ -43,6 +43,9 @@ class RNFM:
         self.saved_file = "{}/{}".format(self.fixed_folder, self.saved_npy)
         self.prev_npy  = "prev_matrix.npy" 
         self.prev_file = "{}/{}".format(self.fixed_folder, self.prev_npy)
+        self.dim_save   = []
+        for i in range(5):
+            self.dim_save.append("{}/dim_matrix_{}.npy".format(self.fixed_folder, str(i)))
         
         self.square_bool = False
         self.square_dim = 2

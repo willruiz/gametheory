@@ -14,10 +14,6 @@ def fill_entries_from_matrix(parent_in, matrix_in):
                 for k, k_entry in enumerate(j_entry): # iterate through tuple
                     k_entry.set("")
 
-def import_matrix(parent_in, matrix_in): # FOR CUSTOM MATRIX INPUT FOR TEST SUITE
-    parent_in.matrix_import = matrix_in
-    parent_in.matrix_import_bool = True
-
 def get_entries_into_matrix(parent_in):
     for i, i_entry in enumerate(parent_in.entry_list):
         for j, j_entry in enumerate(i_entry):
@@ -29,6 +25,10 @@ def get_entries_into_matrix(parent_in):
                 else:
                     input = int(str_input)
                 parent_in.matrix[i][j][k] = input
+
+def import_matrix(parent_in, matrix_in): # FOR CUSTOM MATRIX INPUT FOR TEST SUITE
+    parent_in.matrix_import = matrix_in
+    parent_in.matrix_import_bool = True
 
 def init_np(parent_in):
     parent_in.matrix = np.resize(parent_in.matrix, (parent_in.rows, parent_in.cols))

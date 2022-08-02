@@ -13,8 +13,6 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
     # use numpy functions later for optimization
     parent_in.initH_offset = parent_in.top+parent_in.boxlen/2
     parent_in.initW_offset = parent_in.left+parent_in.boxlen/2
-    print(parent_in.boxlen)
-    print(parent_in.boxlen)
     digscA = 0
     digscB = 0
     for i in range(parent_in.rows):
@@ -39,7 +37,6 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
             else:
                 p1_font = cd.payoff_font
             if (p2_br[i][j]):
-                
                 if (parent_in.matrix[i][j][parent_in.p2_index] >= 100):
                     digscB = 2
                 elif (parent_in.matrix[i][j][parent_in.p2_index] >= 10):
@@ -54,10 +51,16 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
 
             # Find NEs
             if (p1_br[i][j] and p2_br[i][j]):
+                tuple_check = (p1_br[i][j], p2_br[i][j])
+                br_color = ""
+                if parent_in.BRNE == tuple_check:
+                    br_color = cd.rich_yellow
+                else:
+                    br_color = cd.pale_yellow
                 canvas_in.create_rectangle(
                     coord_x-3.5*parent_in.poh +(parent_in.rows-2)*parent_in.poh*0.8, coord_y-parent_in.poh*1.5, 
                     coord_x+3.5*parent_in.poh -(parent_in.cols-2)*parent_in.poh*0.8, coord_y+parent_in.poh*1.5, 
-                    outline= "yellow", width = 3)
+                    outline= br_color, width = 3)
             canvas_in.create_text(coord_x-parent_in.poh-digscB*parent_in.poh*0.2, coord_y, 
                     text=parent_in.matrix[i][j][0], fill="black", font=p1_font)
             canvas_in.create_text(coord_x, coord_y, 
@@ -188,8 +191,8 @@ def draw_alt_paretos(parent_in, canvas_in, i_in, j_in):
     coord_x = parent_in.initW_offset+(parent_in.boxlen*(j_in))
     coord_y = parent_in.initH_offset+(parent_in.boxlen*(i_in))
     canvas_in.create_rectangle(
-        coord_x-3.5*parent_in.poh, coord_y-parent_in.poh*1.5, 
-        coord_x+3.5*parent_in.poh, coord_y+parent_in.poh*1.5, 
+        coord_x-3.5*parent_in.poh +(parent_in.rows-2)*parent_in.poh*0.8, coord_y-parent_in.poh*1.5, 
+        coord_x+3.5*parent_in.poh -(parent_in.cols-2)*parent_in.poh*0.8, coord_y+parent_in.poh*1.5, 
         outline= "lime green", width = 2)
 
 def find_PD_grim_trigger(parent_in):
