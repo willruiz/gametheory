@@ -39,6 +39,8 @@ class RNFM:
         self.matrix_import = np.zeros((1,1), dtype='i,i')
         self.matrix_import_bool = False
 
+        self.BRNE = []
+
         self.fixed_folder = "fixed_saves"
         self.save_folder  = "user_saves"
 

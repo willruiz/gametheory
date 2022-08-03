@@ -8,8 +8,6 @@ import crep_def as cd
 import crep_np  as cn
 from sympy import symbols, Eq, solve
 
-
-
 def find_basic_BR(parent_in): # return index coordinates of BRs
     # Player 1 (going down each column)
     match_p1 = np.zeros((parent_in.rows, parent_in.cols), dtype=bool)
@@ -53,13 +51,14 @@ def find_BRNE(parent_in):
     p2_max_val   =  0
     for i, ie in enumerate(parent_in.matrix):
         for j, je in enumerate(ie):
+            max_index = (-1,-1)
             if (parent_in.p1_br[i][j] and parent_in.p2_br[i][j] and 
                 (je[parent_in.p1_index] >= p1_max_val) and 
                 (je[parent_in.p2_index] >= p2_max_val)):
                 p1_max_val = je[parent_in.p1_index]
                 p2_max_val = je[parent_in.p2_index]
                 max_index = (i,j) # CAUTION: (i == p1, j == p2)
-    parent_in.BRNE = max_index
+                parent_in.BRNE.append(max_index)
     print("BRNE:",parent_in.BRNE)
 
 
@@ -75,29 +74,33 @@ def find_folk_triggers(parent_in):
     2. Find all outcomes with strictly better outcomes than the NE
     3. Do a temporal discounting factor calculation for each Folk Eq
     """
+    # folk_arr: array of delta pairs: list of list of pairs
     parent_in.folk_arr = []
     parent_in.folk_indexes = []
-    br_x = parent_in.BRNE[parent_in.p1_index]
-    br_y = parent_in.BRNE[parent_in.p2_index]
-    p1_br_val = parent_in.matrix[br_x][br_y][parent_in.p1_index]
-    p2_br_val = parent_in.matrix[br_x][br_y][parent_in.p2_index]
-    for i, ie in enumerate(parent_in.matrix):
-        for j, je in enumerate(ie):
-            if (je[parent_in.p1_index] > p1_br_val and
-                je[parent_in.p2_index] > p2_br_val):
-                    p1_delta, p2_delta = find_discount_shift(parent_in, i, j)
-                    if (p1_delta and p2_delta):
-                        parent_in.folk_arr.append((p1_delta, p2_delta))
-                        parent_in.folk_indexes.append((i,j))
-                    else:
-                        print("Deltas do not exist for coordinates [{},{}]".format(str(i), str(j)))
+    for a, ae in enumerate(parent_in.BRNE):
+        parent_in.folk_arr.append([])
+        parent_in.folk_indexes.append([])
+        br_x = ae[parent_in.p1_index]
+        br_y = ae[parent_in.p2_index]
+        p1_br_val = parent_in.matrix[br_x][br_y][parent_in.p1_index]
+        p2_br_val = parent_in.matrix[br_x][br_y][parent_in.p2_index]
+        for i, ie in enumerate(parent_in.matrix):
+            for j, je in enumerate(ie):
+                if (je[parent_in.p1_index] > p1_br_val and
+                    je[parent_in.p2_index] > p2_br_val):
+                        p1_delta, p2_delta = find_discount_shift(parent_in, i, j, ae)
+                        if (p1_delta and p2_delta):
+                            parent_in.folk_arr[a].append((p1_delta, p2_delta))
+                            parent_in.folk_indexes[a].append((i,j))
+                        else:
+                            print("Deltas do not exist for coordinates [{},{}]".format(str(i), str(j)))
 
-def find_discount_shift(parent_in, i_in, j_in):
+def find_discount_shift(parent_in, i_in, j_in, brne_in):
     c_p1 = i_in
     c_p2 = j_in
 
-    d_p1 = parent_in.BRNE[parent_in.p1_index]
-    d_p2 = parent_in.BRNE[parent_in.p2_index]
+    d_p1 = brne_in[parent_in.p1_index]
+    d_p2 = brne_in[parent_in.p2_index]
 
     c_eq_p1 = parent_in.matrix[c_p1][c_p2][parent_in.p1_index]
     atck_p1 = parent_in.matrix[d_p1][c_p2][parent_in.p1_index]
@@ -130,7 +133,6 @@ def find_discount_shift(parent_in, i_in, j_in):
         print("[Undefined p2 delta solution]")
 
     return p1_delta_solution, p2_delta_solution
-
 
 ### Logic GUI ###
 
@@ -182,8 +184,12 @@ def show_payoffs(parent_in, canvas_in, p1_br, p2_br):
             # Find NEs
             if (p1_br[i][j] and p2_br[i][j]):
                 tuple_check = (i,j)
+                tuple_bool = False
                 br_color = ""
-                if parent_in.BRNE == tuple_check:
+                for a in parent_in.BRNE:
+                    if a == tuple_check:
+                        tuple_bool = True
+                if tuple_bool:
                     br_color = cd.rich_yellow
                 else:
                     br_color = cd.pale_yellow
@@ -206,10 +212,10 @@ def draw_alt_paretos(parent_in, canvas_in, i_in, j_in):
         coord_x+3.5*parent_in.poh -(parent_in.cols-2)*parent_in.poh*0.8, coord_y+parent_in.poh*1.5, 
         outline= "lime green", width = 2)
 
-def draw_delta_label(parent_in, subcan_in, i_in, j_in, p1_delta, p2_delta):
+def draw_delta_label(parent_in, subcan_in, i_in, j_in, br_i_in, br_j_in, p1_delta, p2_delta):
     coord_x1 = parent_in.initW_offset+(parent_in.boxlen  *(j_in))
-    coord_x2 = parent_in.initW_offset+(parent_in.boxlen  *(parent_in.BRNE[1]))
-    coord_y1 = parent_in.initH_offset+(parent_in.boxlen * (parent_in.BRNE[0]))
+    coord_x2 = parent_in.initW_offset+(parent_in.boxlen  *(br_j_in))
+    coord_y1 = parent_in.initH_offset+(parent_in.boxlen * (br_i_in))
     coord_y2 = parent_in.initH_offset+(parent_in.boxlen *(i_in))
     # P1-delta
     subcan_in.create_text(
@@ -235,19 +241,31 @@ def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
     cg.gen_labels(parent_in, subcan)
     show_payoffs(parent_in, subcan, match_p1, match_p2)
     
+
+    # folk_arr = list of pareto efficient tuples: [(0.3,0.7), (0.2,0.8)]  
+    # folk_indexes = list of pareto efficient tuples: [(2,2), (1,2)]
     if (rep_bool):
-        for a, ae in enumerate(parent_in.folk_arr):
-            # detected folk coordinates [green box]
-            i = parent_in.folk_indexes[a][0]
-            j = parent_in.folk_indexes[a][1]
+        # detected folk coordinates [green box]
+        for a, ae in enumerate(parent_in.folk_indexes[0]):
+            print("parent_in.folk_indexes:",parent_in.folk_indexes)
+            print("ae:",ae)
+            # ae = [(2,2)]
+            # ae[a] = (2,2)
+            i = ae[0]
+            j = ae[1]        
             
+            # parent_in.BRNE: [(0,0), (1,1)]
             # our BRNE coordinates [yellow box]
-            p1_delta = ae[0]
-            p2_delta = ae[1]
-            print("({},{})".format(str(ae[0]), str(ae[1])))
-            draw_alt_paretos(parent_in, subcan, i, j)
-            draw_delta_label(parent_in, subcan, i, j, p1_delta, p2_delta)
-            
+            for c, ce in enumerate(parent_in.BRNE):
+                # ce = (0,0)
+                print("parent_in.folk_arr[0][a]:",parent_in.folk_arr[0][a])
+                p1_delta = parent_in.folk_arr[0][a][0]
+                p2_delta = parent_in.folk_arr[0][a][1]
+                br_i = ce[0]
+                br_j = ce[1]
+                draw_alt_paretos(parent_in, subcan, i, j)
+                draw_delta_label(parent_in, subcan, i, j, br_i, br_j, p1_delta, p2_delta)
+                
 
         #subcan.create_text(parent_in.cenh, parent_in.top-100, text = "delta: "+str(parent_in.delta_solution), font=(cd.label_font))
     gen_payoff_buttons(parent_in, subroot, subcan)
