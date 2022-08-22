@@ -35,7 +35,6 @@ def find_basic_BR(parent_in): # return index coordinates of BRs
             curr = parent_in.matrix[i][j][1]
             if (curr > local_br_val):
                 local_br_val = curr
-        #print("p2 br: ", local_br_val)
         comp_row = np.zeros((1, parent_in.cols))
         comp_row.fill(local_br_val)
         bool_row = (curr_row_indexed == comp_row)
@@ -47,17 +46,23 @@ def find_BRNE(parent_in):
     # super duper ineffienct nested for-looping, 
     # use numpy functions later for optimization
     max_index = (-1,-1)
-    p1_max_val   =  0
-    p2_max_val   =  0
+    p1_max_val   =  (-1*sys.maxsize)-1
+    p2_max_val   =  (-1*sys.maxsize)-1
     for i, ie in enumerate(parent_in.matrix):
         for j, je in enumerate(ie):
             max_index = (-1,-1)
             if (parent_in.p1_br[i][j] and parent_in.p2_br[i][j] and 
-                (je[parent_in.p1_index] >= p1_max_val) and 
-                (je[parent_in.p2_index] >= p2_max_val)):
+                (je[parent_in.p1_index] > p1_max_val) and 
+                (je[parent_in.p2_index] > p2_max_val)):
                 p1_max_val = je[parent_in.p1_index]
                 p2_max_val = je[parent_in.p2_index]
                 max_index = (i,j) # CAUTION: (i == p1, j == p2)
+                parent_in.BRNE = []
+                parent_in.BRNE.append(max_index)
+            elif (parent_in.p1_br[i][j] and parent_in.p2_br[i][j] and 
+                (je[parent_in.p1_index] == p1_max_val) and 
+                (je[parent_in.p2_index] == p2_max_val)):
+                max_index = (i,j)
                 parent_in.BRNE.append(max_index)
     print("BRNE:",parent_in.BRNE)
 
@@ -78,6 +83,7 @@ def find_folk_triggers(parent_in):
     parent_in.folk_arr = []
     parent_in.folk_indexes = []
     for a, ae in enumerate(parent_in.BRNE):
+
         parent_in.folk_arr.append([])
         parent_in.folk_indexes.append([])
         br_x = ae[parent_in.p1_index]
@@ -111,9 +117,9 @@ def find_discount_shift(parent_in, i_in, j_in, brne_in):
     exprC1 = c_eq_p1/(1-p1_delta)
     exprD1 = atck_p1 + (d_eq_p1*p1_delta)/(1-p1_delta)
     
-    p1_delta_solution = solve(Eq(exprC1, exprD1), p1_delta)
-    if(bool(p1_delta_solution )):
-        p1_delta_solution = round(float(p1_delta_solution[0]),2)
+    p1_delta_expr = solve(Eq(exprC1, exprD1), p1_delta)
+    if(bool(p1_delta_expr )):
+        p1_delta_solution = round(float(p1_delta_expr[0]),2)
     else:
         print("[Undefined p1 delta solution]")
 
@@ -126,11 +132,14 @@ def find_discount_shift(parent_in, i_in, j_in, brne_in):
     exprC2 = c_eq_p2/(1-p2_delta)
     exprD2 = atck_p2 + (d_eq_p2*p2_delta)/(1-p2_delta)
 
-    p2_delta_solution = solve(Eq(exprC2, exprD2), p2_delta)
-    if(bool(p2_delta_solution )):
-        p2_delta_solution = round(float(p2_delta_solution[0]),2)
+    p2_delta_expr = solve(Eq(exprC2, exprD2), p2_delta)
+    if(bool(p2_delta_expr)):
+        p2_delta_solution = round(float(p2_delta_expr[0]),2)
     else:
         print("[Undefined p2 delta solution]")
+    print("atck_p1:",atck_p1)
+    print("atck_p2:",atck_p2)
+
 
     return p1_delta_solution, p2_delta_solution
 
@@ -223,16 +232,16 @@ def draw_delta_label(parent_in, subcan_in, i_in, j_in, br_i_in, br_j_in, p1_delt
             text = "d1: "+str(p1_delta), fill="green", font=(cd.delta_font))
     # h-v
     bl = parent_in.boxlen
-    subcan_in.create_line(coord_x2 -bl*0.3, coord_y1, coord_x1 +bl*0.3, coord_y1,   fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
-    subcan_in.create_line(coord_x1, coord_y1 -bl*0.25, coord_x1, coord_y2 +bl*0.25, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
+    subcan_in.create_line(coord_x1 +bl*0.3, coord_y1,  coord_x2 -bl*0.3,  coord_y1, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
+    subcan_in.create_line(coord_x1, coord_y2 +bl*0.25, coord_x1, coord_y1 -bl*0.25, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
     
     # P2-delta
     subcan_in.create_text(
         coord_x2, coord_y2+parent_in.offset*1.5, 
             text = "d2: "+str(p2_delta), fill="green", font=(cd.delta_font))
     # v-h
-    subcan_in.create_line(coord_x2, coord_y1 -bl*0.25, coord_x2, coord_y2 +bl*0.25, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
-    subcan_in.create_line(coord_x2 -bl*0.3, coord_y2, coord_x1 +bl*0.3, coord_y2,   fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
+    subcan_in.create_line(coord_x2, coord_y2 +bl*0.25, coord_x2, coord_y1 -bl*0.25, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
+    subcan_in.create_line(coord_x1 +bl*0.3, coord_y2,  coord_x2 -bl*0.3,  coord_y2, fill="lime green", width ='2',arrow=tk.LAST, dash=(3,5))
 
 def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
     subroot = tk.Tk()
@@ -247,18 +256,12 @@ def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
     if (rep_bool):
         # detected folk coordinates [green box]
         for a, ae in enumerate(parent_in.folk_indexes[0]):
-            print("parent_in.folk_indexes:",parent_in.folk_indexes)
-            print("ae:",ae)
-            # ae = [(2,2)]
-            # ae[a] = (2,2)
             i = ae[0]
             j = ae[1]        
             
             # parent_in.BRNE: [(0,0), (1,1)]
             # our BRNE coordinates [yellow box]
             for c, ce in enumerate(parent_in.BRNE):
-                # ce = (0,0)
-                print("parent_in.folk_arr[0][a]:",parent_in.folk_arr[0][a])
                 p1_delta = parent_in.folk_arr[0][a][0]
                 p2_delta = parent_in.folk_arr[0][a][1]
                 br_i = ce[0]
@@ -266,7 +269,6 @@ def gen_BR_grid(parent_in, match_p1, match_p2, rep_bool):
                 draw_alt_paretos(parent_in, subcan, i, j)
                 draw_delta_label(parent_in, subcan, i, j, br_i, br_j, p1_delta, p2_delta)
                 
-
         #subcan.create_text(parent_in.cenh, parent_in.top-100, text = "delta: "+str(parent_in.delta_solution), font=(cd.label_font))
     gen_payoff_buttons(parent_in, subroot, subcan)
     subroot.mainloop()
